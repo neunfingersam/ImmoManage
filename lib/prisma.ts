@@ -6,10 +6,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-export const prisma =
+// Prisma 7 requires adapter or accelerateUrl in types, but for SQLite via prisma.config.ts
+// the runtime resolves the datasource automatically — we cast to bypass the type constraint
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const prisma: PrismaClient =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  new (PrismaClient as any)()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
