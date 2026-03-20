@@ -11,3 +11,289 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  VERMIETER
+  MIETER
+}
+
+enum PropertyType {
+  SINGLE
+  MULTI
+}
+
+enum LeaseStatus {
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DocumentCategory {
+  MIETVERTRAG
+  HAUSORDNUNG
+  NEBENKOSTENABRECHNUNG
+  UEBERGABEPROTOKOLL
+  SONSTIGES
+}
+
+enum DocumentScope {
+  TENANT
+  PROPERTY
+  GLOBAL
+}
+
+enum MessageSource {
+  MANUAL
+  AI_ESCALATION
+}
+
+enum AgentRole {
+  USER
+  AGENT
+}
+
+enum CalendarEventType {
+  VERTRAGSENDE
+  ABLESUNG
+  KUENDIGUNG
+  WARTUNG
+  SONSTIGES
+}
+
+model Company {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  logoUrl        String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  users          User[]
+  properties     Property[]
+  tickets        Ticket[]
+  documents      Document[]
+  messages       Message[]
+  leases         Lease[]
+  agentChats     AgentChat[]
+  utilityBills   UtilityBill[]
+  calendarEvents CalendarEvent[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  name         String
+  phone        String?
+  whatsapp     String?
+  active       Boolean  @default(true)
+  companyId    String?
+  createdAt    DateTime @default(now())
+  company             Company?             @relation(fields: [companyId], references: [id])
+  propertyAssignments PropertyAssignment[]
+  leases              Lease[]              @relation("TenantLeases")
+  tickets             Ticket[]             @relation("TenantTickets")
+  ticketComments      TicketComment[]
+  uploadedDocuments   Document[]           @relation("UploadedDocuments")
+  tenantDocuments     Document[]           @relation("TenantDocuments")
+  sentMessages        Message[]            @relation("SentMessages")
+  receivedMessages    Message[]            @relation("ReceivedMessages")
+  notifications       Notification[]
+  calendarEvents      CalendarEvent[]
+  agentChats          AgentChat[]          @relation("AgentChatTenant")
+}
+
+model PropertyAssignment {
+  userId     String
+  propertyId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  @@id([userId, propertyId])
+}
+
+model Property {
+  id          String       @id @default(cuid())
+  companyId   String
+  name        String
+  address     String
+  type        PropertyType
+  unitCount   Int
+  year        Int?
+  description String?
+  createdAt   DateTime     @default(now())
+  company      Company              @relation(fields: [companyId], references: [id])
+  units        Unit[]
+  tickets      Ticket[]
+  documents    Document[]
+  assignments  PropertyAssignment[]
+  utilityBills UtilityBill[]
+}
+
+model Unit {
+  id         String   @id @default(cuid())
+  propertyId String
+  unitNumber String
+  floor      Int?
+  size       Float?
+  rooms      Float?
+  property Property @relation(fields: [propertyId], references: [id])
+  leases   Lease[]
+  tickets  Ticket[]
+}
+
+model Lease {
+  id          String      @id @default(cuid())
+  unitId      String
+  tenantId    String
+  companyId   String
+  status      LeaseStatus @default(ACTIVE)
+  startDate   DateTime
+  endDate     DateTime?
+  coldRent    Float
+  extraCosts  Float
+  depositPaid Boolean     @default(false)
+  contractPdf String?
+  createdAt   DateTime    @default(now())
+  unit         Unit          @relation(fields: [unitId], references: [id])
+  tenant       User          @relation("TenantLeases", fields: [tenantId], references: [id])
+  company      Company       @relation(fields: [companyId], references: [id])
+  utilityBills UtilityBill[]
+}
+
+model Ticket {
+  id          String       @id @default(cuid())
+  companyId   String
+  propertyId  String
+  tenantId    String
+  unitId      String?
+  title       String
+  description String
+  status      TicketStatus @default(OPEN)
+  priority    Priority     @default(MEDIUM)
+  images      Json
+  createdAt   DateTime     @default(now())
+  company  Company         @relation(fields: [companyId], references: [id])
+  property Property        @relation(fields: [propertyId], references: [id])
+  tenant   User            @relation("TenantTickets", fields: [tenantId], references: [id])
+  unit     Unit?           @relation(fields: [unitId], references: [id])
+  comments TicketComment[]
+}
+
+model TicketComment {
+  id        String   @id @default(cuid())
+  ticketId  String
+  authorId  String
+  text      String
+  createdAt DateTime @default(now())
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+  author User   @relation(fields: [authorId], references: [id])
+}
+
+model Document {
+  id            String           @id @default(cuid())
+  companyId     String
+  name          String
+  category      DocumentCategory
+  fileUrl       String
+  fileType      String
+  scope         DocumentScope
+  tenantId      String?
+  propertyId    String?
+  uploadedById  String
+  extractedText String?
+  indexed       Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  company    Company   @relation(fields: [companyId], references: [id])
+  tenant     User?     @relation("TenantDocuments", fields: [tenantId], references: [id])
+  property   Property? @relation(fields: [propertyId], references: [id])
+  uploadedBy User      @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+}
+
+model Message {
+  id        String        @id @default(cuid())
+  companyId String
+  fromId    String
+  toId      String
+  text      String
+  read      Boolean       @default(false)
+  source    MessageSource @default(MANUAL)
+  createdAt DateTime      @default(now())
+  company Company @relation(fields: [companyId], references: [id])
+  from    User    @relation("SentMessages", fields: [fromId], references: [id])
+  to      User    @relation("ReceivedMessages", fields: [toId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  text      String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UtilityBill {
+  id         String    @id @default(cuid())
+  leaseId    String
+  companyId  String
+  propertyId String
+  year       Int
+  amount     Float
+  pdfUrl     String?
+  sentAt     DateTime?
+  createdAt  DateTime  @default(now())
+  lease    Lease    @relation(fields: [leaseId], references: [id])
+  company  Company  @relation(fields: [companyId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+}
+
+model CalendarEvent {
+  id            String            @id @default(cuid())
+  companyId     String
+  userId        String
+  title         String
+  date          DateTime
+  type          CalendarEventType
+  autoGenerated Boolean           @default(false)
+  relatedId     String?
+  createdAt     DateTime          @default(now())
+  company Company @relation(fields: [companyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model AgentChat {
+  id        String   @id @default(cuid())
+  companyId String
+  tenantId  String
+  createdAt DateTime @default(now())
+  company  Company        @relation(fields: [companyId], references: [id])
+  tenant   User           @relation("AgentChatTenant", fields: [tenantId], references: [id])
+  messages AgentMessage[]
+}
+
+model AgentMessage {
+  id           String    @id @default(cuid())
+  chatId       String
+  role         AgentRole
+  content      String
+  sources      Json
+  wasEscalated Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  chat AgentChat @relation(fields: [chatId], references: [id])
+}
