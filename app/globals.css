@@ -1,3 +1,6 @@
+/* Google Fonts — must come before any @import "tailwindcss" */
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap");
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -9,7 +12,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,41 +49,48 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* ImmoManage shadow tokens */
+  --shadow-card: 0 2px 16px 0 oklch(0.2284 0.0384 282.932 / 6%);
+  --shadow-card-hover: 0 4px 24px 0 oklch(0.2284 0.0384 282.932 / 10%);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* ImmoManage brand colors (OKLCH) */
+  --background: oklch(0.9845 0.0026 106.448);    /* #FAFAF8 warm off-white */
+  --foreground: oklch(0.2284 0.0384 282.932);     /* #1A1A2E deep anthracite */
+  --card: oklch(1 0 0);                           /* #FFFFFF */
+  --card-foreground: oklch(0.2284 0.0384 282.932);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
+  --popover-foreground: oklch(0.2284 0.0384 282.932);
+  --primary: oklch(0.6847 0.1557 39.577);         /* #E8734A terracotta/coral */
+  --primary-foreground: oklch(1 0 0);             /* #FFFFFF */
+  --secondary: oklch(0.9278 0.0275 83.536);       /* #F0E6D3 sand beige */
+  --secondary-foreground: oklch(0.2284 0.0384 282.932);
+  --muted: oklch(0.9574 0.0097 72.661);           /* #F5F0EA */
+  --muted-foreground: oklch(0.5334 0.0248 285.527); /* #6B6B7B */
+  --accent: oklch(0.9574 0.0097 72.661);          /* same as muted */
+  --accent-foreground: oklch(0.2284 0.0384 282.932);
+  --destructive: oklch(0.5771 0.2152 27.325);     /* #DC2626 */
+  --border: oklch(0.9100 0.0172 76.105);          /* #E8E0D5 */
+  --input: oklch(0.9100 0.0172 76.105);
+  --ring: oklch(0.6847 0.1557 39.577);            /* primary color for focus rings */
+  --chart-1: oklch(0.6847 0.1557 39.577);
+  --chart-2: oklch(0.9278 0.0275 83.536);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.5rem;                               /* 8px for inputs; cards use radius-2xl (16px) */
+  --sidebar: oklch(0.9845 0.0026 106.448);
+  --sidebar-foreground: oklch(0.2284 0.0384 282.932);
+  --sidebar-primary: oklch(0.6847 0.1557 39.577);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.9574 0.0097 72.661);
+  --sidebar-accent-foreground: oklch(0.2284 0.0384 282.932);
+  --sidebar-border: oklch(0.9100 0.0172 76.105);
+  --sidebar-ring: oklch(0.6847 0.1557 39.577);
+  /* ImmoManage font families */
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "DM Serif Display", ui-serif, Georgia, serif;
 }
 
 .dark {
@@ -90,8 +100,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.7200 0.1557 39.577);         /* lighter terracotta for dark mode */
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -101,7 +111,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.7200 0.1557 39.577);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -109,7 +119,7 @@
   --chart-5: oklch(0.269 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.7200 0.1557 39.577);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
@@ -123,8 +133,27 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
   html {
     @apply font-sans;
+  }
+  h1, h2 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-card-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+  .rounded-card {
+    border-radius: 1rem; /* 16px */
+  }
+  .rounded-input {
+    border-radius: 0.5rem; /* 8px */
   }
 }
