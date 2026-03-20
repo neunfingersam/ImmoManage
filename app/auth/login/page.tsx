@@ -68,11 +68,12 @@ export default function LoginPage() {
                 type="email"
                 placeholder="name@beispiel.de"
                 autoComplete="email"
+                aria-describedby="email-error"
                 {...register('email')}
                 className={errors.email ? 'border-destructive' : ''}
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p id="email-error" className="text-sm text-destructive">{errors.email.message}</p>
               )}
             </div>
 
@@ -84,17 +85,18 @@ export default function LoginPage() {
                 type="password"
                 placeholder="Dein Passwort"
                 autoComplete="current-password"
+                aria-describedby="password-error"
                 {...register('password')}
                 className={errors.password ? 'border-destructive' : ''}
               />
               {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
+                <p id="password-error" className="text-sm text-destructive">{errors.password.message}</p>
               )}
             </div>
 
             {/* Allgemeiner Fehler */}
             {fehler && (
-              <div className="rounded-sm bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <div role="alert" className="rounded-sm bg-destructive/10 px-4 py-3 text-sm text-destructive">
                 {fehler}
               </div>
             )}
