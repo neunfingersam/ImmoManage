@@ -6,10 +6,10 @@ import { PrismaClient } from '../lib/generated/prisma'
 import { hash } from 'bcryptjs'
 import path from 'path'
 
-// Resolve DB path relative to project root (where seed is run from)
-const dbPath = path.resolve(process.cwd(), 'prisma/dev.db')
-// PrismaLibSql takes a libsql config object and creates the client internally
-const adapter = new PrismaLibSql({ url: `file:${dbPath}` })
+// DATABASE_URL aus Umgebung lesen, Fallback auf lokale SQLite
+const dbUrl = process.env.DATABASE_URL ?? `file:${path.resolve(process.cwd(), 'prisma/dev.db')}`
+const authToken = process.env.DATABASE_AUTH_TOKEN
+const adapter = new PrismaLibSql({ url: dbUrl, authToken })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const prisma = new (PrismaClient as any)({ adapter })
 
