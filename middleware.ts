@@ -1,47 +1,43 @@
-// middleware.ts
-import { withAuth } from 'next-auth/middleware'
+// middleware.ts — Edge-kompatibel via getToken statt withAuth
+import { getToken } from 'next-auth/jwt'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export default withAuth(
-  function middleware(req: NextRequest & { nextauth: { token: { role?: string } | null } }) {
-    const { pathname } = req.nextUrl
-    const role = req.nextauth.token?.role
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl
 
-    if (pathname.startsWith('/dashboard') && role === 'MIETER') {
-      return NextResponse.redirect(new URL('/403', req.url))
-    }
-
-    if (pathname.startsWith('/tenant') && role !== 'MIETER') {
-      return NextResponse.redirect(new URL('/403', req.url))
-    }
-
-    if (pathname.startsWith('/superadmin') && role !== 'SUPER_ADMIN') {
-      return NextResponse.redirect(new URL('/403', req.url))
-    }
-
-    if (pathname.startsWith('/dashboard/team') && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
-      return NextResponse.redirect(new URL('/403', req.url))
-    }
-
+  // Öffentliche Routen immer durchlassen
+  if (pathname.startsWith('/auth') || pathname.startsWith('/403')) {
     return NextResponse.next()
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const { pathname } = req.nextUrl
-        if (pathname.startsWith('/auth') || pathname.startsWith('/403')) {
-          return true
-        }
-        // /uploads/* erfordert einen gültigen Login
-        return !!token
-      },
-    },
-    pages: {
-      signIn: '/auth/login',
-    },
   }
-)
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+
+  // Nicht eingeloggt → Login
+  if (!token) {
+    return NextResponse.redirect(new URL('/auth/login', req.url))
+  }
+
+  const role = token.role as string
+
+  if (pathname.startsWith('/dashboard') && role === 'MIETER') {
+    return NextResponse.redirect(new URL('/403', req.url))
+  }
+
+  if (pathname.startsWith('/tenant') && role !== 'MIETER') {
+    return NextResponse.redirect(new URL('/403', req.url))
+  }
+
+  if (pathname.startsWith('/superadmin') && role !== 'SUPER_ADMIN') {
+    return NextResponse.redirect(new URL('/403', req.url))
+  }
+
+  if (pathname.startsWith('/dashboard/team') && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+    return NextResponse.redirect(new URL('/403', req.url))
+  }
+
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: [
