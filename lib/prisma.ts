@@ -14,9 +14,12 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient(): PrismaClient {
   const dbUrl = process.env.DATABASE_URL ?? `file:${path.resolve(process.cwd(), 'prisma/dev.db')}`
-  // Strip "file:" prefix if present for libsql absolute path resolution
-  const filePath = dbUrl.startsWith('file:') ? dbUrl : `file:${dbUrl}`
-  const adapter = new PrismaLibSql({ url: filePath })
+  const authToken = process.env.DATABASE_AUTH_TOKEN
+  // Local SQLite: prefix with file:, Turso/remote: use URL as-is with authToken
+  const url = dbUrl.startsWith('file:') || dbUrl.startsWith('libsql:') || dbUrl.startsWith('http')
+    ? dbUrl
+    : `file:${dbUrl}`
+  const adapter = new PrismaLibSql({ url, authToken })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new (PrismaClient as any)({ adapter }) as PrismaClient
 }
