@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Building2 } from 'lucide-react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -92,6 +93,13 @@ export default function LoginPage() {
               {errors.password && (
                 <p id="password-error" className="text-sm text-destructive">{errors.password.message}</p>
               )}
+            </div>
+
+            {/* Passwort vergessen */}
+            <div className="text-right">
+              <Link href="/auth/forgot-password" className="text-sm text-[#E8734A] hover:underline">
+                Passwort vergessen?
+              </Link>
             </div>
 
             {/* Allgemeiner Fehler */}

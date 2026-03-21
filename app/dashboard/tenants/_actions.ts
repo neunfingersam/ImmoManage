@@ -10,34 +10,40 @@ import { tenantSchema, type TenantFormValues } from '@/lib/schemas/tenant'
 import type { ActionResult } from '@/lib/action-result'
 import type { User } from '@/lib/generated/prisma'
 
-export async function getTenants() {
+const PAGE_SIZE = 20
+
+export async function getTenants(page = 1, search = '') {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return []
+  if (!session?.user?.companyId) return { tenants: [], total: 0 }
 
-  if (session.user.role === 'VERMIETER') {
-    return prisma.user.findMany({
-      where: {
-        role: 'MIETER',
+  const skip = (page - 1) * PAGE_SIZE
+
+  const searchFilter = search.trim()
+    ? {
+        OR: [
+          { name: { contains: search.trim() } },
+          { email: { contains: search.trim() } },
+          { phone: { contains: search.trim() } },
+        ],
+      }
+    : {}
+
+  const base = session.user.role === 'VERMIETER'
+    ? {
+        role: 'MIETER' as const,
         companyId: session.user.companyId,
-        leases: {
-          some: {
-            status: 'ACTIVE',
-            unit: {
-              property: {
-                assignments: { some: { userId: session.user.id } },
-              },
-            },
-          },
-        },
-      },
-      orderBy: { name: 'asc' },
-    })
-  }
+        leases: { some: { status: 'ACTIVE' as const, unit: { property: { assignments: { some: { userId: session.user.id } } } } } },
+      }
+    : { role: 'MIETER' as const, companyId: session.user.companyId }
 
-  return prisma.user.findMany({
-    where: { role: 'MIETER', companyId: session.user.companyId },
-    orderBy: { name: 'asc' },
-  })
+  const where = { ...base, ...searchFilter }
+
+  const [tenants, total] = await Promise.all([
+    prisma.user.findMany({ where, orderBy: { name: 'asc' }, skip, take: PAGE_SIZE }),
+    prisma.user.count({ where }),
+  ])
+
+  return { tenants, total }
 }
 
 export async function createTenant(data: TenantFormValues): Promise<ActionResult<User>> {

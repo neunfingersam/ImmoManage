@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ImmoManage
 
-## Getting Started
+Lokale Property-Management SaaS für Vermieter, Mieter und Verwaltungen. Gebaut mit Next.js 16, Prisma 7 (SQLite/libsql), NextAuth v4 und einem lokalen KI-Assistenten via Ollama.
 
-First, run the development server:
+---
+
+## Features
+
+- **Vermieter-Dashboard** — Immobilien, Einheiten, Mietverträge, Mieter, Dokumente, Kalender
+- **Mieter-Portal** — Schadensmeldungen, Nachrichten, Dokumente, Termine, Zählerstände, KI-Assistent
+- **KI-Agent** — RAG-basiert (Ollama + Vectra), liest alle Mieterdokumente & Vertragsdaten, Eskalation per E-Mail
+- **Übergabeprotokoll** — Raum-für-Raum Dokumentation bei Ein-/Auszug
+- **Zählerstand-Erfassung** — Strom, Gas, Wasser, Heizung
+- **Nebenkostenabrechnung** — PDF-Export pro Mieter
+- **Passwort-Reset** — via E-Mail Token
+- **Mobile Responsive** — Hamburger-Navigation für kleine Bildschirme
+- **SuperAdmin** — Mandantenverwaltung, Reindexierung, Systemlogs
+- **Excel-Export** — Mieterliste als `.xlsx`
+
+---
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 16 (App Router, Server Actions) |
+| Datenbank | SQLite via Prisma 7 + `@prisma/adapter-libsql` |
+| Auth | NextAuth v4 (Credentials) |
+| UI | Base UI + Tailwind CSS v4 |
+| KI | Ollama (llama3 + nomic-embed-text) + Vectra LocalIndex |
+| E-Mail | Nodemailer (lokal: Mailpit) |
+| Exports | xlsx, HTML-Print |
+
+---
+
+## Setup
+
+### Voraussetzungen
+
+- Node.js 20+
+- [Ollama](https://ollama.ai) (optional, für KI-Features)
+- [Mailpit](https://mailpit.axllent.org) (optional, für E-Mail-Features)
+
+### Installation
 
 ```bash
+git clone https://github.com/neunfingersam/ImmoManage.git
+cd ImmoManage
+
+# Abhängigkeiten installieren
+npm install
+
+# Umgebungsvariablen einrichten
+cp .env.example .env.local
+# .env.local öffnen und NEXTAUTH_SECRET setzen:
+# openssl rand -base64 32
+
+# Datenbank migrieren & Client generieren
+npx prisma migrate deploy
+npx prisma generate
+
+# Demo-Daten einspielen (optional)
+npm run db:seed
+
+# Entwicklungsserver starten
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Öffne [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo-Zugänge (nach Seed)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Rolle | E-Mail | Passwort |
+|---|---|---|
+| Super Admin | superadmin@demo.com | demo1234 |
+| Admin/Vermieter | admin@demo.com | demo1234 |
+| Mieter | mieter@demo.com | demo1234 |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Umgebungsvariablen
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Siehe `.env.example` für alle Variablen. Pflichtfelder:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Beschreibung |
+|---|---|
+| `DATABASE_URL` | SQLite-Pfad oder libsql-URL |
+| `NEXTAUTH_SECRET` | Zufälliger Secret (min. 32 Zeichen) |
+| `NEXTAUTH_URL` | Öffentliche URL der App |
 
-## Deploy on Vercel
+Optional:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variable | Standard | Beschreibung |
+|---|---|---|
+| `SMTP_HOST` | `localhost` | SMTP-Server |
+| `SMTP_PORT` | `1025` | SMTP-Port |
+| `SMTP_SECURE` | `false` | TLS aktivieren |
+| `SMTP_FROM` | `noreply@immomanage.local` | Absenderadresse |
+| `SMTP_USER` | — | SMTP-Benutzername |
+| `SMTP_PASS` | — | SMTP-Passwort |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama-Endpunkt |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## KI-Assistent einrichten
+
+```bash
+# Ollama installieren: https://ollama.ai
+ollama pull llama3
+ollama pull nomic-embed-text
+```
+
+Dokumente werden automatisch indexiert wenn sie hochgeladen werden. Manuelle Neuindexierung über SuperAdmin → "Dokumente neu indexieren".
+
+---
+
+## Produktion
+
+Für Produktion empfohlen:
+- **Datenbank**: [Turso](https://turso.tech) (libsql, `DATABASE_URL=libsql://...`)
+- **Hosting**: Vercel, Railway oder eigener Server
+- **E-Mail**: Resend, Postmark oder SendGrid
+- **NEXTAUTH_SECRET**: starkes Geheimnis setzen
+
+```bash
+npm run build
+npm start
+```

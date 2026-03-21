@@ -16,9 +16,12 @@ import {
   Bot,
   UserCog,
   Building,
+  Gauge,
+  ClipboardCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Role } from '@/lib/generated/prisma'
+import { MobileNavTrigger } from './MobileNav'
 
 interface NavItem {
   label: string
@@ -37,6 +40,8 @@ const navItems: NavItem[] = [
   { label: 'Nachrichten', href: '/dashboard/messages', icon: MessageSquare },
   { label: 'Kalender', href: '/dashboard/calendar', icon: Calendar },
   { label: 'Abrechnungen', href: '/dashboard/billing', icon: Receipt },
+  { label: 'Zählerstände', href: '/dashboard/meters', icon: Gauge },
+  { label: 'Übergaben', href: '/dashboard/handovers', icon: ClipboardCheck },
   { label: 'KI-Verlauf', href: '/dashboard/agent-logs', icon: Bot },
   {
     label: 'Team',
@@ -51,7 +56,7 @@ interface DashboardSidebarProps {
   companyName?: string
 }
 
-export function DashboardSidebar({ role, companyName }: DashboardSidebarProps) {
+function DashboardNavLinks({ role, companyName }: DashboardSidebarProps) {
   const pathname = usePathname()
 
   const sichtbareItems = navItems.filter(
@@ -59,7 +64,7 @@ export function DashboardSidebar({ role, companyName }: DashboardSidebarProps) {
   )
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-card border-r border-border">
+    <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
         <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary">
@@ -98,6 +103,22 @@ export function DashboardSidebar({ role, companyName }: DashboardSidebarProps) {
           )
         })}
       </nav>
+    </>
+  )
+}
+
+export function DashboardSidebar({ role, companyName }: DashboardSidebarProps) {
+  return (
+    <aside className="hidden md:flex h-full w-64 flex-col bg-card border-r border-border">
+      <DashboardNavLinks role={role} companyName={companyName} />
     </aside>
+  )
+}
+
+export function DashboardMobileNav({ role, companyName }: DashboardSidebarProps) {
+  return (
+    <MobileNavTrigger>
+      <DashboardNavLinks role={role} companyName={companyName} />
+    </MobileNavTrigger>
   )
 }

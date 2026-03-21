@@ -1,10 +1,8 @@
 // components/layout/DashboardHeader.tsx
-'use client'
-
-import { signOut } from 'next-auth/react'
-import { LogOut } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+// Server Component — lädt ungelesene Notifications serverseitig
 import { NotificationBell } from './NotificationBell'
+import { LogoutButton } from './LogoutButton'
+import { getUnreadCount } from '@/app/dashboard/notifications/_actions'
 import { type Role } from '@/lib/generated/prisma'
 
 // Lesbarer Rollen-Name für die Anzeige
@@ -19,9 +17,12 @@ interface DashboardHeaderProps {
   userName: string
   userEmail: string
   userRole: Role
+  mobileNav?: React.ReactNode
 }
 
-export function DashboardHeader({ userName, userEmail, userRole }: DashboardHeaderProps) {
+export async function DashboardHeader({ userName, userEmail, userRole, mobileNav }: DashboardHeaderProps) {
+  const unreadCount = await getUnreadCount()
+
   const initials = userName
     .split(' ')
     .map((n) => n[0])
@@ -30,11 +31,14 @@ export function DashboardHeader({ userName, userEmail, userRole }: DashboardHead
     .slice(0, 2)
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-card px-6">
-      <div /> {/* Platzhalter links */}
+    <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
+      {/* Left side: mobile nav trigger (hidden on desktop) */}
+      <div className="flex items-center">
+        {mobileNav}
+      </div>
 
       <div className="flex items-center gap-3">
-        <NotificationBell anzahlUngelesen={0} />
+        <NotificationBell unreadCount={unreadCount} />
 
         <div className="flex items-center gap-2">
           {/* Avatar */}
@@ -47,14 +51,7 @@ export function DashboardHeader({ userName, userEmail, userRole }: DashboardHead
             <p className="text-xs text-muted-foreground">{rollenBezeichnung[userRole]}</p>
           </div>
           {/* Logout button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => signOut({ callbackUrl: '/auth/login' })}
-            title="Abmelden"
-          >
-            <LogOut className="h-4 w-4 text-muted-foreground" />
-          </Button>
+          <LogoutButton />
         </div>
       </div>
     </header>

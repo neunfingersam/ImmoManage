@@ -57,8 +57,8 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Übersicht</p>
+        <h1 className="font-serif text-2xl text-foreground">Übersicht</h1>
+        <p className="text-sm text-muted-foreground mt-1">Willkommen, {session?.user?.name?.split(' ')[0]}!</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (

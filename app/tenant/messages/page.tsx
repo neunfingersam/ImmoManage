@@ -1,0 +1,58 @@
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { MessageBubble } from '@/components/messages/MessageBubble'
+import { MessageInput } from '@/components/messages/MessageInput'
+import { getMyMessages, getMyVermieter, sendTenantMessage } from './_actions'
+import { MessageSquare } from 'lucide-react'
+import { EmptyState } from '@/components/shared/EmptyState'
+
+export default async function TenantMessagesPage() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) return null
+
+  const [messages, vermieter] = await Promise.all([getMyMessages(), getMyVermieter()])
+
+  if (!vermieter) {
+    return (
+      <div className="space-y-6">
+        <h1 className="font-serif text-2xl text-foreground">Nachrichten</h1>
+        <EmptyState
+          icon={<MessageSquare className="h-7 w-7" />}
+          titel="Kein Ansprechpartner"
+          beschreibung="Bitte kontaktieren Sie Ihre Verwaltung direkt."
+        />
+      </div>
+    )
+  }
+
+  async function handleSend(data: { toId: string; text: string }) {
+    'use server'
+    return sendTenantMessage(data)
+  }
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-8rem)] space-y-4">
+      <div>
+        <h1 className="font-serif text-2xl text-foreground">Nachrichten</h1>
+        <p className="text-sm text-muted-foreground mt-1">Ihr Ansprechpartner: {vermieter.name}</p>
+      </div>
+
+      <div className="flex-1 overflow-y-auto space-y-4 py-2">
+        {messages.length === 0 && (
+          <p className="text-center text-sm text-muted-foreground py-8">Noch keine Nachrichten.</p>
+        )}
+        {messages.map(m => (
+          <MessageBubble
+            key={m.id}
+            text={m.text}
+            senderName={m.from.name}
+            isMine={m.fromId === session.user.id}
+            date={new Date(m.createdAt)}
+          />
+        ))}
+      </div>
+
+      <MessageInput onSend={handleSend} toId={vermieter.id} />
+    </div>
+  )
+}

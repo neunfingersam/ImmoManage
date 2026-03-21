@@ -33,6 +33,7 @@ export default withAuth(
         if (pathname.startsWith('/auth') || pathname.startsWith('/403')) {
           return true
         }
+        // /uploads/* erfordert einen gültigen Login
         return !!token
       },
     },
@@ -48,5 +49,6 @@ export const config = {
     '/tenant/:path*',
     '/superadmin/:path*',
     '/auth/:path*',
+    '/uploads/:path*',
   ],
 }

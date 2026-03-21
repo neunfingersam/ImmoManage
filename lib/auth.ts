@@ -3,6 +3,7 @@ import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { compare } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit'
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -19,9 +20,15 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'E-Mail', type: 'email' },
         password: { label: 'Passwort', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('E-Mail und Passwort sind erforderlich.')
+        }
+
+        const ip = (req as any)?.headers?.['x-forwarded-for'] ?? (req as any)?.socket?.remoteAddress ?? 'unknown'
+        const rl = checkRateLimit(`login:${ip}`)
+        if (!rl.allowed) {
+          throw new Error('Zu viele Anmeldeversuche. Bitte warte 15 Minuten.')
         }
 
         const user = await prisma.user.findUnique({
@@ -41,6 +48,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error('E-Mail oder Passwort ist falsch.')
         }
 
+        resetRateLimit(`login:${ip}`)
         return {
           id: user.id,
           email: user.email,

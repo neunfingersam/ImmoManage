@@ -24,7 +24,7 @@ export default async function PropertiesPage() {
 
       {properties.length === 0 ? (
         <EmptyState
-          icon={Building2}
+          icon={<Building2 className="h-7 w-7" />}
           titel="Noch keine Immobilien"
           beschreibung="Legen Sie Ihre erste Immobilie an."
         />

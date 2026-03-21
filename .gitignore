@@ -47,4 +47,7 @@ next-env.d.ts
 # sqlite databases
 *.db
 prisma/*.db
+
+# uploads & vector index (runtime data)
 uploads/
+data/vectors/

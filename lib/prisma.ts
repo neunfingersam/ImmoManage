@@ -4,8 +4,12 @@ import path from 'path'
 import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '@/lib/generated/prisma'
 
+// Schema version — bump after every `prisma migrate dev` so stale dev singletons are replaced
+const SCHEMA_VERSION = 2
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
+  prismaVersion: number | undefined
 }
 
 function createPrismaClient(): PrismaClient {
@@ -17,7 +21,14 @@ function createPrismaClient(): PrismaClient {
   return new (PrismaClient as any)({ adapter }) as PrismaClient
 }
 
-export const prisma: PrismaClient =
-  globalForPrisma.prisma ?? createPrismaClient()
+const needsNewClient =
+  !globalForPrisma.prisma || globalForPrisma.prismaVersion !== SCHEMA_VERSION
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+export const prisma: PrismaClient = needsNewClient
+  ? createPrismaClient()
+  : globalForPrisma.prisma!
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma
+  globalForPrisma.prismaVersion = SCHEMA_VERSION
+}

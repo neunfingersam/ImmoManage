@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
+import { DashboardSidebar, DashboardMobileNav } from '@/components/layout/DashboardSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 
 export default async function DashboardLayout({
@@ -38,6 +38,7 @@ export default async function DashboardLayout({
           userName={session.user.name}
           userEmail={session.user.email}
           userRole={session.user.role}
+          mobileNav={<DashboardMobileNav role={session.user.role} companyName={companyName} />}
         />
         <main className="flex-1 overflow-y-auto p-6">
           {children}

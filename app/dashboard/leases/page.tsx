@@ -24,7 +24,7 @@ export default async function LeasesPage() {
       </div>
 
       {leases.length === 0 ? (
-        <EmptyState icon={FileText} titel="Noch keine Mietverträge" beschreibung="Erstellen Sie den ersten Mietvertrag." />
+        <EmptyState icon={<FileText className="h-7 w-7" />} titel="Noch keine Mietverträge" beschreibung="Erstellen Sie den ersten Mietvertrag." />
       ) : (
         <>
           {active.length > 0 && (
