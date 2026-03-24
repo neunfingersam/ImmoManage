@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { getMonday, isSameDay, getWeekDays } from '@/lib/date-utils'
 
 const typeColors: Record<string, string> = {
   VERTRAGSENDE: 'bg-red-100 text-red-800 border-red-200',
@@ -36,29 +37,11 @@ type Props = {
   onDelete: (id: string) => Promise<void>
 }
 
-function getMonday(d: Date) {
-  const date = new Date(d)
-  const day = date.getDay()
-  const diff = (day === 0 ? -6 : 1 - day)
-  date.setDate(date.getDate() + diff)
-  date.setHours(0, 0, 0, 0)
-  return date
-}
-
-function isSameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-}
 
 export function WeeklyCalendar({ events, onDelete }: Props) {
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()))
 
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(weekStart)
-    d.setDate(weekStart.getDate() + i)
-    return d
-  })
+  const weekDays = getWeekDays(weekStart)
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -107,8 +90,8 @@ export function WeeklyCalendar({ events, onDelete }: Props) {
         <div className="w-28" />
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-7 gap-px bg-border rounded-card overflow-hidden border border-border">
+      {/* Desktop Grid (sm+) */}
+      <div className="hidden sm:grid grid-cols-7 gap-px bg-border rounded-card overflow-hidden border border-border">
         {/* Header row */}
         {weekDays.map((day, i) => {
           const isToday = isSameDay(day, today)
@@ -154,6 +137,54 @@ export function WeeklyCalendar({ events, onDelete }: Props) {
                   </button>
                 </div>
               ))}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Mobile Liste (< sm) */}
+      <div className="sm:hidden space-y-3">
+        {weekDays.map((day, i) => {
+          const dayEvents = getEventsForDay(day)
+          const isToday = isSameDay(day, today)
+          return (
+            <div key={i} className={`rounded-lg border border-border overflow-hidden ${isToday ? 'border-primary/40' : ''}`}>
+              <div className={`px-3 py-2 flex items-center gap-2 ${isToday ? 'bg-secondary' : 'bg-muted/30'}`}>
+                <span className={`text-sm font-medium ${isToday ? 'text-primary' : 'text-foreground'}`}>
+                  {DAYS_DE[i]},
+                </span>
+                <span className={`font-serif text-base ${isToday ? 'text-primary' : 'text-foreground'}`}>
+                  {day.getDate()}. {MONTHS_DE[day.getMonth()]}
+                </span>
+              </div>
+              {dayEvents.length === 0 ? (
+                <p className="px-3 py-2 text-xs text-muted-foreground">Keine Termine</p>
+              ) : (
+                <div className="p-2 space-y-1.5">
+                  {dayEvents.map(e => (
+                    <div
+                      key={e.id}
+                      className={`rounded-md border px-3 py-2 text-xs ${typeColors[e.type] ?? typeColors.SONSTIGES} flex items-start justify-between gap-2`}
+                    >
+                      <div className="min-w-0">
+                        <p className="font-medium">{e.title}</p>
+                        {e.property && (
+                          <p className="opacity-75 mt-0.5">
+                            {e.property.name}{e.unit ? ` · ${e.unit.unitNumber}` : ''}
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => onDelete(e.id)}
+                        className="shrink-0 text-current hover:opacity-60 transition-opacity"
+                        aria-label="Löschen"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )
         })}
