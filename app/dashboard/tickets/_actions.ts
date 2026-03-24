@@ -5,17 +5,10 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
+import { getTicketWhere } from '@/lib/access-control'
 import { commentSchema, updateStatusSchema } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
 import type { Ticket, TicketComment } from '@/lib/generated/prisma'
-
-function getTicketWhere(session: { user: { role: string; id: string; companyId: string | null } }) {
-  const base = { companyId: session.user.companyId! }
-  if (session.user.role === 'VERMIETER') {
-    return { ...base, property: { assignments: { some: { userId: session.user.id } } } }
-  }
-  return base
-}
 
 const DONE_PAGE_SIZE = 20
 

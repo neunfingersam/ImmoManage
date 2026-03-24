@@ -5,20 +5,10 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
+import { getLeaseWhere } from '@/lib/access-control'
 import { leaseSchema, type LeaseFormValues } from '@/lib/schemas/lease'
 import type { ActionResult } from '@/lib/action-result'
 import type { Lease } from '@/lib/generated/prisma'
-
-function getLeaseWhere(session: { user: { role: string; id: string; companyId: string | null } }) {
-  const base = { companyId: session.user.companyId! }
-  if (session.user.role === 'VERMIETER') {
-    return {
-      ...base,
-      unit: { property: { assignments: { some: { userId: session.user.id } } } },
-    }
-  }
-  return base
-}
 
 export async function getLeases() {
   const session = await getServerSession(authOptions)
@@ -116,7 +106,7 @@ export async function createLease(data: LeaseFormValues): Promise<ActionResult<L
   }
 }
 
-export async function endLease(leaseId: string): Promise<ActionResult<void>> {
+export async function endLease(leaseId: string, endDate?: string): Promise<ActionResult<void>> {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
   await requireCompanyAccess(session.user.companyId)
@@ -128,7 +118,7 @@ export async function endLease(leaseId: string): Promise<ActionResult<void>> {
 
   await prisma.lease.update({
     where: { id: leaseId },
-    data: { status: 'ENDED', endDate: lease.endDate ?? new Date() },
+    data: { status: 'ENDED', endDate: endDate ? new Date(endDate) : (lease.endDate ?? new Date()) },
   })
   revalidatePath('/dashboard/leases')
   return { success: true, data: undefined }

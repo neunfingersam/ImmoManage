@@ -6,7 +6,8 @@ import { hash } from 'bcryptjs'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
-import { tenantSchema, type TenantFormValues } from '@/lib/schemas/tenant'
+import { getTenantWhere } from '@/lib/access-control'
+import { tenantSchema, type TenantFormValues, updateTenantSchema, type UpdateTenantValues } from '@/lib/schemas/tenant'
 import type { ActionResult } from '@/lib/action-result'
 import type { User } from '@/lib/generated/prisma'
 
@@ -28,15 +29,7 @@ export async function getTenants(page = 1, search = '') {
       }
     : {}
 
-  const base = session.user.role === 'VERMIETER'
-    ? {
-        role: 'MIETER' as const,
-        companyId: session.user.companyId,
-        leases: { some: { status: 'ACTIVE' as const, unit: { property: { assignments: { some: { userId: session.user.id } } } } } },
-      }
-    : { role: 'MIETER' as const, companyId: session.user.companyId }
-
-  const where = { ...base, ...searchFilter }
+  const where = { ...getTenantWhere(session), ...searchFilter }
 
   const [tenants, total] = await Promise.all([
     prisma.user.findMany({ where, orderBy: { name: 'asc' }, skip, take: PAGE_SIZE }),
@@ -85,6 +78,140 @@ export async function deactivateTenant(tenantId: string): Promise<ActionResult<v
   await prisma.user.update({
     where: { id: tenantId, companyId: session.user.companyId, role: 'MIETER' },
     data: { active: false },
+  })
+  revalidatePath('/dashboard/tenants')
+  return { success: true, data: undefined }
+}
+
+export async function getTenant(tenantId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return null
+
+  return prisma.user.findFirst({
+    where: { id: tenantId, ...getTenantWhere(session) },
+  })
+}
+
+export async function updateTenant(tenantId: string, data: UpdateTenantValues): Promise<ActionResult<void>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+  await requireCompanyAccess(session.user.companyId)
+
+  const parsed = updateTenantSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? 'Fehler' }
+
+  const tenant = await getTenant(tenantId)
+  if (!tenant) return { success: false, error: 'Mieter nicht gefunden' }
+
+  if (parsed.data.email !== tenant.email) {
+    const existing = await prisma.user.findUnique({ where: { email: parsed.data.email } })
+    if (existing) return { success: false, error: 'E-Mail bereits vergeben' }
+  }
+
+  await prisma.user.update({
+    where: { id: tenantId },
+    data: {
+      name: parsed.data.name,
+      email: parsed.data.email,
+      phone: parsed.data.phone ?? null,
+      whatsapp: parsed.data.whatsapp ?? null,
+    },
+  })
+  revalidatePath('/dashboard/tenants')
+  revalidatePath(`/dashboard/tenants/${tenantId}`)
+  return { success: true, data: undefined }
+}
+
+export async function getUnitsForMove(tenantId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return []
+
+  const propertyWhere =
+    session.user.role === 'VERMIETER'
+      ? { companyId: session.user.companyId, assignments: { some: { userId: session.user.id } } }
+      : { companyId: session.user.companyId }
+
+  const properties = await prisma.property.findMany({
+    where: propertyWhere,
+    include: {
+      units: {
+        include: { leases: { where: { status: 'ACTIVE' }, select: { id: true } } },
+      },
+    },
+    orderBy: { name: 'asc' },
+  })
+
+  return properties
+    .map(p => ({
+      propertyId: p.id,
+      propertyName: p.name,
+      units: p.units
+        .filter(u => u.leases.length === 0)
+        .map(u => ({ unitId: u.id, unitNumber: u.unitNumber, floor: u.floor })),
+    }))
+    .filter(p => p.units.length > 0)
+}
+
+export async function moveTenantToUnit(tenantId: string, newUnitId: string): Promise<ActionResult<void>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+  await requireCompanyAccess(session.user.companyId)
+
+  const tenant = await getTenant(tenantId)
+  if (!tenant) return { success: false, error: 'Mieter nicht gefunden' }
+
+  const currentLease = await prisma.lease.findFirst({
+    where: { tenantId, status: 'ACTIVE' },
+  })
+  if (!currentLease) return { success: false, error: 'Kein aktiver Mietvertrag gefunden' }
+
+  const newUnit = await prisma.unit.findFirst({
+    where: {
+      id: newUnitId,
+      property: session.user.role === 'VERMIETER'
+        ? { companyId: session.user.companyId, assignments: { some: { userId: session.user.id } } }
+        : { companyId: session.user.companyId },
+    },
+  })
+  if (!newUnit) return { success: false, error: 'Einheit nicht gefunden oder kein Zugriff' }
+
+  const activeLease = await prisma.lease.count({ where: { unitId: newUnitId, status: 'ACTIVE' } })
+  if (activeLease > 0) return { success: false, error: 'Einheit ist bereits belegt' }
+
+  // Atomare Transaktion: alter Lease endet, neuer wird erstellt
+  await prisma.$transaction([
+    prisma.lease.update({
+      where: { id: currentLease.id },
+      data: { status: 'ENDED', endDate: new Date() },
+    }),
+    prisma.lease.create({
+      data: {
+        unitId: newUnitId,
+        tenantId,
+        companyId: session.user.companyId,
+        startDate: new Date(),
+        coldRent: currentLease.coldRent,
+        extraCosts: currentLease.extraCosts,
+        depositPaid: currentLease.depositPaid,
+        status: 'ACTIVE',
+      },
+    }),
+  ])
+
+  revalidatePath('/dashboard/tenants')
+  revalidatePath(`/dashboard/tenants/${tenantId}`)
+  revalidatePath('/dashboard/leases')
+  return { success: true, data: undefined }
+}
+
+export async function reactivateTenant(tenantId: string): Promise<ActionResult<void>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+  await requireCompanyAccess(session.user.companyId)
+
+  await prisma.user.update({
+    where: { id: tenantId, companyId: session.user.companyId, role: 'MIETER' },
+    data: { active: true },
   })
   revalidatePath('/dashboard/tenants')
   return { success: true, data: undefined }
