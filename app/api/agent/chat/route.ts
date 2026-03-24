@@ -7,6 +7,7 @@ import { isOllamaAvailable, getEmbedding, streamChat, ChatMessage } from '@/lib/
 import { queryChunks } from '@/lib/agent/vectra'
 import { shouldEscalate } from '@/lib/agent/escalation'
 import { buildTenantContext, searchTenantDocuments } from '@/lib/agent/chat-context'
+import { logger } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -100,6 +101,7 @@ ${hasContext
         })
 
         if (escalate) {
+          logger.warn('ai_escalation', { userId, companyId, question: message })
           const vermieter = await prisma.user.findFirst({
             where: { companyId, role: { in: ['ADMIN', 'VERMIETER'] } },
           })
@@ -132,6 +134,7 @@ ${hasContext
         controller.close()
       } catch (e: unknown) {
         const errMsg = e instanceof Error ? e.message : 'Unbekannter Fehler'
+        logger.error('chat_stream_error', { userId, companyId, error: errMsg })
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: errMsg })}\n\n`))
         controller.close()
       }
