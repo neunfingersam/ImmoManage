@@ -1,10 +1,24 @@
 import { z } from 'zod'
 
-export const tenantSchema = z.object({
+// Base: fields shared across create + update forms
+const tenantBase = z.object({
   name: z.string().min(1, 'Name ist erforderlich'),
   email: z.string().email('Gültige E-Mail erforderlich'),
-  password: z.string().min(8, 'Mindestens 8 Zeichen'),
   phone: z.string().optional().nullable(),
+  whatsapp: z.string().optional().nullable(),
 })
 
+// Create: requires password, no whatsapp
+export const tenantSchema = tenantBase
+  .omit({ whatsapp: true })
+  .extend({ password: z.string().min(8, 'Mindestens 8 Zeichen') })
+
 export type TenantFormValues = z.infer<typeof tenantSchema>
+
+// Update (by admin/vermieter): no password
+export const updateTenantSchema = tenantBase
+export type UpdateTenantValues = z.infer<typeof updateTenantSchema>
+
+// Update (by tenant themselves via profile page): same fields
+export const updateProfileSchema = tenantBase
+export type UpdateProfileValues = z.infer<typeof updateProfileSchema>
