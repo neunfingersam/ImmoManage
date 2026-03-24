@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { isOllamaAvailable, getEmbedding, streamChat, ChatMessage } from '@/lib/agent/ollama'
 import { queryChunks } from '@/lib/agent/vectra'
 import { shouldEscalate } from '@/lib/agent/escalation'
+import { buildTenantContext, searchTenantDocuments } from '@/lib/agent/chat-context'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -30,87 +31,19 @@ export async function POST(req: NextRequest) {
   let chat = chatId
     ? await prisma.agentChat.findFirst({ where: { id: chatId, tenantId: userId } })
     : null
-
   if (!chat) {
-    chat = await prisma.agentChat.create({
-      data: { companyId, tenantId: userId },
-    })
+    chat = await prisma.agentChat.create({ data: { companyId, tenantId: userId } })
   }
 
-  // Mieter-Lease: alle Details laden
-  const leases = await prisma.lease.findMany({
-    where: { tenantId: userId, status: 'ACTIVE' },
-    include: {
-      unit: { include: { property: { select: { id: true, name: true, address: true, type: true } } } },
-    },
-  })
-  const propertyIds = leases.map(l => l.unit.propertyId)
+  // Kontext aufbauen (extrahiert)
+  const { leaseContext, billContext, propertyIds, unitInfo } = await buildTenantContext(userId)
 
-  // Strukturierte Mietvertragsdaten als Kontext aufbereiten
-  const leaseContext = leases.map(l => {
-    const warmmiete = l.coldRent + l.extraCosts
-    const start = new Date(l.startDate).toLocaleDateString('de-DE')
-    const end = l.endDate ? new Date(l.endDate).toLocaleDateString('de-DE') : 'unbefristet'
-    return `=== Mietvertrag ===
-Immobilie: ${l.unit.property.name}
-Adresse: ${l.unit.property.address}
-Einheit: ${l.unit.unitNumber}${l.unit.floor != null ? ` (Etage ${l.unit.floor})` : ''}${l.unit.size != null ? `, ${l.unit.size} m²` : ''}${l.unit.rooms != null ? `, ${l.unit.rooms} Zimmer` : ''}
-Mietbeginn: ${start}
-Mietende: ${end}
-Kaltmiete: ${l.coldRent.toFixed(2)} €/Monat
-Nebenkosten-Vorauszahlung: ${l.extraCosts.toFixed(2)} €/Monat
-Warmmiete gesamt: ${warmmiete.toFixed(2)} €/Monat
-Kautionsstatus: ${l.depositPaid ? 'Kaution bezahlt' : 'Kaution noch offen'}`
-  }).join('\n\n')
-
-  const unitInfo = leases[0]
-    ? `Einheit ${leases[0].unit.unitNumber}, ${leases[0].unit.property.name}, ${leases[0].unit.property.address}`
-    : null
-
-  // Utility Bills des Mieters
-  const utilityBills = await prisma.utilityBill.findMany({
-    where: { lease: { tenantId: userId } },
-    orderBy: { year: 'desc' },
-    take: 5,
-    include: { property: { select: { name: true } } },
-  })
-  const billContext = utilityBills.length > 0
-    ? `=== Nebenkostenabrechnungen ===\n` + utilityBills.map(b =>
-        `Jahr ${b.year}: ${b.amount.toFixed(2)} € (${b.property.name})${b.sentAt ? ` — zugestellt am ${new Date(b.sentAt).toLocaleDateString('de-DE')}` : ''}`
-      ).join('\n')
-    : ''
-
-  // RAG: Vectra-Suche
+  // Dokument-Suche (extrahiert)
   const queryVector = await getEmbedding(message)
-  const chunks = await queryChunks(queryVector, { companyId, tenantId: userId, propertyIds })
+  const { contextText, chunkIds } = await searchTenantDocuments(
+    queryVector, companyId, userId, propertyIds, queryChunks
+  )
 
-  // Fallback: wenn Vectra leer, direkt aus extractedText suchen
-  let contextText = ''
-  if (chunks.length > 0) {
-    contextText = chunks.map((c, i) => `[${i + 1}] ${c.text}`).join('\n\n')
-  } else {
-    // DB-Fallback: alle indizierten Dokumente des Mieters laden
-    const docs = await prisma.document.findMany({
-      where: {
-        companyId,
-        OR: [
-          { scope: 'TENANT', tenantId: userId },
-          { scope: 'PROPERTY', propertyId: { in: propertyIds } },
-          { scope: 'GLOBAL' },
-        ],
-        extractedText: { not: null },
-      },
-      select: { name: true, extractedText: true },
-    })
-    if (docs.length > 0) {
-      contextText = docs
-        .filter(d => d.extractedText && d.extractedText.length > 0)
-        .map(d => `Dokument "${d.name}":\n${d.extractedText!.slice(0, 3000)}`)
-        .join('\n\n---\n\n')
-    }
-  }
-
-  // Kombinierten Kontext aufbauen: Vertragsdaten + Dokumente + Abrechnungen
   const structuredContext = [leaseContext, billContext].filter(Boolean).join('\n\n')
   const fullContext = [structuredContext, contextText].filter(Boolean).join('\n\n---\n\n')
   const hasContext = fullContext.length > 0
@@ -123,14 +56,12 @@ ${hasContext
     : `Es sind keine Daten für diesen Mieter verfügbar. Teile dem Mieter höflich mit, dass du keine Unterlagen findest und empfehle ihn, seinen Vermieter direkt zu kontaktieren.`
   }`
 
-  // Gesprächsverlauf laden (vor dem Speichern der neuen User-Nachricht)
   const history = await prisma.agentMessage.findMany({
     where: { chatId: chat.id },
     orderBy: { createdAt: 'asc' },
     take: 20,
   })
 
-  // Ollama-Nachrichten-Array aufbauen
   const ollamaMessages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
     ...history.map(m => ({
@@ -140,7 +71,6 @@ ${hasContext
     { role: 'user', content: message },
   ]
 
-  // User-Nachricht speichern
   await prisma.agentMessage.create({
     data: { chatId: chat.id, role: 'USER', content: message, sources: JSON.stringify([]) },
   })
@@ -158,14 +88,13 @@ ${hasContext
         }
 
         const escalate = shouldEscalate(fullResponse, hasContext)
-        const sources = chunks.map(c => c.documentId)
 
         await prisma.agentMessage.create({
           data: {
             chatId: currentChat.id,
             role: 'AGENT',
             content: fullResponse,
-            sources: JSON.stringify(sources),
+            sources: JSON.stringify(chunkIds),
             wasEscalated: escalate,
           },
         })
