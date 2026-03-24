@@ -1,10 +1,8 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { requireCompanyAccess } from '@/lib/auth-guard'
+import { getAuthSession, withAuthAction } from '@/lib/action-utils'
 import { getTicketWhere } from '@/lib/access-control'
 import { commentSchema, updateStatusSchema } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
@@ -13,8 +11,8 @@ import type { Ticket, TicketComment } from '@/lib/generated/prisma'
 const DONE_PAGE_SIZE = 20
 
 export async function getTickets(donePage = 1, search = '') {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return { open: [], inProgress: [], done: [], doneTotal: 0 }
+  const session = await getAuthSession()
+  if (!session) return { open: [], inProgress: [], done: [], doneTotal: 0 }
 
   const include = {
     tenant: { select: { id: true, name: true } },
@@ -41,8 +39,8 @@ export async function getTickets(donePage = 1, search = '') {
 }
 
 export async function getTicket(ticketId: string) {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return null
+  const session = await getAuthSession()
+  if (!session) return null
 
   return prisma.ticket.findFirst({
     where: { id: ticketId, ...getTicketWhere(session) },
@@ -59,42 +57,39 @@ export async function getTicket(ticketId: string) {
 }
 
 export async function updateTicketStatus(ticketId: string, data: { status: string }): Promise<ActionResult<Ticket>> {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
-  await requireCompanyAccess(session.user.companyId)
+  return withAuthAction(async (session) => {
+    const parsed = updateStatusSchema.safeParse(data)
+    if (!parsed.success) return { success: false, error: (parsed.error as any).issues?.[0]?.message ?? parsed.error.message }
 
-  const parsed = updateStatusSchema.safeParse(data)
-  if (!parsed.success) return { success: false, error: (parsed.error as any).issues?.[0]?.message ?? parsed.error.message }
+    const existing = await prisma.ticket.findFirst({
+      where: { id: ticketId, ...getTicketWhere(session) },
+    })
+    if (!existing) return { success: false, error: 'Ticket nicht gefunden' }
 
-  const existing = await prisma.ticket.findFirst({
-    where: { id: ticketId, ...getTicketWhere(session) },
+    const ticket = await prisma.ticket.update({
+      where: { id: ticketId },
+      data: { status: parsed.data.status },
+    })
+    revalidatePath('/dashboard/tickets')
+    revalidatePath(`/dashboard/tickets/${ticketId}`)
+    return { success: true, data: ticket }
   })
-  if (!existing) return { success: false, error: 'Ticket nicht gefunden' }
-
-  const ticket = await prisma.ticket.update({
-    where: { id: ticketId },
-    data: { status: parsed.data.status },
-  })
-  revalidatePath('/dashboard/tickets')
-  revalidatePath(`/dashboard/tickets/${ticketId}`)
-  return { success: true, data: ticket }
 }
 
 export async function addComment(ticketId: string, data: { text: string }): Promise<ActionResult<TicketComment>> {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+  return withAuthAction(async (session) => {
+    const parsed = commentSchema.safeParse(data)
+    if (!parsed.success) return { success: false, error: (parsed.error as any).issues?.[0]?.message ?? parsed.error.message }
 
-  const parsed = commentSchema.safeParse(data)
-  if (!parsed.success) return { success: false, error: (parsed.error as any).issues?.[0]?.message ?? parsed.error.message }
+    const existing = await prisma.ticket.findFirst({
+      where: { id: ticketId, ...getTicketWhere(session) },
+    })
+    if (!existing) return { success: false, error: 'Ticket nicht gefunden' }
 
-  const existing = await prisma.ticket.findFirst({
-    where: { id: ticketId, ...getTicketWhere(session) },
+    const comment = await prisma.ticketComment.create({
+      data: { ticketId, authorId: session.user.id, text: parsed.data.text },
+    })
+    revalidatePath(`/dashboard/tickets/${ticketId}`)
+    return { success: true, data: comment }
   })
-  if (!existing) return { success: false, error: 'Ticket nicht gefunden' }
-
-  const comment = await prisma.ticketComment.create({
-    data: { ticketId, authorId: session.user.id, text: parsed.data.text },
-  })
-  revalidatePath(`/dashboard/tickets/${ticketId}`)
-  return { success: true, data: comment }
 }
