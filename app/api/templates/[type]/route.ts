@@ -57,6 +57,7 @@ export async function GET(
     const level = parseInt(type.replace('mahnung', '')) as 1 | 2 | 3
     const { MahnungPdf } = await import('@/lib/templates/mahnung')
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pdfBuffer = await renderToBuffer(
       React.createElement(MahnungPdf, {
         companyName,
@@ -68,11 +69,12 @@ export async function GET(
         dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toLocaleDateString('de-CH'),
         level,
         locale,
-      })
+      }) as any
     )
   } else {
     const { SimplePlaceholderPdf } = await import('@/lib/templates/placeholder')
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pdfBuffer = await renderToBuffer(
       React.createElement(SimplePlaceholderPdf, {
         companyName,
@@ -80,11 +82,11 @@ export async function GET(
         locale,
         tenantName,
         propertyAddress,
-      })
+      }) as any
     )
   }
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${type}-${locale}.pdf"`,
