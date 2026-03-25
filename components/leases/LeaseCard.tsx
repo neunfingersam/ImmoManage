@@ -5,7 +5,7 @@ import { Euro, CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { endLease } from '@/app/dashboard/leases/_actions'
+import { endLease } from '@/app/[lang]/dashboard/leases/_actions'
 import type { Lease, Unit, Property, User } from '@/lib/generated/prisma'
 
 export type LeaseWithDetails = Lease & {

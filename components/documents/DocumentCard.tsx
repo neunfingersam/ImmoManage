@@ -1,7 +1,7 @@
 import { FileText, Trash2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { deleteDocument } from '@/app/dashboard/documents/_actions'
+import { deleteDocument } from '@/app/[lang]/dashboard/documents/_actions'
 import type { Document, User, Property } from '@/lib/generated/prisma'
 
 type DocumentWithRels = Document & {

@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { unitSchema, type UnitFormValues } from '@/lib/schemas/unit'
-import { createUnit, updateUnit } from '@/app/dashboard/properties/_actions'
+import { createUnit, updateUnit } from '@/app/[lang]/dashboard/properties/_actions'
 import type { Unit } from '@/lib/generated/prisma'
 
 type Props = {

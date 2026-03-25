@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { deactivateTenant } from '@/app/dashboard/tenants/_actions'
+import { deactivateTenant } from '@/app/[lang]/dashboard/tenants/_actions'
 import type { User } from '@/lib/generated/prisma'
 
 export function TenantCard({ tenant }: { tenant: User }) {

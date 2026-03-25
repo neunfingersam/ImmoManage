@@ -3,19 +3,21 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { BarChart3, Building, UserCog, ScrollText, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { label: 'Übersicht', href: '/superadmin', icon: BarChart3 },
-  { label: 'Unternehmen', href: '/superadmin/companies', icon: Building },
-  { label: 'Admins', href: '/superadmin/admins', icon: UserCog },
-  { label: 'Statistiken', href: '/superadmin/stats', icon: BarChart3 },
-  { label: 'Aktivitäts-Log', href: '/superadmin/logs', icon: ScrollText },
+  { label: 'Übersicht', path: '/superadmin', icon: BarChart3 },
+  { label: 'Unternehmen', path: '/superadmin/companies', icon: Building },
+  { label: 'Admins', path: '/superadmin/admins', icon: UserCog },
+  { label: 'Statistiken', path: '/superadmin/stats', icon: BarChart3 },
+  { label: 'Aktivitäts-Log', path: '/superadmin/logs', icon: ScrollText },
 ]
 
 export function SuperAdminSidebar() {
   const pathname = usePathname()
+  const locale = useLocale()
 
   return (
     <aside className="flex h-full w-64 flex-col bg-card border-r border-border">
@@ -31,15 +33,16 @@ export function SuperAdminSidebar() {
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         {navItems.map((item) => {
+          const href = `/${locale}${item.path}`
           const isActive =
-            item.href === '/superadmin'
-              ? pathname === '/superadmin'
-              : pathname.startsWith(item.href)
+            item.path === '/superadmin'
+              ? pathname === `/${locale}/superadmin`
+              : pathname.startsWith(href)
 
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={item.path}
+              href={href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 isActive

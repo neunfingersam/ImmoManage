@@ -1,7 +1,8 @@
-// app/tenant/layout.tsx
+// app/[lang]/tenant/layout.tsx
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { getLocale } from 'next-intl/server'
 import { TenantSidebar, TenantMobileNav } from '@/components/layout/TenantSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { prisma } from '@/lib/prisma'
@@ -12,13 +13,14 @@ export default async function TenantLayout({
   children: React.ReactNode
 }) {
   const session = await getServerSession(authOptions)
+  const locale = await getLocale()
 
   if (!session) {
-    redirect('/auth/login')
+    redirect(`/${locale}/auth/login`)
   }
 
   if (session.user.role !== 'MIETER') {
-    redirect('/403')
+    redirect(`/${locale}/403`)
   }
 
   // Query upcoming events count for this tenant
@@ -26,10 +28,7 @@ export default async function TenantLayout({
   try {
     const now = new Date()
     const leases = await prisma.lease.findMany({
-      where: {
-        tenantId: session.user.id,
-        status: 'ACTIVE',
-      },
+      where: { tenantId: session.user.id, status: 'ACTIVE' },
       include: { unit: { select: { id: true, propertyId: true } } },
     })
     const unitIds = leases.map((l) => l.unit.id)

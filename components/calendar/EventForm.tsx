@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { createEvent } from '@/app/dashboard/calendar/_actions'
+import { createEvent } from '@/app/[lang]/dashboard/calendar/_actions'
 
 const typeLabels = [
   { value: 'VERTRAGSENDE', label: 'Vertragsende' },

@@ -1,7 +1,8 @@
-// app/dashboard/layout.tsx
+// app/[lang]/dashboard/layout.tsx
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { getLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { DashboardSidebar, DashboardMobileNav } from '@/components/layout/DashboardSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
@@ -12,13 +13,14 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const session = await getServerSession(authOptions)
+  const locale = await getLocale()
 
   if (!session) {
-    redirect('/auth/login')
+    redirect(`/${locale}/auth/login`)
   }
 
   if (session.user.role === 'MIETER') {
-    redirect('/403')
+    redirect(`/${locale}/403`)
   }
 
   let companyName: string | undefined

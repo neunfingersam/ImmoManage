@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { createBill } from '@/app/dashboard/billing/_actions'
+import { createBill } from '@/app/[lang]/dashboard/billing/_actions'
 
 type Lease = {
   id: string

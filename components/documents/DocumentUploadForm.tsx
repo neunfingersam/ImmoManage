@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { uploadDocument } from '@/app/dashboard/documents/_actions'
+import { uploadDocument } from '@/app/[lang]/dashboard/documents/_actions'
 
 type Option = { id: string; name: string }
 

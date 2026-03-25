@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { Bell, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { getNotifications, markAllRead } from '@/app/dashboard/notifications/_actions'
+import { getNotifications, markAllRead } from '@/app/[lang]/dashboard/notifications/_actions'
 import type { Notification } from '@/lib/generated/prisma'
 
 interface Props {

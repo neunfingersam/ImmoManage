@@ -3,7 +3,7 @@
 import { useTransition } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { deleteUnit } from '@/app/dashboard/properties/_actions'
+import { deleteUnit } from '@/app/[lang]/dashboard/properties/_actions'
 import type { Unit, User, Lease } from '@/lib/generated/prisma'
 
 type UnitWithLease = Unit & {
