@@ -1,12 +1,12 @@
 'use client'
 
 import { useTransition } from 'react'
-import { Mail, Phone, UserX } from 'lucide-react'
+import { Mail, Phone, UserX, ArrowLeftRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { deactivateTenant } from '@/app/dashboard/tenants/_actions'
+import { deactivateTenant } from '@/app/[lang]/dashboard/tenants/_actions'
 import type { User } from '@/lib/generated/prisma'
 
 export function TenantCard({ tenant }: { tenant: User }) {
@@ -44,16 +44,25 @@ export function TenantCard({ tenant }: { tenant: User }) {
         )}
       </div>
       {tenant.active && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleDeactivate}
-          disabled={pending}
-          className="text-destructive hover:text-destructive self-start"
-        >
-          <UserX className="h-4 w-4 mr-1" />
-          Deaktivieren
-        </Button>
+        <div className="flex gap-2">
+          <a
+            href={`/dashboard/tenants/${tenant.id}/handover-wizard`}
+            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[0.8rem] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <ArrowLeftRight className="h-3.5 w-3.5" />
+            Mieterwechsel
+          </a>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDeactivate}
+            disabled={pending}
+            className="text-destructive hover:text-destructive self-start"
+          >
+            <UserX className="h-4 w-4 mr-1" />
+            Deaktivieren
+          </Button>
+        </div>
       )}
     </Card>
   )

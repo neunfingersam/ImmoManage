@@ -3,6 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import {
   LayoutDashboard,
   Building2,
@@ -18,6 +19,10 @@ import {
   Building,
   Gauge,
   ClipboardCheck,
+  CreditCard,
+  Rocket,
+  CheckSquare,
+  Clock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Role } from '@/lib/generated/prisma'
@@ -25,27 +30,32 @@ import { MobileNavTrigger } from './MobileNav'
 
 interface NavItem {
   label: string
-  href: string
+  path: string // relative path without locale prefix
   icon: React.ElementType
   nichtFuerRollen?: Role[]
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Immobilien', href: '/dashboard/properties', icon: Building2 },
-  { label: 'Mieter', href: '/dashboard/tenants', icon: Users },
-  { label: 'Mietverträge', href: '/dashboard/leases', icon: FileText },
-  { label: 'Schadensmeldungen', href: '/dashboard/tickets', icon: AlertCircle },
-  { label: 'Dokumente', href: '/dashboard/documents', icon: FolderOpen },
-  { label: 'Nachrichten', href: '/dashboard/messages', icon: MessageSquare },
-  { label: 'Kalender', href: '/dashboard/calendar', icon: Calendar },
-  { label: 'Abrechnungen', href: '/dashboard/billing', icon: Receipt },
-  { label: 'Zählerstände', href: '/dashboard/meters', icon: Gauge },
-  { label: 'Übergaben', href: '/dashboard/handovers', icon: ClipboardCheck },
-  { label: 'KI-Verlauf', href: '/dashboard/agent-logs', icon: Bot },
+  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+  { label: 'Immobilien', path: '/dashboard/properties', icon: Building2 },
+  { label: 'Mieter', path: '/dashboard/tenants', icon: Users },
+  { label: 'Mietverträge', path: '/dashboard/leases', icon: FileText },
+  { label: 'Schadensmeldungen', path: '/dashboard/tickets', icon: AlertCircle },
+  { label: 'Dokumente', path: '/dashboard/documents', icon: FolderOpen },
+  { label: 'Nachrichten', path: '/dashboard/messages', icon: MessageSquare },
+  { label: 'Kalender', path: '/dashboard/calendar', icon: Calendar },
+  { label: 'Zahlungen', path: '/dashboard/payments', icon: CreditCard },
+  { label: 'Abrechnungen', path: '/dashboard/billing', icon: Receipt },
+  { label: 'Zählerstände', path: '/dashboard/meters', icon: Gauge },
+  { label: 'Übergaben', path: '/dashboard/handovers', icon: ClipboardCheck },
+  { label: 'Aufgaben', path: '/dashboard/tasks', icon: CheckSquare },
+  { label: 'Aktivitäten', path: '/dashboard/activity', icon: Clock },
+  { label: 'Vorlagen', path: '/dashboard/templates', icon: FileText },
+  { label: 'Einrichtung', path: '/dashboard/onboarding/import', icon: Rocket },
+  { label: 'KI-Verlauf', path: '/dashboard/agent-logs', icon: Bot },
   {
     label: 'Team',
-    href: '/dashboard/team',
+    path: '/dashboard/team',
     icon: UserCog,
     nichtFuerRollen: ['VERMIETER'],
   },
@@ -58,6 +68,7 @@ interface DashboardSidebarProps {
 
 function DashboardNavLinks({ role, companyName }: DashboardSidebarProps) {
   const pathname = usePathname()
+  const locale = useLocale()
 
   const sichtbareItems = navItems.filter(
     (item) => !item.nichtFuerRollen?.includes(role)
@@ -81,15 +92,16 @@ function DashboardNavLinks({ role, companyName }: DashboardSidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
         {sichtbareItems.map((item) => {
+          const href = `/${locale}${item.path}`
           const isActive =
-            item.href === '/dashboard'
-              ? pathname === '/dashboard'
-              : pathname.startsWith(item.href)
+            item.path === '/dashboard'
+              ? pathname === `/${locale}/dashboard`
+              : pathname.startsWith(href)
 
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={item.path}
+              href={href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 isActive

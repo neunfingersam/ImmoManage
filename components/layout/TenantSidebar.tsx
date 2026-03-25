@@ -3,37 +3,40 @@
 // components/layout/TenantSidebar.tsx
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { Home, AlertCircle, FolderOpen, MessageSquare, Bot, Building, CalendarDays, Gauge } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
 const navItems = [
-  { label: 'Meine Wohnung', href: '/tenant', icon: Home },
-  { label: 'Schadensmeldungen', href: '/tenant/tickets', icon: AlertCircle },
-  { label: 'Meine Dokumente', href: '/tenant/documents', icon: FolderOpen },
-  { label: 'Nachrichten', href: '/tenant/messages', icon: MessageSquare },
-  { label: 'KI-Assistent', href: '/tenant/assistant', icon: Bot },
-  { label: 'Meine Termine', href: '/tenant/calendar', icon: CalendarDays },
-  { label: 'Zählerstände', href: '/tenant/meters', icon: Gauge },
+  { label: 'Meine Wohnung', path: '/tenant', icon: Home },
+  { label: 'Schadensmeldungen', path: '/tenant/tickets', icon: AlertCircle },
+  { label: 'Meine Dokumente', path: '/tenant/documents', icon: FolderOpen },
+  { label: 'Nachrichten', path: '/tenant/messages', icon: MessageSquare },
+  { label: 'KI-Assistent', path: '/tenant/assistant', icon: Bot },
+  { label: 'Meine Termine', path: '/tenant/calendar', icon: CalendarDays },
+  { label: 'Zählerstände', path: '/tenant/meters', icon: Gauge },
 ]
 
 function TenantNavLinks({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {
   const pathname = usePathname()
+  const locale = useLocale()
 
   return (
     <nav className="flex-1 px-3 py-4 space-y-0.5">
       {navItems.map((item) => {
+        const href = `/${locale}${item.path}`
         const isActive =
-          item.href === '/tenant'
-            ? pathname === '/tenant'
-            : pathname.startsWith(item.href)
+          item.path === '/tenant'
+            ? pathname === `/${locale}/tenant`
+            : pathname.startsWith(href)
 
-        const showBadge = item.href === '/tenant/calendar' && upcomingEventsCount > 0
+        const showBadge = item.path === '/tenant/calendar' && upcomingEventsCount > 0
 
         return (
           <Link
-            key={item.href}
-            href={item.href}
+            key={item.path}
+            href={href}
             className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
               isActive

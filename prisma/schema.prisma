@@ -91,13 +91,53 @@ enum CalendarEventType {
   SONSTIGES
 }
 
+enum UnitStatus {
+  VERMIETET
+  LEER
+  RENOVIERUNG
+}
+
+enum DepositStatus {
+  AUSSTEHEND
+  HINTERLEGT
+  FREIGEGEBEN
+}
+
+enum RentDemandStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CASH
+  QR_RECHNUNG
+}
+
+enum TaskType {
+  WARTUNG
+  REPARATUR
+  VERTRAGSVERLAENGERUNG
+  BESICHTIGUNG
+  SONSTIGES
+}
+
+enum TaskStatus {
+  OFFEN
+  IN_BEARBEITUNG
+  ERLEDIGT
+}
+
 model Company {
-  id             String          @id @default(cuid())
-  name           String
-  slug           String          @unique
-  logoUrl        String?
-  active         Boolean         @default(true)
-  createdAt      DateTime        @default(now())
+  id                   String          @id @default(cuid())
+  name                 String
+  slug                 String          @unique
+  logoUrl              String?
+  active               Boolean         @default(true)
+  onboardingCompleted  Boolean         @default(false)
+  smtpConfig           Json?
+  createdAt            DateTime        @default(now())
   users          User[]
   properties     Property[]
   tickets        Ticket[]
@@ -109,6 +149,9 @@ model Company {
   calendarEvents CalendarEvent[]
   meterReadings  MeterReading[]
   handovers      Handover[]
+  rentDemands    RentDemand[]
+  tasks          Task[]
+  activityLogs   ActivityLog[]
 }
 
 model User {
@@ -119,6 +162,7 @@ model User {
   name         String
   phone        String?
   whatsapp     String?
+  iban         String?
   active       Boolean  @default(true)
   companyId    String?
   createdAt    DateTime @default(now())
@@ -136,6 +180,7 @@ model User {
   agentChats          AgentChat[]          @relation("AgentChatTenant")
   passwordResetTokens PasswordResetToken[]
   meterReadings       MeterReading[]       @relation("TenantMeterReadings")
+  activityLogs        ActivityLog[]
 }
 
 model PropertyAssignment {
@@ -163,15 +208,18 @@ model Property {
   assignments    PropertyAssignment[]
   utilityBills   UtilityBill[]
   calendarEvents CalendarEvent[]
+  tasks          Task[]
 }
 
 model Unit {
-  id         String   @id @default(cuid())
+  id         String     @id @default(cuid())
   propertyId String
   unitNumber String
   floor      Int?
   size       Float?
   rooms      Float?
+  status     UnitStatus @default(LEER)
+  photos     Json?
   property       Property        @relation(fields: [propertyId], references: [id])
   leases         Lease[]
   tickets        Ticket[]
@@ -179,24 +227,31 @@ model Unit {
 }
 
 model Lease {
-  id          String      @id @default(cuid())
-  unitId      String
-  tenantId    String
-  companyId   String
-  status      LeaseStatus @default(ACTIVE)
-  startDate   DateTime
-  endDate     DateTime?
-  coldRent    Float
-  extraCosts  Float
-  depositPaid Boolean     @default(false)
-  contractPdf String?
-  createdAt   DateTime    @default(now())
-  unit         Unit          @relation(fields: [unitId], references: [id])
-  tenant       User          @relation("TenantLeases", fields: [tenantId], references: [id])
-  company      Company       @relation(fields: [companyId], references: [id])
-  utilityBills UtilityBill[]
+  id                String        @id @default(cuid())
+  unitId            String
+  tenantId          String
+  companyId         String
+  status            LeaseStatus   @default(ACTIVE)
+  startDate         DateTime
+  endDate           DateTime?
+  coldRent          Float
+  extraCosts        Float
+  depositPaid       Boolean       @default(false)
+  depositAmount     Float?
+  depositBank       String?
+  depositStatus     DepositStatus @default(AUSSTEHEND)
+  indexierung       Boolean       @default(false)
+  referenzzinssatz  Float?
+  contractPdf       String?
+  handoverWizard    Json?
+  createdAt         DateTime      @default(now())
+  unit          Unit          @relation(fields: [unitId], references: [id])
+  tenant        User          @relation("TenantLeases", fields: [tenantId], references: [id])
+  company       Company       @relation(fields: [companyId], references: [id])
+  utilityBills  UtilityBill[]
   meterReadings MeterReading[]
-  handovers    Handover[]
+  handovers     Handover[]
+  rentDemands   RentDemand[]
 }
 
 model Ticket {
@@ -274,15 +329,18 @@ model Notification {
 }
 
 model UtilityBill {
-  id         String    @id @default(cuid())
-  leaseId    String
-  companyId  String
-  propertyId String
-  year       Int
-  amount     Float
-  pdfUrl     String?
-  sentAt     DateTime?
-  createdAt  DateTime  @default(now())
+  id              String    @id @default(cuid())
+  leaseId         String
+  companyId       String
+  propertyId      String
+  year            Int
+  amount          Float
+  costItems       Json?
+  distributionKey String    @default("sqm")
+  tenantShares    Json?
+  pdfUrl          String?
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
   lease    Lease    @relation(fields: [leaseId], references: [id])
   company  Company  @relation(fields: [companyId], references: [id])
   property Property @relation(fields: [propertyId], references: [id])
@@ -367,4 +425,68 @@ model Handover {
   createdAt  DateTime       @default(now())
   company Company @relation(fields: [companyId], references: [id])
   lease   Lease   @relation(fields: [leaseId], references: [id])
+}
+
+model RentDemand {
+  id          String           @id @default(cuid())
+  companyId   String
+  leaseId     String
+  month       Int              // 1–12
+  year        Int
+  amount      Float
+  dueDate     DateTime
+  status      RentDemandStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  company   Company         @relation(fields: [companyId], references: [id])
+  lease     Lease           @relation(fields: [leaseId], references: [id])
+  payments  Payment[]
+  reminders PaymentReminder[]
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  rentDemandId  String
+  amount        Float
+  paymentDate   DateTime
+  method        PaymentMethod @default(BANK_TRANSFER)
+  note          String?
+  createdAt     DateTime      @default(now())
+  rentDemand RentDemand @relation(fields: [rentDemandId], references: [id])
+}
+
+model PaymentReminder {
+  id           String   @id @default(cuid())
+  rentDemandId String
+  level        Int      // 1, 2, 3
+  sentAt       DateTime @default(now())
+  rentDemand RentDemand @relation(fields: [rentDemandId], references: [id])
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  companyId   String
+  title       String
+  description String?
+  type        TaskType   @default(SONSTIGES)
+  status      TaskStatus @default(OFFEN)
+  dueDate     DateTime?
+  reminderDays Int?
+  propertyId  String?
+  leaseId     String?
+  createdAt   DateTime   @default(now())
+  company  Company   @relation(fields: [companyId], references: [id])
+  property Property? @relation(fields: [propertyId], references: [id])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  companyId String
+  userId    String
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+  company Company @relation(fields: [companyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
 }

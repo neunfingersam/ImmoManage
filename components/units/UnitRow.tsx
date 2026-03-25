@@ -3,7 +3,7 @@
 import { useTransition } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { deleteUnit } from '@/app/dashboard/properties/_actions'
+import { deleteUnit, updateUnitStatusAction } from '@/app/[lang]/dashboard/properties/_actions'
 import type { Unit, User, Lease } from '@/lib/generated/prisma'
 
 type UnitWithLease = Unit & {
@@ -14,6 +14,12 @@ type Props = {
   unit: UnitWithLease
   propertyId: string
   onEdit: (unit: UnitWithLease) => void
+}
+
+const statusLabels: Record<string, string> = {
+  VERMIETET: 'Vermietet',
+  LEER: 'Leer',
+  RENOVIERUNG: 'Renovierung',
 }
 
 export function UnitRow({ unit, propertyId, onEdit }: Props) {
@@ -27,6 +33,13 @@ export function UnitRow({ unit, propertyId, onEdit }: Props) {
     })
   }
 
+  function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const status = e.target.value as 'VERMIETET' | 'LEER' | 'RENOVIERUNG'
+    startTransition(async () => {
+      await updateUnitStatusAction(unit.id, status)
+    })
+  }
+
   return (
     <tr className="border-b border-border last:border-0">
       <td className="py-3 px-4 font-medium text-foreground">{unit.unitNumber}</td>
@@ -34,6 +47,18 @@ export function UnitRow({ unit, propertyId, onEdit }: Props) {
       <td className="py-3 px-4 text-muted-foreground">{unit.size ? `${unit.size} m²` : '—'}</td>
       <td className="py-3 px-4 text-muted-foreground">{unit.rooms ? `${unit.rooms} Zi.` : '—'}</td>
       <td className="py-3 px-4 text-muted-foreground">{activeTenant ? activeTenant.name : <span className="text-muted-foreground/50">Leer</span>}</td>
+      <td className="py-3 px-4">
+        <select
+          value={unit.status}
+          onChange={handleStatusChange}
+          disabled={pending}
+          className="text-xs border border-border rounded px-2 py-1 bg-background text-foreground disabled:opacity-50"
+        >
+          {Object.entries(statusLabels).map(([val, label]) => (
+            <option key={val} value={val}>{label}</option>
+          ))}
+        </select>
+      </td>
       <td className="py-3 px-4">
         <div className="flex gap-1 justify-end">
           <Button variant="ghost" size="sm" onClick={() => onEdit(unit)} aria-label="Bearbeiten">

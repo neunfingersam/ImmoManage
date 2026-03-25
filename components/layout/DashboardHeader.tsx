@@ -2,7 +2,8 @@
 // Server Component — lädt ungelesene Notifications serverseitig
 import { NotificationBell } from './NotificationBell'
 import { LogoutButton } from './LogoutButton'
-import { getUnreadCount } from '@/app/dashboard/notifications/_actions'
+import { LocaleSwitcher } from '@/components/LocaleSwitcher'
+import { getUnreadCount } from '@/app/[lang]/dashboard/notifications/_actions'
 import { type Role } from '@/lib/generated/prisma'
 
 // Lesbarer Rollen-Name für die Anzeige
@@ -38,6 +39,7 @@ export async function DashboardHeader({ userName, userEmail, userRole, mobileNav
       </div>
 
       <div className="flex items-center gap-3">
+        <LocaleSwitcher />
         <NotificationBell unreadCount={unreadCount} />
 
         <div className="flex items-center gap-2">
