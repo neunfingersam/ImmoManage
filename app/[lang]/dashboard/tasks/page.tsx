@@ -14,7 +14,6 @@ export default async function TasksPage() {
     where: { companyId: session.user.companyId },
     include: {
       property: { select: { name: true } },
-      tenant: { select: { name: true } },
     },
     orderBy: [{ status: 'asc' }, { dueDate: 'asc' }],
   })
@@ -50,9 +49,13 @@ export default async function TasksPage() {
                 <TaskCard
                   key={task.id}
                   task={{
-                    ...task,
+                    id: task.id,
+                    title: task.title,
+                    description: task.description,
+                    type: task.type,
+                    dueDate: task.dueDate ?? new Date(),
+                    status: task.status,
                     propertyName: task.property?.name ?? undefined,
-                    tenantName: task.tenant?.name ?? undefined,
                   }}
                 />
               ))}

@@ -12,7 +12,6 @@ type Task = {
   dueDate: Date
   status: 'OFFEN' | 'IN_BEARBEITUNG' | 'ERLEDIGT'
   propertyName?: string
-  tenantName?: string
 }
 
 const typeLabels: Record<string, string> = {
@@ -39,7 +38,6 @@ export function TaskCard({ task }: { task: Task }) {
         <span>📋 {typeLabels[task.type] ?? task.type}</span>
         <span>📅 {new Date(task.dueDate).toLocaleDateString('de-CH')}</span>
         {task.propertyName && <span>🏠 {task.propertyName}</span>}
-        {task.tenantName && <span>👤 {task.tenantName}</span>}
         {isOverdue && <span className="text-destructive font-medium">⚠ Überfällig</span>}
       </div>
       <div className="flex gap-2 pt-1">

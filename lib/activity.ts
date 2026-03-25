@@ -1,6 +1,7 @@
 // lib/activity.ts — Aktivitätsprotokoll Hilfsfunktionen
 
 import { prisma } from '@/lib/prisma'
+import type { Prisma } from '@/lib/generated/prisma'
 
 type ActivityAction =
   | 'TENANT_CREATED'
@@ -66,7 +67,7 @@ export async function logActivity(params: {
       action: params.action,
       entity: params.entity,
       entityId: params.entityId,
-      meta: params.meta ?? {},
+      meta: (params.meta ?? {}) as Prisma.InputJsonValue,
     },
   })
 }

@@ -12,7 +12,6 @@ const taskSchema = z.object({
   type: z.enum(['WARTUNG', 'REPARATUR', 'VERTRAGSVERLAENGERUNG', 'BESICHTIGUNG', 'SONSTIGES']),
   dueDate: z.string().datetime(),
   propertyId: z.string().optional(),
-  tenantId: z.string().optional(),
   reminderDays: z.number().int().min(0).optional(),
 })
 
@@ -25,14 +24,12 @@ export async function createTaskAction(data: unknown) {
   await prisma.task.create({
     data: {
       companyId: session.user.companyId,
-      createdById: session.user.id,
       title: parsed.title,
       description: parsed.description,
       type: parsed.type,
       dueDate: new Date(parsed.dueDate),
       status: 'OFFEN',
       propertyId: parsed.propertyId || undefined,
-      tenantId: parsed.tenantId || undefined,
       reminderDays: parsed.reminderDays,
     },
   })
