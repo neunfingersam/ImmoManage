@@ -38,7 +38,8 @@ export async function GET(
   const smtpConfig = company.smtpConfig as { bankIban?: string; bankName?: string } | null
   const iban = smtpConfig?.bankIban ?? 'CH0000000000000000000' // Demo-IBAN
 
-  const monthStr = demand.month.toLocaleDateString('de-CH', { month: 'long', year: 'numeric' })
+  const monthDate = new Date(demand.year, demand.month - 1, 1)
+  const monthStr = monthDate.toLocaleDateString('de-CH', { month: 'long', year: 'numeric' })
   const reference = `Miete ${monthStr} - ${demand.lease.tenant.name}`
 
   const qrPayload = buildQrPayload({

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { calculateRentDemandAmount, getMonthStart, getDueDate } from '@/lib/payments'
+import { calculateRentDemandAmount, getDueDate } from '@/lib/payments'
 
 export async function POST() {
   const session = await getServerSession(authOptions)
@@ -11,8 +11,10 @@ export async function POST() {
   }
 
   const companyId = session.user.companyId
-  const monthStart = getMonthStart(new Date())
-  const dueDate = getDueDate(monthStart)
+  const now = new Date()
+  const month = now.getMonth() + 1 // 1–12
+  const year = now.getFullYear()
+  const dueDate = getDueDate(now)
 
   // Alle aktiven Leases der Company laden
   const activeLeases = await prisma.lease.findMany({
@@ -26,7 +28,7 @@ export async function POST() {
   for (const lease of activeLeases) {
     // Idempotenz: prüfen ob Eintrag für diesen Monat bereits existiert
     const existing = await prisma.rentDemand.findFirst({
-      where: { leaseId: lease.id, month: monthStart },
+      where: { leaseId: lease.id, month, year },
     })
 
     if (existing) {
@@ -38,7 +40,8 @@ export async function POST() {
       data: {
         companyId,
         leaseId: lease.id,
-        month: monthStart,
+        month,
+        year,
         amount: calculateRentDemandAmount(lease),
         status: 'PENDING',
         dueDate,
@@ -53,8 +56,8 @@ export async function POST() {
       companyId,
       userId: session.user.id,
       action: 'RENT_DEMANDS_GENERATED',
-      entityType: 'RentDemand',
-      metadata: { created, skipped, month: monthStart.toISOString() },
+      entity: 'RentDemand',
+      meta: { created, skipped, month, year },
     },
   })
 

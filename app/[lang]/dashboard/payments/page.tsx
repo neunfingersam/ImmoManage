@@ -34,7 +34,7 @@ export default async function PaymentsPage() {
 
   const rows = demands.map((d) => ({
     id: d.id,
-    month: d.month,
+    month: new Date(d.year, d.month - 1, 1),
     amount: d.amount,
     status: d.status as 'PENDING' | 'PAID' | 'OVERDUE',
     dueDate: d.dueDate,

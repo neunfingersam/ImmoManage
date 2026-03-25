@@ -8,7 +8,6 @@ import { z } from 'zod'
 
 const recordPaymentSchema = z.object({
   rentDemandId: z.string(),
-  leaseId: z.string(),
   amount: z.number().positive(),
   paymentDate: z.string().datetime(),
   note: z.string().optional(),
@@ -22,12 +21,10 @@ export async function recordPaymentAction(data: unknown) {
 
   const payment = await prisma.payment.create({
     data: {
-      companyId: session.user.companyId,
       rentDemandId: parsed.rentDemandId,
-      leaseId: parsed.leaseId,
       amount: parsed.amount,
       paymentDate: new Date(parsed.paymentDate),
-      method: 'MANUAL',
+      method: 'BANK_TRANSFER',
       note: parsed.note,
     },
   })
@@ -54,9 +51,9 @@ export async function recordPaymentAction(data: unknown) {
       companyId: session.user.companyId,
       userId: session.user.id,
       action: 'PAYMENT_RECORDED',
-      entityType: 'Payment',
+      entity: 'Payment',
       entityId: payment.id,
-      metadata: { amount: parsed.amount, leaseId: parsed.leaseId },
+      meta: { amount: parsed.amount },
     },
   })
 
@@ -78,10 +75,8 @@ export async function sendReminderAction(rentDemandId: string) {
 
   await prisma.paymentReminder.create({
     data: {
-      companyId: session.user.companyId,
       rentDemandId,
       level: nextLevel,
-      sentAt: new Date(),
     },
   })
 

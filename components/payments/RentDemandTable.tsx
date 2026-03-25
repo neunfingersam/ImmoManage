@@ -53,7 +53,6 @@ export function RentDemandTable({ demands }: { demands: RentDemandRow[] }) {
                       variant="outline"
                       onClick={() => recordPaymentAction({
                         rentDemandId: d.id,
-                        leaseId: '',
                         amount: d.amount,
                         paymentDate: new Date().toISOString(),
                       })}
@@ -69,11 +68,13 @@ export function RentDemandTable({ demands }: { demands: RentDemandRow[] }) {
                     </Button>
                   </>
                 )}
-                <Button size="sm" variant="ghost" asChild>
-                  <a href={`/api/payments/qr-invoice/${d.id}`} target="_blank">
-                    QR
-                  </a>
-                </Button>
+                <a
+                  href={`/api/payments/qr-invoice/${d.id}`}
+                  target="_blank"
+                  className="inline-flex h-7 items-center rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] font-medium hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  QR
+                </a>
               </td>
             </tr>
           ))}
