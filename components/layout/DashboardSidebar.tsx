@@ -19,6 +19,7 @@ import {
   Building,
   Gauge,
   ClipboardCheck,
+  CreditCard,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Role } from '@/lib/generated/prisma'
@@ -40,6 +41,7 @@ const navItems: NavItem[] = [
   { label: 'Dokumente', path: '/dashboard/documents', icon: FolderOpen },
   { label: 'Nachrichten', path: '/dashboard/messages', icon: MessageSquare },
   { label: 'Kalender', path: '/dashboard/calendar', icon: Calendar },
+  { label: 'Zahlungen', path: '/dashboard/payments', icon: CreditCard },
   { label: 'Abrechnungen', path: '/dashboard/billing', icon: Receipt },
   { label: 'Zählerstände', path: '/dashboard/meters', icon: Gauge },
   { label: 'Übergaben', path: '/dashboard/handovers', icon: ClipboardCheck },
