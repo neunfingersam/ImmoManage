@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { AlertCircle, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { TicketCard } from '@/components/tickets/TicketCard'
 import { EmptyState } from '@/components/shared/EmptyState'
+import { KiSummaryButton } from '@/components/shared/KiSummaryButton'
 import { getTickets } from './_actions'
 
 const DONE_PAGE_SIZE = 20
@@ -28,13 +29,16 @@ export default async function TicketsPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-2xl text-foreground">Schadensmeldungen</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {search
-            ? `${total} Treffer für „${search}"`
-            : `${open.length} offen · ${inProgress.length} in Bearbeitung · ${doneTotal} erledigt`}
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="font-serif text-2xl text-foreground">Schadensmeldungen</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {search
+              ? `${total} Treffer für „${search}"`
+              : `${open.length} offen · ${inProgress.length} in Bearbeitung · ${doneTotal} erledigt`}
+          </p>
+        </div>
+        <KiSummaryButton apiPath="/api/agent/ticket-summary" label="KI-Zusammenfassung" />
       </div>
 
       {/* Suche */}

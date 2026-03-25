@@ -7,11 +7,20 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { UnitDialog } from '@/components/units/UnitDialog'
 import { UnitsTable } from '@/components/units/UnitsTable'
-import { getProperty } from '../_actions'
+import { getProperty, getVermieterForAssignment } from '../_actions'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { PropertyAssignments } from './PropertyAssignments'
 
 export default async function PropertyDetailPage({ params }: { params: Promise<{ propertyId: string }> }) {
   const { propertyId } = await params
-  const property = await getProperty(propertyId)
+  const session = await getServerSession(authOptions)
+  const isAdmin = session?.user?.role === 'ADMIN'
+
+  const [property, vermieterList] = await Promise.all([
+    getProperty(propertyId),
+    isAdmin ? getVermieterForAssignment() : Promise.resolve([]),
+  ])
   if (!property) notFound()
 
   const typeLabel = property.type === 'MULTI' ? 'Mehrfamilienhaus' : 'Einzelimmobilie'
@@ -45,6 +54,17 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
         <Card className="p-4 text-sm text-muted-foreground">{property.description}</Card>
       )}
 
+      {isAdmin && (
+        <section className="space-y-3">
+          <h2 className="font-medium text-foreground">Zugewiesene Vermieter</h2>
+          <PropertyAssignments
+            propertyId={property.id}
+            assigned={property.assignments.map(a => a.user)}
+            available={vermieterList}
+          />
+        </section>
+      )}
+
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-medium text-foreground">Einheiten ({property.units.length})</h2>
@@ -56,7 +76,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
             Noch keine Einheiten. Füge die erste Einheit hinzu.
           </Card>
         ) : (
-          <Card className="overflow-hidden">
+          <Card className="overflow-x-auto">
             <UnitsTable units={property.units as any} propertyId={property.id} />
           </Card>
         )}

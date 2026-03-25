@@ -75,8 +75,8 @@ export function HandoverForm({ leases }: { leases: Lease[] }) {
 
       <Card className="p-5 space-y-4">
         <h2 className="font-medium text-foreground">Grunddaten</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="col-span-1 sm:col-span-2">
             <label className="block text-xs text-muted-foreground mb-1">Mietvertrag</label>
             <select
               name="leaseId"
@@ -112,7 +112,7 @@ export function HandoverForm({ leases }: { leases: Lease[] }) {
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 sm:col-span-2">
             <label className="block text-xs text-muted-foreground mb-1">
               Allgemeine Notizen (optional)
             </label>

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { BarChart3, Building, UserCog, ScrollText, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MobileNavTrigger } from './MobileNav'
 
 const navItems = [
   { label: 'Übersicht', path: '/superadmin', icon: BarChart3 },
@@ -15,12 +16,12 @@ const navItems = [
   { label: 'Aktivitäts-Log', path: '/superadmin/logs', icon: ScrollText },
 ]
 
-export function SuperAdminSidebar() {
+function SuperAdminNavLinks() {
   const pathname = usePathname()
   const locale = useLocale()
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-card border-r border-border">
+    <>
       <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
         <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary">
           <Building2 className="h-5 w-5 text-primary-foreground" />
@@ -56,6 +57,22 @@ export function SuperAdminSidebar() {
           )
         })}
       </nav>
+    </>
+  )
+}
+
+export function SuperAdminSidebar() {
+  return (
+    <aside className="hidden md:flex h-full w-64 flex-col bg-card border-r border-border">
+      <SuperAdminNavLinks />
     </aside>
+  )
+}
+
+export function SuperAdminMobileNav() {
+  return (
+    <MobileNavTrigger>
+      <SuperAdminNavLinks />
+    </MobileNavTrigger>
   )
 }

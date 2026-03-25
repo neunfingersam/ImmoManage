@@ -66,13 +66,13 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
 
   const ext = path.extname(file.name)
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', session.user.companyId, session.user.id)
+  const uploadDir = path.join(process.cwd(), 'private', 'uploads', session.user.companyId, session.user.id)
   await mkdir(uploadDir, { recursive: true })
   const filePath = path.join(uploadDir, filename)
   const buffer = Buffer.from(await file.arrayBuffer())
   await writeFile(filePath, buffer)
 
-  const fileUrl = `/uploads/${session.user.companyId}/${session.user.id}/${filename}`
+  const fileUrl = `/api/uploads/${session.user.companyId}/${session.user.id}/${filename}`
 
   let doc: Document
   try {
@@ -114,7 +114,7 @@ export async function deleteDocument(documentId: string): Promise<ActionResult<v
 
   try {
     const { unlink } = await import('fs/promises')
-    const filePath = path.join(process.cwd(), 'public', doc.fileUrl)
+    const filePath = path.join(process.cwd(), 'private', doc.fileUrl.replace(/^\/api\//, ''))
     await unlink(filePath)
   } catch { /* Datei bereits gelöscht oder nicht gefunden */ }
 

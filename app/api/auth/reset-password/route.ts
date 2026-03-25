@@ -23,6 +23,12 @@ export async function POST(req: NextRequest) {
     redirect(`/auth/reset-password?token=${token}&error=invalid`)
   }
 
+  const user = await prisma.user.findUnique({ where: { id: resetToken.userId } })
+  if (!user || !user.active) {
+    await prisma.passwordResetToken.delete({ where: { token } })
+    redirect(`/auth/reset-password?token=${token}&error=invalid`)
+  }
+
   const passwordHash = await hash(password, 12)
   await prisma.user.update({ where: { id: resetToken.userId }, data: { passwordHash } })
   await prisma.passwordResetToken.deleteMany({ where: { userId: resetToken.userId } })

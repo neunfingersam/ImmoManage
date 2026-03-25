@@ -14,6 +14,7 @@ import {
 import { ticketSchema, type TicketFormValues } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
 import type { Ticket } from '@/lib/generated/prisma'
+import { Sparkles } from 'lucide-react'
 
 type Option = { propertyId: string; propertyName: string; unitId: string; unitNumber: string }
 
@@ -27,6 +28,9 @@ export function NewTicketForm({ options, action }: Props) {
   const [serverError, setServerError] = useState<string | null>(null)
   const router = useRouter()
 
+  const [suggestingPriority, setSuggestingPriority] = useState(false)
+  const [priorityError, setPriorityError] = useState<string | null>(null)
+
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<TicketFormValues>({
     resolver: zodResolver(ticketSchema) as any,
     defaultValues: {
@@ -35,6 +39,30 @@ export function NewTicketForm({ options, action }: Props) {
       unitId: options[0]?.unitId ?? '',
     },
   })
+
+  async function suggestPriority() {
+    const title = watch('title')
+    const description = watch('description')
+    if (!title) return
+    setSuggestingPriority(true)
+    setPriorityError(null)
+    try {
+      const res = await fetch('/api/agent/suggest-priority', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description }),
+      })
+      if (res.ok) {
+        const { priority } = await res.json()
+        setValue('priority', priority as 'LOW' | 'MEDIUM' | 'HIGH')
+      } else {
+        setPriorityError('KI-Analyse nicht verfügbar')
+      }
+    } catch {
+      setPriorityError('KI-Analyse nicht verfügbar')
+    }
+    setSuggestingPriority(false)
+  }
 
   function handleOptionChange(value: string) {
     const opt = options.find(o => o.unitId === value)
@@ -89,8 +117,19 @@ export function NewTicketForm({ options, action }: Props) {
       </div>
 
       <div className="space-y-1">
-        <Label>Priorität</Label>
-        <Select defaultValue="MEDIUM" onValueChange={(v) => setValue('priority', (v ?? 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH')}>
+        <div className="flex items-center justify-between">
+          <Label>Priorität</Label>
+          <button
+            type="button"
+            onClick={suggestPriority}
+            disabled={suggestingPriority || !watch('title')}
+            className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Sparkles className="h-3 w-3" />
+            {suggestingPriority ? 'Analysiere…' : 'KI-Vorschlag'}
+          </button>
+        </div>
+        <Select value={watch('priority')} onValueChange={(v) => setValue('priority', (v ?? 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH')}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -100,6 +139,7 @@ export function NewTicketForm({ options, action }: Props) {
             <SelectItem value="HIGH">Hoch</SelectItem>
           </SelectContent>
         </Select>
+        {priorityError && <p className="text-xs text-destructive">{priorityError}</p>}
       </div>
 
       {serverError && <p className="text-sm text-destructive" role="alert">{serverError}</p>}

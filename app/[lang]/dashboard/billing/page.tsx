@@ -26,9 +26,9 @@ export default async function BillingPage() {
         ) : (
           <div className="space-y-2">
             {bills.map(b => (
-              <Card key={b.id} className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-foreground">{b.lease.tenant.name} · {b.property.name} {b.lease.unit.unitNumber}</p>
+              <Card key={b.id} className="p-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground truncate">{b.lease.tenant.name} · {b.property.name} {b.lease.unit.unitNumber}</p>
                   <p className="text-xs text-muted-foreground">Jahr {b.year}</p>
                 </div>
                 <div className="flex items-center gap-4">

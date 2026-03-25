@@ -13,24 +13,40 @@ export async function isOllamaAvailable(): Promise<boolean> {
 }
 
 export async function getEmbedding(text: string): Promise<number[]> {
-  const res = await fetch(`${OLLAMA_BASE}/api/embeddings`, {
+  const res = await fetch(`${OLLAMA_BASE}/api/embed`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'nomic-embed-text', prompt: text }),
+    body: JSON.stringify({ model: 'nomic-embed-text', input: text }),
   })
   if (!res.ok) throw new Error('Ollama Embedding fehlgeschlagen')
   const data = await res.json()
-  return data.embedding
+  // New API returns { embeddings: [[...]] }, old returned { embedding: [...] }
+  return data.embeddings?.[0] ?? data.embedding
 }
 
 export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string }
+
+export async function generateText(messages: ChatMessage[]): Promise<string> {
+  const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: process.env.OLLAMA_MODEL ?? 'llama3.2:1b',
+      messages,
+      stream: false,
+    }),
+  })
+  if (!res.ok) throw new Error('Ollama nicht erreichbar')
+  const data = await res.json()
+  return data.message?.content ?? ''
+}
 
 export async function* streamChat(messages: ChatMessage[]): AsyncGenerator<string> {
   const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'llama3',
+      model: process.env.OLLAMA_MODEL ?? 'llama3.2:1b',
       messages,
       stream: true,
     }),

@@ -39,9 +39,9 @@ export default async function LogsPage() {
       <section className="space-y-3">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Letzte Tickets</h2>
         {tickets.map(t => (
-          <Card key={t.id} className="p-4 flex items-center justify-between">
-            <div>
-              <p className="font-medium text-foreground text-sm">{t.title}</p>
+          <Card key={t.id} className="p-4 flex flex-wrap items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="font-medium text-foreground text-sm truncate">{t.title}</p>
               <p className="text-xs text-muted-foreground">{t.company.name} · {t.property.name} · {t.tenant.name}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -58,9 +58,9 @@ export default async function LogsPage() {
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">KI-Eskalationen</h2>
           {messages.map(m => (
-            <Card key={m.id} className="p-4 flex items-center justify-between">
-              <div>
-                <p className="font-medium text-foreground text-sm">{m.text.replace('[KI-Eskalation] ', '')}</p>
+            <Card key={m.id} className="p-4 flex flex-wrap items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-medium text-foreground text-sm truncate">{m.text.replace('[KI-Eskalation] ', '')}</p>
                 <p className="text-xs text-muted-foreground">{m.company.name} · {m.from.name}</p>
               </div>
               <span className="text-xs text-muted-foreground shrink-0">{new Date(m.createdAt).toLocaleDateString('de-DE')}</span>

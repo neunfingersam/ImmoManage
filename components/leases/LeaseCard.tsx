@@ -1,10 +1,12 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useTransition, useState } from 'react'
 import { Euro, CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { endLease } from '@/app/[lang]/dashboard/leases/_actions'
 import type { Lease, Unit, Property, User } from '@/lib/generated/prisma'
 
@@ -27,12 +29,14 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
 
 export function LeaseCard({ lease }: { lease: LeaseWithDetails }) {
   const [pending, startTransition] = useTransition()
+  const [showEndDialog, setShowEndDialog] = useState(false)
+  const [endDateInput, setEndDateInput] = useState('')
   const totalRent = lease.coldRent + lease.extraCosts
 
   function handleEnd() {
-    if (!confirm('Mietvertrag wirklich beenden?')) return
     startTransition(async () => {
-      await endLease(lease.id)
+      await endLease(lease.id, endDateInput || undefined)
+      setShowEndDialog(false)
     })
   }
 
@@ -58,16 +62,48 @@ export function LeaseCard({ lease }: { lease: LeaseWithDetails }) {
           <span>{startStr} – {endStr}</span>
         </div>
       </div>
-      {lease.status === 'ACTIVE' && (
+      {lease.status === 'ACTIVE' && !showEndDialog && (
         <Button
           variant="outline"
           size="sm"
-          onClick={handleEnd}
+          onClick={() => setShowEndDialog(true)}
           disabled={pending}
           className="self-start text-destructive border-destructive hover:bg-destructive/10"
         >
           Beenden
         </Button>
+      )}
+      {lease.status === 'ACTIVE' && showEndDialog && (
+        <div className="space-y-3 rounded-md border p-3 bg-secondary/30">
+          <div className="space-y-1">
+            <Label htmlFor={`end-date-${lease.id}`} className="text-sm">Enddatum (optional)</Label>
+            <Input
+              id={`end-date-${lease.id}`}
+              type="date"
+              value={endDateInput}
+              onChange={(e) => setEndDateInput(e.target.value)}
+              className="h-8 text-sm"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleEnd}
+              disabled={pending}
+            >
+              {pending ? 'Wird beendet…' : 'Bestätigen'}
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => { setShowEndDialog(false); setEndDateInput('') }}
+              disabled={pending}
+            >
+              Abbrechen
+            </Button>
+          </div>
+        </div>
       )}
     </Card>
   )

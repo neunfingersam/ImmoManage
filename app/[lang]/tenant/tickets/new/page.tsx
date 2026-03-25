@@ -24,6 +24,20 @@ export default async function NewTicketPage() {
     unitNumber: l.unit.unitNumber,
   }))
 
+  if (options.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-serif text-2xl text-foreground">Neue Schadensmeldung</h1>
+        </div>
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground">Kein aktiver Mietvertrag vorhanden.</p>
+          <p className="text-sm text-muted-foreground mt-1">Bitte wenden Sie sich an Ihren Vermieter.</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>

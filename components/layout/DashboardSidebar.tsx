@@ -52,7 +52,7 @@ const navItems: NavItem[] = [
   { label: 'Aktivitäten', path: '/dashboard/activity', icon: Clock },
   { label: 'Vorlagen', path: '/dashboard/templates', icon: FileText },
   { label: 'Einrichtung', path: '/dashboard/onboarding/import', icon: Rocket },
-  { label: 'KI-Verlauf', path: '/dashboard/agent-logs', icon: Bot },
+  { label: 'KI-Assistent', path: '/dashboard/assistant', icon: Bot },
   {
     label: 'Team',
     path: '/dashboard/team',

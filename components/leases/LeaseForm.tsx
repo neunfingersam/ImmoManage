@@ -85,7 +85,7 @@ export function LeaseForm({ units, tenants, action }: Props) {
         {errors.tenantId && <p className="text-sm text-destructive">{errors.tenantId.message as string}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label htmlFor="startDate">Startdatum</Label>
           <Input id="startDate" type="date" {...register('startDate')} />
@@ -97,7 +97,7 @@ export function LeaseForm({ units, tenants, action }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label htmlFor="coldRent">Kaltmiete (€)</Label>
           <Input id="coldRent" type="number" step="0.01" {...register('coldRent')} />

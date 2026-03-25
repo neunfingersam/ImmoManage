@@ -65,7 +65,12 @@ export async function getThread(partnerId: string) {
 }
 
 export async function getPartner(partnerId: string) {
-  return prisma.user.findUnique({ where: { id: partnerId }, select: { id: true, name: true, email: true } })
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return null
+  return prisma.user.findFirst({
+    where: { id: partnerId, companyId: session.user.companyId },
+    select: { id: true, name: true, email: true },
+  })
 }
 
 export async function sendMessage(data: { toId: string; text: string }): Promise<ActionResult<Message>> {

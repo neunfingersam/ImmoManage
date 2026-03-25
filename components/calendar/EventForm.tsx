@@ -62,7 +62,7 @@ export function EventForm({ properties, units }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-3 max-w-lg">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label htmlFor="title">Titel</Label>
           <Input id="title" name="title" placeholder="z.B. Wartung Aufzug" required />
@@ -73,7 +73,7 @@ export function EventForm({ properties, units }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label>Typ</Label>
           <Select value={type} onValueChange={(v) => setType(v ?? 'SONSTIGES')}>

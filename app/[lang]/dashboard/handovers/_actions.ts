@@ -24,8 +24,23 @@ const handoverSchema = z.object({
 export async function getHandovers() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return []
+
+  const where =
+    session.user.role === 'VERMIETER'
+      ? {
+          companyId: session.user.companyId,
+          lease: {
+            unit: {
+              property: {
+                assignments: { some: { userId: session.user.id } },
+              },
+            },
+          },
+        }
+      : { companyId: session.user.companyId }
+
   return prisma.handover.findMany({
-    where: { companyId: session.user.companyId },
+    where,
     include: {
       lease: {
         include: {

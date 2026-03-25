@@ -20,7 +20,8 @@ export function UnitsTable({ units, propertyId }: { units: UnitWithLease[]; prop
 
   return (
     <>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[500px]">
         <thead>
           <tr className="border-b border-border bg-muted/30">
             <th className="py-2.5 px-4 text-left font-medium text-muted-foreground">Einheit</th>
@@ -37,6 +38,7 @@ export function UnitsTable({ units, propertyId }: { units: UnitWithLease[]; prop
           ))}
         </tbody>
       </table>
+      </div>
 
       {editUnit && (
         <UnitDialog

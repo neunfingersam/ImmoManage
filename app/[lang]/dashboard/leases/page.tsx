@@ -3,6 +3,7 @@ import { Plus, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { LeaseCard, type LeaseWithDetails } from '@/components/leases/LeaseCard'
 import { EmptyState } from '@/components/shared/EmptyState'
+import { KiSummaryButton } from '@/components/shared/KiSummaryButton'
 import { getLeases } from './_actions'
 
 export default async function LeasesPage() {
@@ -12,15 +13,18 @@ export default async function LeasesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="font-serif text-2xl text-foreground">Mietverträge</h1>
           <p className="text-sm text-muted-foreground mt-1">{active.length} aktiv · {ended.length} abgelaufen</p>
         </div>
-        <Button render={<Link href="/dashboard/leases/new" />} className="bg-primary hover:bg-primary/90">
-          <Plus className="h-4 w-4 mr-1" />
-          Neu
-        </Button>
+        <div className="flex items-center gap-2">
+          <KiSummaryButton apiPath="/api/agent/lease-reminders" label="Ablaufende Verträge" />
+          <Button render={<Link href="/dashboard/leases/new" />} className="bg-primary hover:bg-primary/90">
+            <Plus className="h-4 w-4 mr-1" />
+            Neu
+          </Button>
+        </div>
       </div>
 
       {leases.length === 0 ? (

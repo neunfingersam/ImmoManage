@@ -4,7 +4,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import { Home, AlertCircle, FolderOpen, MessageSquare, Bot, Building, CalendarDays, Gauge } from 'lucide-react'
+import { Home, AlertCircle, FolderOpen, MessageSquare, Bot, Building, CalendarDays, Gauge, UserCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
@@ -16,6 +16,7 @@ const navItems = [
   { label: 'KI-Assistent', path: '/tenant/assistant', icon: Bot },
   { label: 'Meine Termine', path: '/tenant/calendar', icon: CalendarDays },
   { label: 'Zählerstände', path: '/tenant/meters', icon: Gauge },
+  { label: 'Mein Profil', path: '/tenant/profile', icon: UserCircle },
 ]
 
 function TenantNavLinks({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {

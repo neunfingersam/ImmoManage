@@ -220,7 +220,7 @@ model Unit {
   rooms      Float?
   status     UnitStatus @default(LEER)
   photos     Json?
-  property       Property        @relation(fields: [propertyId], references: [id])
+  property       Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   leases         Lease[]
   tickets        Ticket[]
   calendarEvents CalendarEvent[]
@@ -279,7 +279,7 @@ model TicketComment {
   authorId  String
   text      String
   createdAt DateTime @default(now())
-  ticket Ticket @relation(fields: [ticketId], references: [id])
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   author User   @relation(fields: [authorId], references: [id])
 }
 
@@ -382,7 +382,7 @@ model AgentMessage {
   sources      Json
   wasEscalated Boolean   @default(false)
   createdAt    DateTime  @default(now())
-  chat AgentChat @relation(fields: [chatId], references: [id])
+  chat AgentChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }
 
 model PasswordResetToken {
@@ -391,7 +391,7 @@ model PasswordResetToken {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MeterReading {

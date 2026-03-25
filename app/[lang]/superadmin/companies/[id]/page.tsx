@@ -49,7 +49,7 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
           { label: 'Mietverträge', value: company._count.leases },
           { label: 'Tickets', value: company._count.tickets },
         ].map(s => (
-          <Card key={s.label} className="p-4 text-center">
+          <Card key={s.label} className="p-3 sm:p-4 text-center">
             <p className="text-2xl font-serif text-foreground">{s.value}</p>
             <p className="text-xs text-muted-foreground">{s.label}</p>
           </Card>

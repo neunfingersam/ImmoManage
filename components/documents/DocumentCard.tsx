@@ -1,8 +1,10 @@
-import { FileText, Trash2 } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { deleteDocument } from '@/app/[lang]/dashboard/documents/_actions'
 import type { Document, User, Property } from '@/lib/generated/prisma'
+import { DocumentSummaryButton } from './DocumentSummaryButton'
+import { DocumentDeleteButton } from './DocumentDeleteButton'
 
 type DocumentWithRels = Document & {
   uploadedBy: Pick<User, 'id' | 'name'>
@@ -27,27 +29,26 @@ export function DocumentCard({ doc }: { doc: DocumentWithRels }) {
   }
 
   return (
-    <Card className="p-4 flex items-center gap-3">
-      <div className="shrink-0 h-10 w-10 rounded-lg bg-secondary flex items-center justify-center text-primary">
-        <FileText className="h-5 w-5" />
+    <Card className="p-4 space-y-2">
+      <div className="flex items-center gap-3">
+        <div className="shrink-0 h-10 w-10 rounded-lg bg-secondary flex items-center justify-center text-primary">
+          <FileText className="h-5 w-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-foreground truncate">{doc.name}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {categoryLabels[doc.category] ?? doc.category} · {doc.tenant?.name ?? doc.property?.name ?? 'Global'} · {date}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Badge variant="outline">{doc.scope}</Badge>
+          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+            Öffnen
+          </a>
+          <DocumentDeleteButton action={handleDelete} />
+        </div>
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-foreground truncate">{doc.name}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          {categoryLabels[doc.category] ?? doc.category} · {doc.tenant?.name ?? doc.property?.name ?? 'Global'} · {date}
-        </p>
-      </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <Badge variant="outline">{doc.scope}</Badge>
-        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-          Öffnen
-        </a>
-        <form action={handleDelete}>
-          <button type="submit" className="text-muted-foreground hover:text-destructive transition-colors" aria-label="Löschen">
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </form>
-      </div>
+      <DocumentSummaryButton docId={doc.id} />
     </Card>
   )
 }

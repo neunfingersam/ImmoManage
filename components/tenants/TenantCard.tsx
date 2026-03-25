@@ -1,12 +1,13 @@
 'use client'
 
 import { useTransition } from 'react'
-import { Mail, Phone, UserX, ArrowLeftRight } from 'lucide-react'
+import Link from 'next/link'
+import { Mail, Phone, UserX, UserCheck, ArrowLeftRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { deactivateTenant } from '@/app/[lang]/dashboard/tenants/_actions'
+import { deactivateTenant, reactivateTenant } from '@/app/[lang]/dashboard/tenants/_actions'
 import type { User } from '@/lib/generated/prisma'
 
 export function TenantCard({ tenant }: { tenant: User }) {
@@ -20,8 +21,20 @@ export function TenantCard({ tenant }: { tenant: User }) {
     })
   }
 
+  function handleReactivate() {
+    if (!confirm(`Mieter "${tenant.name}" wirklich reaktivieren?`)) return
+    startTransition(async () => {
+      await reactivateTenant(tenant.id)
+    })
+  }
+
   return (
-    <Card className="p-5 flex flex-col gap-3">
+    <Card className="p-5 flex flex-col gap-3 relative">
+      <Link
+        href={`/dashboard/tenants/${tenant.id}`}
+        className="absolute inset-0 rounded-[inherit]"
+        aria-label={`${tenant.name} öffnen`}
+      />
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarFallback className="bg-secondary text-foreground">{initials}</AvatarFallback>
@@ -43,11 +56,11 @@ export function TenantCard({ tenant }: { tenant: User }) {
           </div>
         )}
       </div>
-      {tenant.active && (
+      {tenant.active ? (
         <div className="flex gap-2">
           <a
             href={`/dashboard/tenants/${tenant.id}/handover-wizard`}
-            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[0.8rem] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="relative z-10 inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[0.8rem] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <ArrowLeftRight className="h-3.5 w-3.5" />
             Mieterwechsel
@@ -57,12 +70,23 @@ export function TenantCard({ tenant }: { tenant: User }) {
             size="sm"
             onClick={handleDeactivate}
             disabled={pending}
-            className="text-destructive hover:text-destructive self-start"
+            className="relative z-10 text-destructive hover:text-destructive self-start"
           >
             <UserX className="h-4 w-4 mr-1" />
             Deaktivieren
           </Button>
         </div>
+      ) : (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleReactivate}
+          disabled={pending}
+          className="relative z-10 text-primary hover:text-primary self-start"
+        >
+          <UserCheck className="h-4 w-4 mr-1" />
+          Reaktivieren
+        </Button>
       )}
     </Card>
   )

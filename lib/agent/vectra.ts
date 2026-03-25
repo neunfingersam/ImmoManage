@@ -27,7 +27,12 @@ export async function addChunks(
 
 export async function queryChunks(
   vector: number[],
-  filter: { companyId: string; tenantId?: string; propertyIds?: string[] },
+  filter: {
+    companyId: string
+    tenantId?: string
+    propertyIds?: string[]
+    role?: 'ADMIN' | 'VERMIETER'
+  },
   topK = 5
 ) {
   const index = await getIndex()
@@ -37,6 +42,10 @@ export async function queryChunks(
     .filter((r) => {
       const m = r.item.metadata as Record<string, string>
       if (m.companyId !== filter.companyId) return false
+
+      // Admin sieht alle Company-Dokumente
+      if (filter.role === 'ADMIN') return true
+
       if (m.scope === 'TENANT') return m.tenantId === filter.tenantId
       if (m.scope === 'PROPERTY') return filter.propertyIds?.includes(m.propertyId ?? '') ?? false
       return true // GLOBAL

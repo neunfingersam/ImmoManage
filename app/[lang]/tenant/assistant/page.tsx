@@ -1,6 +1,5 @@
 'use client'
 
-// app/tenant/assistant/page.tsx
 import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -16,7 +15,28 @@ export default function AssistantPage() {
   const [loading, setLoading] = useState(false)
   const [chatId, setChatId] = useState<string | null>(null)
   const [unavailable, setUnavailable] = useState(false)
+  const [historyLoaded, setHistoryLoaded] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  // Chatverlauf beim Start laden
+  useEffect(() => {
+    fetch('/api/agent/history')
+      .then(r => r.json())
+      .then(chats => {
+        if (chats?.length > 0) {
+          const latest = chats[0]
+          setChatId(latest.id)
+          const msgs: Message[] = latest.messages.map((m: any) => ({
+            role: m.role === 'USER' ? 'user' : 'agent',
+            content: m.content,
+            escalated: m.wasEscalated,
+          }))
+          setMessages(msgs)
+        }
+        setHistoryLoaded(true)
+      })
+      .catch(() => setHistoryLoaded(true))
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -26,7 +46,7 @@ export default function AssistantPage() {
     const text = input.trim()
     if (!text || loading) return
     setInput('')
-    setMessages((prev) => [...prev, { role: 'user', content: text }])
+    setMessages(prev => [...prev, { role: 'user', content: text }])
     setLoading(true)
 
     try {
@@ -38,14 +58,7 @@ export default function AssistantPage() {
 
       if (res.status === 503) {
         setUnavailable(true)
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'agent',
-            content:
-              'KI-Assistent ist momentan nicht verfügbar. Bitte kontaktiere deinen Vermieter direkt.',
-          },
-        ])
+        setMessages(prev => [...prev, { role: 'agent', content: 'KI-Assistent ist momentan nicht verfügbar. Bitte kontaktiere deinen Vermieter direkt.' }])
         setLoading(false)
         return
       }
@@ -60,39 +73,28 @@ export default function AssistantPage() {
         const { done, value } = await reader.read()
         if (done) break
         const chunk = decoder.decode(value)
-        for (const line of chunk.split('\n').filter((l) => l.startsWith('data: '))) {
+        for (const line of chunk.split('\n').filter(l => l.startsWith('data: '))) {
           try {
             const data = JSON.parse(line.slice(6))
             if (data.token) {
               agentText += data.token
               if (!msgAdded) {
-                setMessages((prev) => [...prev, { role: 'agent', content: agentText }])
+                setMessages(prev => [...prev, { role: 'agent', content: agentText }])
                 msgAdded = true
               } else {
-                setMessages((prev) => [
-                  ...prev.slice(0, -1),
-                  { role: 'agent', content: agentText },
-                ])
+                setMessages(prev => [...prev.slice(0, -1), { role: 'agent', content: agentText }])
               }
             }
             if (data.done) {
               setChatId(data.chatId)
               escalated = data.escalated
-              setMessages((prev) => [
-                ...prev.slice(0, -1),
-                { role: 'agent', content: agentText, escalated },
-              ])
+              setMessages(prev => [...prev.slice(0, -1), { role: 'agent', content: agentText, escalated }])
             }
-          } catch {
-            // ignore parse errors
-          }
+          } catch { /* ignore */ }
         }
       }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: 'agent', content: 'Fehler beim Senden. Bitte versuche es erneut.' },
-      ])
+      setMessages(prev => [...prev, { role: 'agent', content: 'Fehler beim Senden. Bitte versuche es erneut.' }])
     }
     setLoading(false)
   }
@@ -108,9 +110,7 @@ export default function AssistantPage() {
     <div className="flex flex-col h-[calc(100vh-8rem)] space-y-4">
       <div>
         <h1 className="font-serif text-2xl text-foreground">KI-Assistent</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Fragen zu Ihren Dokumenten und Ihrer Wohnung
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">Fragen zu Ihren Dokumenten und Ihrer Wohnung</p>
       </div>
 
       {unavailable && (
@@ -121,7 +121,7 @@ export default function AssistantPage() {
       )}
 
       <div className="flex-1 overflow-y-auto space-y-4 py-2">
-        {messages.length === 0 && (
+        {historyLoaded && messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-card bg-secondary text-primary">
               <Bot className="h-7 w-7" />
@@ -132,24 +132,14 @@ export default function AssistantPage() {
           </div>
         )}
         {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
-          >
-            <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
-                m.role === 'user'
-                  ? 'bg-primary text-white'
-                  : 'bg-secondary text-foreground'
-              }`}
-            >
+          <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+            <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+              m.role === 'user' ? 'bg-primary text-white' : 'bg-secondary text-foreground'
+            }`}>
               {m.content}
             </div>
             {m.escalated && (
-              <Badge
-                variant="outline"
-                className="mt-1 text-xs text-yellow-700 border-yellow-300"
-              >
+              <Badge variant="outline" className="mt-1 text-xs text-yellow-700 border-yellow-300">
                 Weitergeleitet an Ihren Vermieter
               </Badge>
             )}
@@ -168,19 +158,14 @@ export default function AssistantPage() {
       <div className="flex gap-2 items-end">
         <Textarea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={e => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Frage stellen…"
           rows={2}
           className="flex-1 resize-none"
           disabled={loading}
         />
-        <Button
-          onClick={send}
-          disabled={loading || !input.trim()}
-          size="sm"
-          className="bg-primary hover:bg-primary/90 shrink-0"
-        >
+        <Button onClick={send} disabled={loading || !input.trim()} size="sm" className="bg-primary hover:bg-primary/90 shrink-0">
           <Send className="h-4 w-4" />
         </Button>
       </div>
