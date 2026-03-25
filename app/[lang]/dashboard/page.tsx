@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { Building2, Users, FileText, AlertCircle } from 'lucide-react'
+import { Building2, Users, FileText, AlertCircle, CreditCard, TriangleAlert } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 
 async function getKpis(session: { user: { role: string; id: string; companyId: string | null } }) {
@@ -14,7 +14,7 @@ async function getKpis(session: { user: { role: string; id: string; companyId: s
     ? { companyId, assignments: { some: { userId: session.user.id } } }
     : { companyId }
 
-  const [properties, units, tenants, tickets] = await Promise.all([
+  const [properties, units, tenants, tickets, openPaymentsTotal, overdueCount] = await Promise.all([
     prisma.property.count({ where: propertyWhere }),
     prisma.unit.count({ where: { property: propertyWhere } }),
     prisma.user.count({
@@ -36,9 +36,16 @@ async function getKpis(session: { user: { role: string; id: string; companyId: s
         ? { companyId, status: 'OPEN', property: propertyWhere }
         : { companyId, status: 'OPEN' },
     }),
+    prisma.rentDemand.aggregate({
+      where: { companyId, status: { in: ['PENDING', 'OVERDUE'] } },
+      _sum: { amount: true },
+    }),
+    prisma.rentDemand.count({
+      where: { companyId, status: 'OVERDUE' },
+    }),
   ])
 
-  return { properties, units, tenants, tickets }
+  return { properties, units, tenants, tickets, openPaymentsTotal: openPaymentsTotal._sum.amount ?? 0, overdueCount }
 }
 
 export default async function DashboardPage() {
@@ -52,6 +59,8 @@ export default async function DashboardPage() {
     { label: 'Einheiten', value: kpi.units, icon: FileText, href: '/dashboard/properties', color: 'text-secondary-foreground' },
     { label: 'Mieter', value: kpi.tenants, icon: Users, href: '/dashboard/tenants', color: 'text-foreground' },
     { label: 'Offene Tickets', value: kpi.tickets, icon: AlertCircle, href: '/dashboard/tickets', color: 'text-destructive' },
+    { label: 'Offene Posten (CHF)', value: `${kpi.openPaymentsTotal.toFixed(0)}`, icon: CreditCard, href: '/dashboard/payments', color: 'text-primary' },
+    { label: 'Überfällig', value: kpi.overdueCount, icon: TriangleAlert, href: '/dashboard/payments', color: 'text-destructive' },
   ]
 
   return (
