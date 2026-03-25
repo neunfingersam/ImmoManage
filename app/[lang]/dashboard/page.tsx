@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { Building2, Users, FileText, AlertCircle, CreditCard, TriangleAlert } from 'lucide-react'
+import { Building2, Users, FileText, AlertCircle, CreditCard, TriangleAlert, CheckSquare, Home, CalendarClock } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 
 async function getKpis(session: { user: { role: string; id: string; companyId: string | null } }) {
@@ -14,7 +14,21 @@ async function getKpis(session: { user: { role: string; id: string; companyId: s
     ? { companyId, assignments: { some: { userId: session.user.id } } }
     : { companyId }
 
-  const [properties, units, tenants, tickets, openPaymentsTotal, overdueCount] = await Promise.all([
+  const in60Days = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
+
+  const [
+    properties,
+    units,
+    tenants,
+    tickets,
+    openPaymentsTotal,
+    overdueCount,
+    totalUnits,
+    vacantUnits,
+    upcomingLeaseEnds,
+    tasks7,
+    tasks30,
+  ] = await Promise.all([
     prisma.property.count({ where: propertyWhere }),
     prisma.unit.count({ where: { property: propertyWhere } }),
     prisma.user.count({
@@ -43,9 +57,46 @@ async function getKpis(session: { user: { role: string; id: string; companyId: s
     prisma.rentDemand.count({
       where: { companyId, status: 'OVERDUE' },
     }),
+    prisma.unit.count({ where: { property: { companyId } } }),
+    prisma.unit.count({ where: { property: { companyId }, status: 'LEER' } }),
+    prisma.lease.count({
+      where: {
+        companyId,
+        status: 'ACTIVE',
+        endDate: { lte: in60Days, gte: new Date() },
+      },
+    }),
+    prisma.task.count({
+      where: {
+        companyId,
+        status: { not: 'ERLEDIGT' },
+        dueDate: { lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+      },
+    }),
+    prisma.task.count({
+      where: {
+        companyId,
+        status: { not: 'ERLEDIGT' },
+        dueDate: { lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
+      },
+    }),
   ])
 
-  return { properties, units, tenants, tickets, openPaymentsTotal: openPaymentsTotal._sum.amount ?? 0, overdueCount }
+  const vacancyRate = totalUnits > 0 ? Math.round((vacantUnits / totalUnits) * 100) : 0
+
+  return {
+    properties,
+    units,
+    tenants,
+    tickets,
+    openPaymentsTotal: openPaymentsTotal._sum.amount ?? 0,
+    overdueCount,
+    vacancyRate,
+    vacantUnits,
+    upcomingLeaseEnds,
+    tasks7,
+    tasks30,
+  }
 }
 
 export default async function DashboardPage() {
@@ -54,6 +105,13 @@ export default async function DashboardPage() {
 
   const kpi = await getKpis(session)
 
+  const vacancyColor =
+    kpi.vacancyRate < 5
+      ? 'text-green-600'
+      : kpi.vacancyRate < 15
+        ? 'text-yellow-600'
+        : 'text-destructive'
+
   const cards = [
     { label: 'Immobilien', value: kpi.properties, icon: Building2, href: '/dashboard/properties', color: 'text-primary' },
     { label: 'Einheiten', value: kpi.units, icon: FileText, href: '/dashboard/properties', color: 'text-secondary-foreground' },
@@ -61,6 +119,10 @@ export default async function DashboardPage() {
     { label: 'Offene Tickets', value: kpi.tickets, icon: AlertCircle, href: '/dashboard/tickets', color: 'text-destructive' },
     { label: 'Offene Posten (CHF)', value: `${kpi.openPaymentsTotal.toFixed(0)}`, icon: CreditCard, href: '/dashboard/payments', color: 'text-primary' },
     { label: 'Überfällig', value: kpi.overdueCount, icon: TriangleAlert, href: '/dashboard/payments', color: 'text-destructive' },
+    { label: 'Leerstandsquote', value: `${kpi.vacancyRate}%`, icon: Home, href: '/dashboard/properties', color: vacancyColor },
+    { label: 'Vertragsenden (60d)', value: kpi.upcomingLeaseEnds, icon: CalendarClock, href: '/dashboard/leases', color: kpi.upcomingLeaseEnds > 0 ? 'text-yellow-600' : 'text-foreground' },
+    { label: 'Aufgaben (7 Tage)', value: kpi.tasks7, icon: CheckSquare, href: '/dashboard/tasks', color: kpi.tasks7 > 0 ? 'text-destructive' : 'text-foreground' },
+    { label: 'Aufgaben (30 Tage)', value: kpi.tasks30, icon: CheckSquare, href: '/dashboard/tasks', color: 'text-muted-foreground' },
   ]
 
   return (

@@ -211,6 +211,18 @@ export async function updateUnit(unitId: string, data: UnitFormValues): Promise<
   })
 }
 
+export async function updateUnitStatusAction(unitId: string, status: 'VERMIETET' | 'LEER' | 'RENOVIERUNG') {
+  const session = await getAuthSession()
+  if (!session?.user?.companyId) throw new Error('Unauthorized')
+
+  await prisma.unit.update({
+    where: { id: unitId },
+    data: { status },
+  })
+
+  revalidatePath('/dashboard/properties')
+}
+
 export async function deleteUnit(unitId: string, propertyId: string): Promise<ActionResult<void>> {
   return withAuthAction(async (session) => {
     const property = await prisma.property.findFirst({

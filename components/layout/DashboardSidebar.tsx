@@ -21,6 +21,8 @@ import {
   ClipboardCheck,
   CreditCard,
   Rocket,
+  CheckSquare,
+  Clock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Role } from '@/lib/generated/prisma'
@@ -46,6 +48,8 @@ const navItems: NavItem[] = [
   { label: 'Abrechnungen', path: '/dashboard/billing', icon: Receipt },
   { label: 'Zählerstände', path: '/dashboard/meters', icon: Gauge },
   { label: 'Übergaben', path: '/dashboard/handovers', icon: ClipboardCheck },
+  { label: 'Aufgaben', path: '/dashboard/tasks', icon: CheckSquare },
+  { label: 'Aktivitäten', path: '/dashboard/activity', icon: Clock },
   { label: 'Vorlagen', path: '/dashboard/templates', icon: FileText },
   { label: 'Einrichtung', path: '/dashboard/onboarding/import', icon: Rocket },
   { label: 'KI-Verlauf', path: '/dashboard/agent-logs', icon: Bot },
