@@ -22,6 +22,11 @@ export async function proxy(req: NextRequest) {
   const internalPath = stripLocale(pathname)
   const locale = getLocaleFromPath(pathname)
 
+  // API routes (especially NextAuth) — pass through without auth check
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+
   // Public routes: always allow through (intl handles locale prefix)
   if (
     internalPath.startsWith('/auth') ||
