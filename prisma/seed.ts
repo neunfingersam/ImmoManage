@@ -2,7 +2,7 @@
 // Demo-Daten für die Entwicklungsumgebung
 // Alle Passwörter: demo1234
 import { PrismaLibSql } from '@prisma/adapter-libsql'
-import { PrismaClient } from '../lib/generated/prisma'
+import { PrismaClient } from '../lib/generated/prisma/client'
 import { hash } from 'bcryptjs'
 import path from 'path'
 
@@ -416,6 +416,151 @@ async function main() {
       read: false,
     },
   })
+
+  // Update units with status
+  await prisma.unit.update({ where: { id: 'unit-demo-1' }, data: { status: 'VERMIETET' } })
+  await prisma.unit.update({ where: { id: 'unit-demo-2' }, data: { status: 'VERMIETET' } })
+  await prisma.unit.update({ where: { id: 'unit-demo-3' }, data: { status: 'LEER' } })
+  await prisma.unit.update({ where: { id: 'unit-demo-4' }, data: { status: 'VERMIETET' } })
+
+  // Update leases with deposit info
+  await prisma.lease.update({
+    where: { id: 'lease-demo-1' },
+    data: { depositAmount: 2550, depositBank: 'ZKB Zürich', depositStatus: 'HINTERLEGT', indexierung: true, referenzzinssatz: 1.75 },
+  })
+  await prisma.lease.update({
+    where: { id: 'lease-demo-2' },
+    data: { depositAmount: 2160, depositBank: 'UBS Zürich', depositStatus: 'HINTERLEGT', indexierung: false },
+  })
+  await prisma.lease.update({
+    where: { id: 'lease-demo-3' },
+    data: { depositAmount: 3300, depositBank: 'Raiffeisen Zürich', depositStatus: 'HINTERLEGT', indexierung: true, referenzzinssatz: 1.75 },
+  })
+
+  // RentDemands – January and February 2026 for all active leases
+  const now = new Date()
+  for (const [leaseId, amount] of [
+    ['lease-demo-1', 1030],
+    ['lease-demo-2', 870],
+    ['lease-demo-3', 1320],
+  ] as [string, number][]) {
+    await prisma.rentDemand.upsert({
+      where: { id: `rd-${leaseId}-2026-01` },
+      update: {},
+      create: {
+        id: `rd-${leaseId}-2026-01`,
+        companyId: company.id,
+        leaseId,
+        month: 1,
+        year: 2026,
+        amount,
+        dueDate: new Date('2026-01-01'),
+        status: 'PAID',
+      },
+    })
+    await prisma.rentDemand.upsert({
+      where: { id: `rd-${leaseId}-2026-02` },
+      update: {},
+      create: {
+        id: `rd-${leaseId}-2026-02`,
+        companyId: company.id,
+        leaseId,
+        month: 2,
+        year: 2026,
+        amount,
+        dueDate: new Date('2026-02-01'),
+        status: 'PAID',
+      },
+    })
+    await prisma.rentDemand.upsert({
+      where: { id: `rd-${leaseId}-2026-03` },
+      update: {},
+      create: {
+        id: `rd-${leaseId}-2026-03`,
+        companyId: company.id,
+        leaseId,
+        month: 3,
+        year: 2026,
+        amount,
+        dueDate: new Date('2026-03-01'),
+        status: leaseId === 'lease-demo-2' ? 'OVERDUE' : 'PENDING',
+      },
+    })
+  }
+
+  // Payment for a paid demand
+  await prisma.payment.upsert({
+    where: { id: 'pay-demo-1' },
+    update: {},
+    create: {
+      id: 'pay-demo-1',
+      rentDemandId: 'rd-lease-demo-1-2026-01',
+      amount: 1030,
+      paymentDate: new Date('2026-01-03'),
+      method: 'BANK_TRANSFER',
+    },
+  })
+
+  // Tasks
+  await prisma.task.upsert({
+    where: { id: 'task-demo-1' },
+    update: {},
+    create: {
+      id: 'task-demo-1',
+      companyId: company.id,
+      title: 'Heizungsservice Musterstraße 12',
+      description: 'Jährliche Wartung der Heizungsanlage beauftragen.',
+      type: 'WARTUNG',
+      status: 'OFFEN',
+      dueDate: new Date('2026-04-15'),
+      reminderDays: 7,
+      propertyId: immobilie1.id,
+    },
+  })
+
+  await prisma.task.upsert({
+    where: { id: 'task-demo-2' },
+    update: {},
+    create: {
+      id: 'task-demo-2',
+      companyId: company.id,
+      title: 'Vertragsverlängerung Mieter Weber',
+      description: 'Vertrag läuft am 14.03.2025 aus – Verlängerung besprechen.',
+      type: 'VERTRAGSVERLAENGERUNG',
+      status: 'IN_BEARBEITUNG',
+      dueDate: new Date('2026-03-14'),
+      reminderDays: 30,
+      leaseId: 'lease-demo-2',
+    },
+  })
+
+  await prisma.task.upsert({
+    where: { id: 'task-demo-3' },
+    update: {},
+    create: {
+      id: 'task-demo-3',
+      companyId: company.id,
+      title: 'Besichtigung 2. OG Musterstraße 12',
+      description: 'Wohnung für neuen Mietinteressenten zeigen.',
+      type: 'BESICHTIGUNG',
+      status: 'OFFEN',
+      dueDate: new Date('2026-03-28'),
+      propertyId: immobilie1.id,
+    },
+  })
+
+  // ActivityLog
+  for (const entry of [
+    { id: 'act-demo-1', userId: admin.id, action: 'CREATE', entity: 'Lease', entityId: 'lease-demo-1', createdAt: new Date('2026-01-10T09:00:00Z') },
+    { id: 'act-demo-2', userId: vermieter1.id, action: 'CLOSE', entity: 'Ticket', entityId: 'ticket-demo-1', createdAt: new Date('2026-02-15T14:30:00Z') },
+    { id: 'act-demo-3', userId: admin.id, action: 'CREATE', entity: 'RentDemand', entityId: 'rd-lease-demo-1-2026-03', createdAt: new Date('2026-03-01T08:00:00Z') },
+  ]) {
+    await prisma.activityLog.upsert({
+      where: { id: entry.id },
+      update: {},
+      create: { ...entry, companyId: company.id },
+    })
+  }
 
   console.log('✅ Seed erfolgreich abgeschlossen!')
   console.log('')
