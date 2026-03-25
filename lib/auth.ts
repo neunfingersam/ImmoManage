@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const ip = (req as any)?.headers?.['x-forwarded-for'] ?? (req as any)?.socket?.remoteAddress ?? 'unknown'
-        const rl = checkRateLimit(`login:${ip}`)
+        const rl = await checkRateLimit(`login:${ip}`)
         if (!rl.allowed) {
           throw new Error('Zu viele Anmeldeversuche. Bitte warte 15 Minuten.')
         }
