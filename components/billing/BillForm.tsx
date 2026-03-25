@@ -11,7 +11,7 @@ import { createBill } from '@/app/[lang]/dashboard/billing/_actions'
 
 const costItemSchema = z.object({
   name: z.string().min(1, 'Name erforderlich'),
-  amount: z.number({ invalid_type_error: 'Betrag erforderlich' }).positive('Muss positiv sein'),
+  amount: z.number({ message: 'Betrag erforderlich' }).positive('Muss positiv sein'),
   key: z.enum(['sqm', 'unit', 'persons']),
 })
 
@@ -80,7 +80,7 @@ export function BillForm({ leases }: { leases: Lease[] }) {
       {/* Mietvertrag */}
       <div className="space-y-1">
         <Label>Mietvertrag</Label>
-        <Select onValueChange={(v) => setValue('leaseId', v)}>
+        <Select onValueChange={(v) => setValue('leaseId', v as string)}>
           <SelectTrigger><SelectValue placeholder="Mieter auswählen" /></SelectTrigger>
           <SelectContent>
             {leases.map((l) => (
