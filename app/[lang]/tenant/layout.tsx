@@ -2,18 +2,19 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { getLocale } from 'next-intl/server'
 import { TenantSidebar, TenantMobileNav } from '@/components/layout/TenantSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { prisma } from '@/lib/prisma'
 
 export default async function TenantLayout({
   children,
+  params,
 }: {
   children: React.ReactNode
+  params: Promise<{ lang: string }>
 }) {
+  const { lang: locale } = await params
   const session = await getServerSession(authOptions)
-  const locale = await getLocale()
 
   if (!session) {
     redirect(`/${locale}/auth/login`)

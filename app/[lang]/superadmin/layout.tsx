@@ -2,17 +2,18 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { getLocale } from 'next-intl/server'
 import { SuperAdminSidebar, SuperAdminMobileNav } from '@/components/layout/SuperAdminSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 
 export default async function SuperAdminLayout({
   children,
+  params,
 }: {
   children: React.ReactNode
+  params: Promise<{ lang: string }>
 }) {
+  const { lang: locale } = await params
   const session = await getServerSession(authOptions)
-  const locale = await getLocale()
 
   if (!session) {
     redirect(`/${locale}/auth/login`)

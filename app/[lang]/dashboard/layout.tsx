@@ -2,18 +2,19 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { getLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { DashboardSidebar, DashboardMobileNav } from '@/components/layout/DashboardSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 
 export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode
+  params: Promise<{ lang: string }>
 }) {
+  const { lang: locale } = await params
   const session = await getServerSession(authOptions)
-  const locale = await getLocale()
 
   if (!session) {
     redirect(`/${locale}/auth/login`)
