@@ -21,9 +21,10 @@ type Option = { propertyId: string; propertyName: string; unitId: string; unitNu
 type Props = {
   options: Option[]
   action: (data: TicketFormValues) => Promise<ActionResult<Ticket>>
+  backPath?: string
 }
 
-export function NewTicketForm({ options, action }: Props) {
+export function NewTicketForm({ options, action, backPath = '/tenant/tickets' }: Props) {
   const [pending, startTransition] = useTransition()
   const [serverError, setServerError] = useState<string | null>(null)
   const router = useRouter()
@@ -77,7 +78,7 @@ export function NewTicketForm({ options, action }: Props) {
     startTransition(async () => {
       const result = await action(data as TicketFormValues)
       if (result.success) {
-        router.push('/tenant/tickets')
+        router.push(backPath)
       } else {
         setServerError(result.error)
       }
@@ -148,7 +149,7 @@ export function NewTicketForm({ options, action }: Props) {
         <Button type="submit" disabled={pending} className="bg-primary hover:bg-primary/90">
           {pending ? 'Wird gesendet…' : 'Meldung einreichen'}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.push('/tenant/tickets')}>
+        <Button type="button" variant="outline" onClick={() => router.push(backPath)}>
           Abbrechen
         </Button>
       </div>

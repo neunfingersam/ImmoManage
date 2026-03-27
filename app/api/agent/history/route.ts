@@ -12,9 +12,13 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const tenantId = searchParams.get('tenantId')
 
-  const where = tenantId
-    ? { companyId: session.user.companyId, tenantId }
-    : { companyId: session.user.companyId }
+  // Mieter sehen immer nur ihren eigenen Verlauf
+  const isMieter = session.user.role === 'MIETER'
+  const where = isMieter
+    ? { companyId: session.user.companyId, tenantId: session.user.id }
+    : tenantId
+      ? { companyId: session.user.companyId, tenantId }
+      : { companyId: session.user.companyId }
 
   const chats = await prisma.agentChat.findMany({
     where,

@@ -3,58 +3,68 @@
 // components/layout/TenantSidebar.tsx
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useLocale } from 'next-intl'
-import { Home, AlertCircle, FolderOpen, MessageSquare, Bot, Building, CalendarDays, Gauge, UserCircle } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { Home, AlertCircle, FolderOpen, MessageSquare, CalendarDays, Gauge, UserCircle, Building, Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
-const navItems = [
-  { label: 'Meine Wohnung', path: '/tenant', icon: Home },
-  { label: 'Schadensmeldungen', path: '/tenant/tickets', icon: AlertCircle },
-  { label: 'Meine Dokumente', path: '/tenant/documents', icon: FolderOpen },
-  { label: 'Nachrichten', path: '/tenant/messages', icon: MessageSquare },
-  { label: 'KI-Assistent', path: '/tenant/assistant', icon: Bot },
-  { label: 'Meine Termine', path: '/tenant/calendar', icon: CalendarDays },
-  { label: 'Zählerstände', path: '/tenant/meters', icon: Gauge },
-  { label: 'Mein Profil', path: '/tenant/profile', icon: UserCircle },
+const primaryItems = [
+  { key: 'myApartment', path: '/tenant', icon: Home },
+  { key: 'tickets', path: '/tenant/tickets', icon: AlertCircle },
+  { key: 'messages', path: '/tenant/messages', icon: MessageSquare },
+  { key: 'documents', path: '/tenant/documents', icon: FolderOpen },
+  { key: 'calendar', path: '/tenant/calendar', icon: CalendarDays },
+]
+
+const secondaryItems = [
+  { key: 'meters', path: '/tenant/meters', icon: Gauge },
+  { key: 'assistant', path: '/tenant/assistant', icon: Bot },
+  { key: 'myProfile', path: '/tenant/profile', icon: UserCircle },
 ]
 
 function TenantNavLinks({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {
   const pathname = usePathname()
   const locale = useLocale()
+  const t = useTranslations('nav')
+
+  const renderItem = (item: typeof primaryItems[0]) => {
+    const href = `/${locale}${item.path}`
+    const isActive =
+      item.path === '/tenant'
+        ? pathname === `/${locale}/tenant`
+        : pathname.startsWith(href)
+    const showBadge = item.path === '/tenant/calendar' && upcomingEventsCount > 0
+    return (
+      <Link
+        key={item.path}
+        href={href}
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+          isActive
+            ? 'bg-primary/10 text-primary'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        )}
+      >
+        <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+        <span className="flex-1">{t(item.key as Parameters<typeof t>[0])}</span>
+        {showBadge && (
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+            {upcomingEventsCount > 99 ? '99+' : upcomingEventsCount}
+          </span>
+        )}
+      </Link>
+    )
+  }
 
   return (
-    <nav className="flex-1 px-3 py-4 space-y-0.5">
-      {navItems.map((item) => {
-        const href = `/${locale}${item.path}`
-        const isActive =
-          item.path === '/tenant'
-            ? pathname === `/${locale}/tenant`
-            : pathname.startsWith(href)
-
-        const showBadge = item.path === '/tenant/calendar' && upcomingEventsCount > 0
-
-        return (
-          <Link
-            key={item.path}
-            href={href}
-            className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-              isActive
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-            )}
-          >
-            <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-            <span className="flex-1">{item.label}</span>
-            {showBadge && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
-                {upcomingEventsCount > 99 ? '99+' : upcomingEventsCount}
-              </span>
-            )}
-          </Link>
-        )
-      })}
+    <nav className="flex-1 px-3 py-4 space-y-4">
+      <div className="space-y-0.5">
+        {primaryItems.map(renderItem)}
+      </div>
+      <div className="border-t border-border" />
+      <div className="space-y-0.5">
+        {secondaryItems.map(renderItem)}
+      </div>
     </nav>
   )
 }
@@ -68,7 +78,6 @@ export function TenantSidebar({ upcomingEventsCount = 0 }: { upcomingEventsCount
         </div>
         <p className="font-serif text-base text-foreground">ImmoManage</p>
       </div>
-
       <TenantNavLinks upcomingEventsCount={upcomingEventsCount} />
     </aside>
   )

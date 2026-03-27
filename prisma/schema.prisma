@@ -17,6 +17,7 @@ enum Role {
   ADMIN
   VERMIETER
   MIETER
+  EIGENTUEMER
 }
 
 enum PropertyType {
@@ -129,6 +130,12 @@ enum TaskStatus {
   ERLEDIGT
 }
 
+enum AccountDeletionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Company {
   id                   String          @id @default(cuid())
   name                 String
@@ -138,20 +145,21 @@ model Company {
   onboardingCompleted  Boolean         @default(false)
   smtpConfig           Json?
   createdAt            DateTime        @default(now())
-  users          User[]
-  properties     Property[]
-  tickets        Ticket[]
-  documents      Document[]
-  messages       Message[]
-  leases         Lease[]
-  agentChats     AgentChat[]
-  utilityBills   UtilityBill[]
-  calendarEvents CalendarEvent[]
-  meterReadings  MeterReading[]
-  handovers      Handover[]
-  rentDemands    RentDemand[]
-  tasks          Task[]
-  activityLogs   ActivityLog[]
+  users                  User[]
+  properties             Property[]
+  tickets                Ticket[]
+  documents              Document[]
+  messages               Message[]
+  leases                 Lease[]
+  agentChats             AgentChat[]
+  utilityBills           UtilityBill[]
+  calendarEvents         CalendarEvent[]
+  meterReadings          MeterReading[]
+  handovers              Handover[]
+  rentDemands            RentDemand[]
+  tasks                  Task[]
+  activityLogs           ActivityLog[]
+  accountDeletionRequests AccountDeletionRequest[]
 }
 
 model User {
@@ -168,6 +176,7 @@ model User {
   createdAt    DateTime @default(now())
   company             Company?             @relation(fields: [companyId], references: [id])
   propertyAssignments PropertyAssignment[]
+  propertyOwnerships  PropertyOwner[]
   leases              Lease[]              @relation("TenantLeases")
   tickets             Ticket[]             @relation("TenantTickets")
   ticketComments      TicketComment[]
@@ -181,6 +190,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   meterReadings       MeterReading[]       @relation("TenantMeterReadings")
   activityLogs        ActivityLog[]
+  deletionRequest     AccountDeletionRequest?
 }
 
 model PropertyAssignment {
@@ -189,6 +199,18 @@ model PropertyAssignment {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   @@id([userId, propertyId])
+}
+
+model PropertyOwner {
+  id         String    @id @default(cuid())
+  userId     String
+  propertyId String
+  unitId     String?
+  ownerSince DateTime?
+  createdAt  DateTime  @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unit     Unit?    @relation(fields: [unitId], references: [id])
 }
 
 model Property {
@@ -206,6 +228,7 @@ model Property {
   tickets        Ticket[]
   documents      Document[]
   assignments    PropertyAssignment[]
+  owners         PropertyOwner[]
   utilityBills   UtilityBill[]
   calendarEvents CalendarEvent[]
   tasks          Task[]
@@ -223,6 +246,7 @@ model Unit {
   property       Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   leases         Lease[]
   tickets        Ticket[]
+  owners         PropertyOwner[]
   calendarEvents CalendarEvent[]
 }
 
@@ -265,6 +289,7 @@ model Ticket {
   status      TicketStatus @default(OPEN)
   priority    Priority     @default(MEDIUM)
   images      Json
+  repairCost  Float?
   createdAt   DateTime     @default(now())
   company  Company         @relation(fields: [companyId], references: [id])
   property Property        @relation(fields: [propertyId], references: [id])
@@ -489,4 +514,16 @@ model ActivityLog {
   createdAt DateTime @default(now())
   company Company @relation(fields: [companyId], references: [id])
   user    User    @relation(fields: [userId], references: [id])
+}
+
+model AccountDeletionRequest {
+  id         String                @id @default(cuid())
+  userId     String                @unique
+  companyId  String
+  status     AccountDeletionStatus @default(PENDING)
+  reason     String?
+  createdAt  DateTime              @default(now())
+  resolvedAt DateTime?
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id])
 }

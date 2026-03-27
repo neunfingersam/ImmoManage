@@ -3,22 +3,23 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { BarChart3, Building, UserCog, ScrollText, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
 const navItems = [
-  { label: 'Übersicht', path: '/superadmin', icon: BarChart3 },
-  { label: 'Unternehmen', path: '/superadmin/companies', icon: Building },
-  { label: 'Admins', path: '/superadmin/admins', icon: UserCog },
-  { label: 'Statistiken', path: '/superadmin/stats', icon: BarChart3 },
-  { label: 'Aktivitäts-Log', path: '/superadmin/logs', icon: ScrollText },
+  { key: 'overview', path: '/superadmin', icon: BarChart3 },
+  { key: 'companies', path: '/superadmin/companies', icon: Building },
+  { key: 'admins', path: '/superadmin/admins', icon: UserCog },
+  { key: 'stats', path: '/superadmin/stats', icon: BarChart3 },
+  { key: 'logs', path: '/superadmin/logs', icon: ScrollText },
 ]
 
 function SuperAdminNavLinks() {
   const pathname = usePathname()
   const locale = useLocale()
+  const t = useTranslations('nav')
 
   return (
     <>
@@ -28,7 +29,7 @@ function SuperAdminNavLinks() {
         </div>
         <div>
           <p className="font-serif text-base text-foreground leading-tight">ImmoManage</p>
-          <p className="text-xs text-primary font-medium">Plattform-Admin</p>
+          <p className="text-xs text-primary font-medium">{t('platformAdmin')}</p>
         </div>
       </div>
 
@@ -52,7 +53,7 @@ function SuperAdminNavLinks() {
               )}
             >
               <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-              {item.label}
+              {t(item.key as Parameters<typeof t>[0])}
             </Link>
           )
         })}

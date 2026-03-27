@@ -47,9 +47,9 @@ export function MahnungPdf(data: MahnungData) {
           <Text key={i} style={pdfStyles.paragraph}>{para}</Text>
         ))}
       </View>
-      <View style={pdfStyles.signatureBlock}>
-        <Text style={pdfStyles.signatureLine}>Ort / Datum</Text>
-        <Text style={pdfStyles.signatureLine}>{data.companyName}</Text>
+      <View style={pdfStyles.signatureRow_legacy}>
+        <Text style={pdfStyles.signatureLine_legacy}>Ort / Datum</Text>
+        <Text style={pdfStyles.signatureLine_legacy}>{data.companyName}</Text>
       </View>
     </PdfLayout>
   )

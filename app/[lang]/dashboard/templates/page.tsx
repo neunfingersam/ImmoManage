@@ -5,6 +5,7 @@ const TEMPLATES = [
   { key: 'mietvertrag', icon: '📄' },
   { key: 'uebergabeprotokoll', icon: '🏠' },
   { key: 'kuendigung', icon: '📮' },
+  { key: 'nebenkostenabrechnung', icon: '🧾' },
   { key: 'mahnung1', icon: '⚠️' },
   { key: 'mahnung2', icon: '🔴' },
   { key: 'mahnung3', icon: '🚨' },

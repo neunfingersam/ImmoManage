@@ -5,14 +5,7 @@ import { LogoutButton } from './LogoutButton'
 import { LocaleSwitcher } from '@/components/LocaleSwitcher'
 import { getUnreadCount } from '@/app/[lang]/dashboard/notifications/_actions'
 import { type Role } from '@/lib/generated/prisma'
-
-// Lesbarer Rollen-Name für die Anzeige
-const rollenBezeichnung: Record<Role, string> = {
-  SUPER_ADMIN: 'Super Admin',
-  ADMIN: 'Administrator',
-  VERMIETER: 'Vermieter',
-  MIETER: 'Mieter',
-}
+import { getTranslations } from 'next-intl/server'
 
 interface DashboardHeaderProps {
   userName: string
@@ -22,7 +15,7 @@ interface DashboardHeaderProps {
 }
 
 export async function DashboardHeader({ userName, userEmail, userRole, mobileNav }: DashboardHeaderProps) {
-  const unreadCount = await getUnreadCount()
+  const [unreadCount, t] = await Promise.all([getUnreadCount(), getTranslations('roles')])
 
   const initials = userName
     .split(' ')
@@ -50,7 +43,7 @@ export async function DashboardHeader({ userName, userEmail, userRole, mobileNav
           {/* User info */}
           <div className="hidden text-left sm:block">
             <p className="text-sm font-medium text-foreground">{userName}</p>
-            <p className="text-xs text-muted-foreground">{rollenBezeichnung[userRole]}</p>
+            <p className="text-xs text-muted-foreground">{t(userRole)}</p>
           </div>
           {/* Logout button */}
           <LogoutButton />

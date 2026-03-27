@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import {
   LayoutDashboard,
   Building2,
@@ -13,51 +13,56 @@ import {
   FolderOpen,
   MessageSquare,
   Calendar,
-  Receipt,
+  CreditCard,
   Bot,
   UserCog,
   Building,
-  Gauge,
-  ClipboardCheck,
-  CreditCard,
+  Receipt,
   Rocket,
-  CheckSquare,
-  Clock,
+  Calculator,
+  Home,
+  Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type Role } from '@/lib/generated/prisma'
 import { MobileNavTrigger } from './MobileNav'
 
 interface NavItem {
-  label: string
-  path: string // relative path without locale prefix
+  key: string
+  path: string
   icon: React.ElementType
-  nichtFuerRollen?: Role[]
+  rolesOnly?: Role[]
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { label: 'Immobilien', path: '/dashboard/properties', icon: Building2 },
-  { label: 'Mieter', path: '/dashboard/tenants', icon: Users },
-  { label: 'Mietverträge', path: '/dashboard/leases', icon: FileText },
-  { label: 'Schadensmeldungen', path: '/dashboard/tickets', icon: AlertCircle },
-  { label: 'Dokumente', path: '/dashboard/documents', icon: FolderOpen },
-  { label: 'Nachrichten', path: '/dashboard/messages', icon: MessageSquare },
-  { label: 'Kalender', path: '/dashboard/calendar', icon: Calendar },
-  { label: 'Zahlungen', path: '/dashboard/payments', icon: CreditCard },
-  { label: 'Abrechnungen', path: '/dashboard/billing', icon: Receipt },
-  { label: 'Zählerstände', path: '/dashboard/meters', icon: Gauge },
-  { label: 'Übergaben', path: '/dashboard/handovers', icon: ClipboardCheck },
-  { label: 'Aufgaben', path: '/dashboard/tasks', icon: CheckSquare },
-  { label: 'Aktivitäten', path: '/dashboard/activity', icon: Clock },
-  { label: 'Vorlagen', path: '/dashboard/templates', icon: FileText },
-  { label: 'Einrichtung', path: '/dashboard/onboarding/import', icon: Rocket },
-  { label: 'KI-Assistent', path: '/dashboard/assistant', icon: Bot },
+const sections: { titleKey?: string; items: NavItem[] }[] = [
   {
-    label: 'Team',
-    path: '/dashboard/team',
-    icon: UserCog,
-    nichtFuerRollen: ['VERMIETER'],
+    items: [
+      { key: 'dashboard', path: '/dashboard', icon: LayoutDashboard },
+      { key: 'properties', path: '/dashboard/properties', icon: Building2 },
+      { key: 'tenants', path: '/dashboard/tenants', icon: Users },
+      { key: 'leases', path: '/dashboard/leases', icon: FileText },
+      { key: 'payments', path: '/dashboard/payments', icon: CreditCard },
+    ],
+  },
+  {
+    items: [
+      { key: 'tickets', path: '/dashboard/tickets', icon: AlertCircle },
+      { key: 'messages', path: '/dashboard/messages', icon: MessageSquare },
+      { key: 'calendar', path: '/dashboard/calendar', icon: Calendar },
+      { key: 'documents', path: '/dashboard/documents', icon: FolderOpen },
+    ],
+  },
+  {
+    items: [
+      { key: 'tax', path: '/dashboard/tax', icon: Calculator },
+      { key: 'billing', path: '/dashboard/billing', icon: Receipt },
+      { key: 'templates', path: '/dashboard/templates', icon: FileText },
+      { key: 'owners', path: '/dashboard/owners', icon: Home },
+      { key: 'deletionRequests', path: '/dashboard/deletion-requests', icon: Trash2, rolesOnly: ['ADMIN', 'VERMIETER'] },
+      { key: 'team', path: '/dashboard/team', icon: UserCog, rolesOnly: ['ADMIN'] },
+      { key: 'assistant', path: '/dashboard/assistant', icon: Bot },
+      { key: 'onboarding', path: '/dashboard/onboarding/import', icon: Rocket },
+    ],
   },
 ]
 
@@ -69,10 +74,7 @@ interface DashboardSidebarProps {
 function DashboardNavLinks({ role, companyName }: DashboardSidebarProps) {
   const pathname = usePathname()
   const locale = useLocale()
-
-  const sichtbareItems = navItems.filter(
-    (item) => !item.nichtFuerRollen?.includes(role)
-  )
+  const t = useTranslations('nav')
 
   return (
     <>
@@ -90,28 +92,40 @@ function DashboardNavLinks({ role, companyName }: DashboardSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-        {sichtbareItems.map((item) => {
-          const href = `/${locale}${item.path}`
-          const isActive =
-            item.path === '/dashboard'
-              ? pathname === `/${locale}/dashboard`
-              : pathname.startsWith(href)
-
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
+        {sections.map((section, si) => {
+          const visible = section.items.filter(
+            (item) => !item.rolesOnly || item.rolesOnly.includes(role)
+          )
+          if (visible.length === 0) return null
           return (
-            <Link
-              key={item.path}
-              href={href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              )}
-            >
-              <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-              {item.label}
-            </Link>
+            <div key={si}>
+              {si > 0 && <div className="border-t border-border mb-4" />}
+              <div className="space-y-0.5">
+                {visible.map((item) => {
+                  const href = `/${locale}${item.path}`
+                  const isActive =
+                    item.path === '/dashboard'
+                      ? pathname === `/${locale}/dashboard`
+                      : pathname.startsWith(href)
+                  return (
+                    <Link
+                      key={item.path}
+                      href={href}
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                        isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                    >
+                      <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+                      {t(item.key as Parameters<typeof t>[0])}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
           )
         })}
       </nav>

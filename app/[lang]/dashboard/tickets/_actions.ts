@@ -76,6 +76,23 @@ export async function updateTicketStatus(ticketId: string, data: { status: strin
   })
 }
 
+export async function updateRepairCost(ticketId: string, repairCost: number | null): Promise<ActionResult<Ticket>> {
+  return withAuthAction(async (session) => {
+    const existing = await prisma.ticket.findFirst({
+      where: { id: ticketId, ...getTicketWhere(session) },
+    })
+    if (!existing) return { success: false, error: 'Ticket nicht gefunden' }
+
+    const ticket = await prisma.ticket.update({
+      where: { id: ticketId },
+      data: { repairCost },
+    })
+    revalidatePath(`/dashboard/tickets/${ticketId}`)
+    revalidatePath('/dashboard/tax')
+    return { success: true, data: ticket }
+  })
+}
+
 export async function addComment(ticketId: string, data: { text: string }): Promise<ActionResult<TicketComment>> {
   return withAuthAction(async (session) => {
     const parsed = commentSchema.safeParse(data)

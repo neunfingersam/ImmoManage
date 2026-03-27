@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Menu, X } from 'lucide-react'
 
 interface MobileNavTriggerProps {
@@ -11,6 +12,7 @@ interface MobileNavTriggerProps {
 export function MobileNavTrigger({ children }: MobileNavTriggerProps) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const t = useTranslations('nav')
 
   // Close drawer on route change
   useEffect(() => {
@@ -23,7 +25,7 @@ export function MobileNavTrigger({ children }: MobileNavTriggerProps) {
       <button
         onClick={() => setOpen(true)}
         className="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-md text-muted-foreground hover:bg-muted transition-colors"
-        aria-label="Menü öffnen"
+        aria-label={t('menuOpen')}
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -38,23 +40,22 @@ export function MobileNavTrigger({ children }: MobileNavTriggerProps) {
 
       {/* Slide-in drawer */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-200 ease-in-out md:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-200 ease-in-out md:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-full flex-col bg-card shadow-xl">
-          <div className="flex items-center justify-end p-3 border-b border-border">
+        <div className="flex h-full flex-col bg-card shadow-xl overflow-y-auto">
+          {/* Close button overlaid on logo bar */}
+          <div className="absolute top-4 right-3 z-10">
             <button
               onClick={() => setOpen(false)}
               className="inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:bg-muted transition-colors"
-              aria-label="Menü schließen"
+              aria-label={t('menuClose')}
             >
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto">
-            {children}
-          </div>
+          {children}
         </div>
       </div>
     </>

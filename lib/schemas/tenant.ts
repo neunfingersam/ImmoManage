@@ -8,10 +8,8 @@ const tenantBase = z.object({
   whatsapp: z.string().optional().nullable(),
 })
 
-// Create: requires password, no whatsapp
-export const tenantSchema = tenantBase
-  .omit({ whatsapp: true })
-  .extend({ password: z.string().min(8, 'Mindestens 8 Zeichen') })
+// Create: no password — tenant sets it themselves via invite email
+export const tenantSchema = tenantBase.omit({ whatsapp: true })
 
 export type TenantFormValues = z.infer<typeof tenantSchema>
 

@@ -2,12 +2,14 @@
 
 import { revalidatePath } from 'next/cache'
 import { hash } from 'bcryptjs'
+import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { getAuthSession, withAuthAction } from '@/lib/action-utils'
 import { getTenantWhere, getPropertyWhere } from '@/lib/access-control'
 import { tenantSchema, type TenantFormValues, updateTenantSchema, type UpdateTenantValues } from '@/lib/schemas/tenant'
 import type { ActionResult } from '@/lib/action-result'
 import type { User } from '@/lib/generated/prisma'
+import { sendTenantInviteEmail } from '@/lib/email'
 
 const PAGE_SIZE = 20
 
@@ -46,7 +48,8 @@ export async function createTenant(data: TenantFormValues): Promise<ActionResult
     if (existing) return { success: false, error: 'E-Mail-Adresse bereits vergeben' }
 
     try {
-      const passwordHash = await hash(parsed.data.password, 12)
+      // Random placeholder password — tenant will set their own via invite link
+      const passwordHash = await hash(crypto.randomBytes(32).toString('hex'), 12)
       const tenant = await prisma.user.create({
         data: {
           email: parsed.data.email,
@@ -58,11 +61,60 @@ export async function createTenant(data: TenantFormValues): Promise<ActionResult
           active: true,
         },
       })
+
+      // Generate invite token (reuse PasswordResetToken, expires in 72h)
+      await prisma.passwordResetToken.deleteMany({ where: { userId: tenant.id } })
+      const token = crypto.randomBytes(32).toString('hex')
+      await prisma.passwordResetToken.create({
+        data: { token, userId: tenant.id, expiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000) },
+      })
+
+      const company = await prisma.company.findUnique({ where: { id: session.user.companyId }, select: { name: true } })
+      const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+      const inviteUrl = `${baseUrl}/auth/reset-password?token=${token}`
+
+      await sendTenantInviteEmail({
+        tenantEmail: tenant.email,
+        tenantName: tenant.name,
+        companyName: company?.name ?? 'ImmoManage',
+        inviteUrl,
+        expiresHours: 72,
+      }).catch(() => {})
+
       revalidatePath('/dashboard/tenants')
       return { success: true, data: tenant }
     } catch (e) {
       return { success: false, error: 'Fehler beim Erstellen des Mieters' }
     }
+  })
+}
+
+export async function resendTenantInvite(tenantId: string): Promise<ActionResult<void>> {
+  return withAuthAction(async (session) => {
+    const tenant = await prisma.user.findFirst({
+      where: { id: tenantId, companyId: session.user.companyId, role: 'MIETER' },
+    })
+    if (!tenant) return { success: false, error: 'Mieter nicht gefunden' }
+
+    await prisma.passwordResetToken.deleteMany({ where: { userId: tenantId } })
+    const token = crypto.randomBytes(32).toString('hex')
+    await prisma.passwordResetToken.create({
+      data: { token, userId: tenantId, expiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000) },
+    })
+
+    const company = await prisma.company.findUnique({ where: { id: session.user.companyId }, select: { name: true } })
+    const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+    const inviteUrl = `${baseUrl}/auth/reset-password?token=${token}`
+
+    await sendTenantInviteEmail({
+      tenantEmail: tenant.email,
+      tenantName: tenant.name,
+      companyName: company?.name ?? 'ImmoManage',
+      inviteUrl,
+      expiresHours: 72,
+    })
+
+    return { success: true, data: undefined }
   })
 }
 

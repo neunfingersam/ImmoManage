@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card'
 import { TicketStatusBadge, TicketPriorityBadge } from '@/components/tickets/TicketStatusBadge'
 import { TicketCommentForm } from '@/components/tickets/TicketCommentForm'
 import { TicketStatusForm } from '@/components/tickets/TicketStatusForm'
-import { getTicket, updateTicketStatus, addComment } from '../_actions'
+import { getTicket, updateTicketStatus, addComment, updateRepairCost } from '../_actions'
+import { RepairCostForm } from '@/components/tickets/RepairCostForm'
 
 export default async function TicketDetailPage({ params }: { params: Promise<{ ticketId: string }> }) {
   const { ticketId } = await params
@@ -23,6 +24,11 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
   async function handleComment(data: { text: string }) {
     'use server'
     return addComment(ticketId, data)
+  }
+
+  async function handleRepairCost(cost: number | null) {
+    'use server'
+    return updateRepairCost(ticketId, cost)
   }
 
   return (
@@ -53,6 +59,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
 
       <Card className="p-4 space-y-3">
         <TicketStatusForm currentStatus={ticket.status} onUpdate={handleStatusUpdate} />
+        <RepairCostForm currentCost={(ticket as any).repairCost ?? null} onUpdate={handleRepairCost} />
       </Card>
 
       <div className="space-y-4">
