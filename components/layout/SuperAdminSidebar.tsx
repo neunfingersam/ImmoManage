@@ -4,15 +4,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { BarChart3, Building, UserCog, ScrollText, Building2 } from 'lucide-react'
+import { LayoutDashboard, Building, UserCog, ScrollText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
 const navItems = [
-  { key: 'overview', path: '/superadmin', icon: BarChart3 },
+  { key: 'overview', path: '/superadmin', icon: LayoutDashboard },
   { key: 'companies', path: '/superadmin/companies', icon: Building },
   { key: 'admins', path: '/superadmin/admins', icon: UserCog },
-  { key: 'stats', path: '/superadmin/stats', icon: BarChart3 },
   { key: 'logs', path: '/superadmin/logs', icon: ScrollText },
 ]
 
@@ -23,14 +22,10 @@ function SuperAdminNavLinks() {
 
   return (
     <>
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary">
-          <Building2 className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <div>
-          <p className="font-serif text-base text-foreground leading-tight">ImmoManage</p>
-          <p className="text-xs text-primary font-medium">{t('platformAdmin')}</p>
-        </div>
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
+        <p className="text-xs text-primary font-medium">{t('platformAdmin')}</p>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">
