@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Minus, X, Loader2 } from 'lucide-react'
+import { Check, Minus, X, Loader2, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 const plans = [
   {
@@ -32,7 +34,7 @@ const plans = [
     price: 39,
     priceNote: 'pro Monat',
     highlight: false,
-    cta: 'Jetzt anfragen',
+    cta: 'Jetzt registrieren',
     features: {
       properties: 'bis 5 Objekte',
       units: 'bis 25 Einheiten',
@@ -52,7 +54,7 @@ const plans = [
     price: 79,
     priceNote: 'pro Monat',
     highlight: true,
-    cta: 'Jetzt anfragen',
+    cta: 'Jetzt registrieren',
     features: {
       properties: 'unbegrenzt',
       units: 'unbegrenzt',
@@ -101,54 +103,94 @@ const featureLabels: Record<string, string> = {
   support: 'Support',
 }
 
-interface ModalState {
-  open: boolean
-  planKey: string
-  planLabel: string
-}
-
-interface FormState {
-  name: string
-  email: string
-  phone: string
-  company: string
-  consent: boolean
-}
-
 const inputClass =
   'w-full rounded-xl border border-[#E8734A20] bg-white px-4 py-3 text-[#1A1A2E] placeholder-[#1A1A2E]/30 outline-none text-sm transition-all focus:ring-2 focus:ring-[#E8734A]/30 focus:border-[#E8734A]'
 
 export default function PricingCards() {
   const locale = useLocale()
-  const [modal, setModal] = useState<ModalState>({ open: false, planKey: '', planLabel: '' })
-  const [form, setForm] = useState<FormState>({ name: '', email: '', phone: '', company: '', consent: false })
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const router = useRouter()
 
-  function openModal(planKey: string, planLabel: string) {
-    setModal({ open: true, planKey, planLabel })
+  const [modalPlan, setModalPlan] = useState<{ key: string; label: string } | null>(null)
+  const [form, setForm] = useState({ name: '', email: '', password: '', companyName: '', consent: false })
+  const [showPw, setShowPw] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  function openModal(key: string, label: string) {
+    setModalPlan({ key, label })
     setStatus('idle')
-    setForm({ name: '', email: '', phone: '', company: '', consent: false })
+    setErrorMsg('')
+    setForm({ name: '', email: '', password: '', companyName: '', consent: false })
   }
 
   function closeModal() {
-    setModal(m => ({ ...m, open: false }))
+    setModalPlan(null)
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('loading')
+    setErrorMsg('')
+
+    // Enterprise → just send contact request, no account creation
+    if (modalPlan?.key === 'ENTERPRISE') {
+      try {
+        const res = await fetch('/api/plan-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            company: form.companyName,
+            plan: 'ENTERPRISE',
+            consent: form.consent,
+          }),
+        })
+        if (!res.ok) throw new Error()
+        closeModal()
+        alert('Danke! Wir melden uns innerhalb von 24 Stunden bei Ihnen.')
+      } catch {
+        setErrorMsg('Fehler beim Senden. Bitte versuchen Sie es erneut.')
+        setStatus('error')
+      }
+      return
+    }
+
+    // STANDARD / PRO → self-registration
     try {
-      const res = await fetch('/api/plan-request', {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, plan: modal.planKey }),
+        body: JSON.stringify({ ...form, plan: modalPlan?.key }),
       })
-      if (!res.ok) throw new Error()
-      setStatus('success')
+      const data = await res.json()
+      if (!res.ok) {
+        setErrorMsg(data.error ?? 'Registrierung fehlgeschlagen')
+        setStatus('error')
+        return
+      }
+
+      // Auto-login
+      const result = await signIn('credentials', {
+        email: form.email,
+        password: form.password,
+        redirect: false,
+      })
+
+      if (result?.ok) {
+        router.push(`/${locale}/dashboard`)
+      } else {
+        // Login failed but account was created — send to login page
+        closeModal()
+        router.push(`/${locale}/auth/login?registered=1`)
+      }
     } catch {
+      setErrorMsg('Fehler bei der Registrierung. Bitte versuchen Sie es erneut.')
       setStatus('error')
     }
   }
+
+  const isEnterprise = modalPlan?.key === 'ENTERPRISE'
 
   return (
     <>
@@ -191,11 +233,9 @@ export default function PricingCards() {
               {Object.entries(plan.features).map(([key, value]) => (
                 <li key={key} className="flex items-start gap-2 text-sm text-[#1A1A2E]/70">
                   {typeof value === 'boolean' ? (
-                    value ? (
-                      <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#E8734A' }} />
-                    ) : (
-                      <Minus className="h-4 w-4 mt-0.5 flex-shrink-0 text-[#1A1A2E]/20" />
-                    )
+                    value
+                      ? <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#E8734A' }} />
+                      : <Minus className="h-4 w-4 mt-0.5 flex-shrink-0 text-[#1A1A2E]/20" />
                   ) : (
                     <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#E8734A' }} />
                   )}
@@ -233,14 +273,13 @@ export default function PricingCards() {
       </div>
 
       {/* Modal */}
-      {modal.open && (
+      {modalPlan && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
           style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
           onClick={(e) => { if (e.target === e.currentTarget) closeModal() }}
         >
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-            {/* Close */}
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl my-8">
             <button
               onClick={closeModal}
               className="absolute right-4 top-4 rounded-lg p-1.5 text-[#1A1A2E]/40 hover:bg-[#E8734A]/10 hover:text-[#E8734A] transition-colors"
@@ -248,104 +287,114 @@ export default function PricingCards() {
               <X className="h-4 w-4" />
             </button>
 
-            {status === 'success' ? (
-              <div className="flex flex-col items-center gap-4 py-8 text-center">
-                <div
-                  className="flex h-16 w-16 items-center justify-center rounded-full text-3xl"
-                  style={{ backgroundColor: '#E8734A15' }}
-                >
-                  ✓
-                </div>
-                <p className="text-lg font-semibold text-[#1A1A2E]">Anfrage gesendet!</p>
-                <p className="text-sm text-[#1A1A2E]/60">Wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
-                <button
-                  onClick={closeModal}
-                  className="mt-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white"
-                  style={{ backgroundColor: '#E8734A' }}
-                >
-                  Schliessen
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="mb-5">
-                  <span
-                    className="inline-block rounded-full px-3 py-1 text-xs font-bold text-white mb-3"
-                    style={{ backgroundColor: '#E8734A' }}
-                  >
-                    {modal.planLabel}-Plan
-                  </span>
-                  <h2 className="text-xl font-bold text-[#1A1A2E]">Anfrage senden</h2>
-                  <p className="text-sm text-[#1A1A2E]/55 mt-1">
-                    Wir kontaktieren Sie innerhalb von 24 Stunden und richten Ihren Account ein.
-                  </p>
-                </div>
+            <div className="mb-5">
+              <span
+                className="inline-block rounded-full px-3 py-1 text-xs font-bold text-white mb-3"
+                style={{ backgroundColor: '#E8734A' }}
+              >
+                {modalPlan.label}-Plan
+              </span>
+              <h2 className="text-xl font-bold text-[#1A1A2E]">
+                {isEnterprise ? 'Anfrage senden' : 'Account erstellen'}
+              </h2>
+              <p className="text-sm text-[#1A1A2E]/55 mt-1">
+                {isEnterprise
+                  ? 'Wir kontaktieren Sie innerhalb von 24 Stunden.'
+                  : 'Konto anlegen und direkt starten — in unter 1 Minute.'}
+              </p>
+            </div>
 
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <input
-                    required
-                    type="text"
-                    placeholder="Ihr Name *"
-                    value={form.name}
-                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    className={inputClass}
-                  />
-                  <input
-                    required
-                    type="email"
-                    placeholder="E-Mail Adresse *"
-                    value={form.email}
-                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    className={inputClass}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Telefon (optional)"
-                    value={form.phone}
-                    onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                    className={inputClass}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Firma / Name der Verwaltung (optional)"
-                    value={form.company}
-                    onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                    className={inputClass}
-                  />
-
-                  <label className="flex items-start gap-3 cursor-pointer pt-1">
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                required
+                type="text"
+                placeholder="Ihr Name *"
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                className={inputClass}
+              />
+              <input
+                required
+                type="email"
+                placeholder="E-Mail Adresse *"
+                value={form.email}
+                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                className={inputClass}
+              />
+              {!isEnterprise && (
+                <>
+                  <div className="relative">
                     <input
                       required
-                      type="checkbox"
-                      checked={form.consent}
-                      onChange={e => setForm(f => ({ ...f, consent: e.target.checked }))}
-                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#E8734A]"
+                      type={showPw ? 'text' : 'password'}
+                      placeholder="Passwort (min. 6 Zeichen) *"
+                      minLength={6}
+                      value={form.password}
+                      onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                      className={inputClass + ' pr-11'}
                     />
-                    <span className="text-xs text-[#1A1A2E]/55 leading-relaxed">
-                      Ich habe die{' '}
-                      <Link href={`/${locale}/datenschutz`} target="_blank" className="underline hover:text-[#E8734A]">
-                        Datenschutzerklärung
-                      </Link>{' '}
-                      gelesen und bin damit einverstanden, dass meine Daten zur Bearbeitung meiner Anfrage verwendet werden.
-                    </span>
-                  </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPw(v => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1A1A2E]/30 hover:text-[#1A1A2E]/60"
+                      tabIndex={-1}
+                    >
+                      {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Name Ihrer Verwaltung / Firma *"
+                    value={form.companyName}
+                    onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))}
+                    className={inputClass}
+                  />
+                </>
+              )}
 
-                  {status === 'error' && (
-                    <p className="text-sm text-red-500">Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.</p>
-                  )}
+              <label className="flex items-start gap-3 cursor-pointer pt-1">
+                <input
+                  required
+                  type="checkbox"
+                  checked={form.consent}
+                  onChange={e => setForm(f => ({ ...f, consent: e.target.checked }))}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#E8734A]"
+                />
+                <span className="text-xs text-[#1A1A2E]/55 leading-relaxed">
+                  Ich habe die{' '}
+                  <Link href={`/${locale}/datenschutz`} target="_blank" className="underline hover:text-[#E8734A]">
+                    Datenschutzerklärung
+                  </Link>{' '}
+                  gelesen und stimme der Verarbeitung meiner Daten zu.
+                </span>
+              </label>
 
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 flex items-center justify-center gap-2"
-                    style={{ backgroundColor: '#E8734A' }}
-                  >
-                    {status === 'loading' && <Loader2 className="h-4 w-4 animate-spin" />}
-                    {status === 'loading' ? 'Senden...' : 'Anfrage absenden'}
-                  </button>
-                </form>
-              </>
-            )}
+              {errorMsg && (
+                <p className="text-sm text-red-500 rounded-lg bg-red-50 px-3 py-2">{errorMsg}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
+                style={{ backgroundColor: '#E8734A' }}
+              >
+                {status === 'loading' && <Loader2 className="h-4 w-4 animate-spin" />}
+                {status === 'loading'
+                  ? isEnterprise ? 'Senden...' : 'Account wird erstellt...'
+                  : isEnterprise ? 'Anfrage absenden' : 'Account erstellen & starten'}
+              </button>
+
+              {!isEnterprise && (
+                <p className="text-center text-xs text-[#1A1A2E]/40 pt-1">
+                  Bereits registriert?{' '}
+                  <Link href={`/${locale}/auth/login`} className="underline hover:text-[#E8734A]">
+                    Anmelden
+                  </Link>
+                </p>
+              )}
+            </form>
           </div>
         </div>
       )}
