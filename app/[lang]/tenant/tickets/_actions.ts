@@ -63,7 +63,7 @@ export async function createTicket(data: TicketFormValues): Promise<ActionResult
         description: parsed.data.description,
         priority: parsed.data.priority,
         status: 'OPEN',
-        images: JSON.stringify([]),
+        images: JSON.stringify(parsed.data.images ?? []),
       },
     })
     revalidatePath('/tenant/tickets')
