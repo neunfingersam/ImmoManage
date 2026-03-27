@@ -247,27 +247,17 @@ export default function PricingCards() {
               ))}
             </ul>
 
-            {plan.key === 'STARTER' ? (
-              <Link
-                href={`/${locale}/auth/login`}
-                className="block text-center rounded-xl py-2.5 text-sm font-semibold transition-all"
-                style={{ backgroundColor: '#E8734A10', color: '#E8734A' }}
-              >
-                {plan.cta}
-              </Link>
-            ) : (
-              <button
-                onClick={() => openModal(plan.key, plan.label)}
-                className="block w-full text-center rounded-xl py-2.5 text-sm font-semibold transition-all hover:opacity-90"
-                style={
-                  plan.highlight
-                    ? { backgroundColor: '#E8734A', color: '#fff' }
-                    : { backgroundColor: '#E8734A10', color: '#E8734A' }
-                }
-              >
-                {plan.cta}
-              </button>
-            )}
+            <button
+              onClick={() => openModal(plan.key, plan.label)}
+              className="block w-full text-center rounded-xl py-2.5 text-sm font-semibold transition-all hover:opacity-90"
+              style={
+                plan.highlight
+                  ? { backgroundColor: '#E8734A', color: '#fff' }
+                  : { backgroundColor: '#E8734A10', color: '#E8734A' }
+              }
+            >
+              {plan.cta}
+            </button>
           </div>
         ))}
       </div>
