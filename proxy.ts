@@ -29,8 +29,11 @@ export async function proxy(req: NextRequest) {
 
   // Public routes: always allow through (intl handles locale prefix)
   if (
+    internalPath === '/' ||
     internalPath.startsWith('/auth') ||
     internalPath.startsWith('/403') ||
+    internalPath.startsWith('/datenschutz') ||
+    internalPath.startsWith('/impressum') ||
     pathname.startsWith('/auth') ||
     pathname.startsWith('/403')
   ) {
@@ -52,6 +55,14 @@ export async function proxy(req: NextRequest) {
 
   if (internalPath.startsWith('/tenant') && role !== 'MIETER') {
     return NextResponse.redirect(new URL(`/${locale}/403`, req.url))
+  }
+
+  if (internalPath.startsWith('/owner') && role !== 'EIGENTUEMER') {
+    return NextResponse.redirect(new URL(`/${locale}/403`, req.url))
+  }
+
+  if (internalPath.startsWith('/dashboard') && role === 'EIGENTUEMER') {
+    return NextResponse.redirect(new URL(`/${locale}/owner`, req.url))
   }
 
   if (internalPath.startsWith('/superadmin') && role !== 'SUPER_ADMIN') {

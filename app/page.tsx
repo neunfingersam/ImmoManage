@@ -12,7 +12,7 @@ export default async function RootPage() {
   const session = await getServerSession(authOptions)
 
   if (!session) {
-    redirect(`/${DEFAULT}/auth/login`)
+    redirect(`/${DEFAULT}`)
   }
 
   switch (session.user.role) {
