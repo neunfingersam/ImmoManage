@@ -36,6 +36,7 @@ export async function proxy(req: NextRequest) {
     internalPath.startsWith('/403') ||
     internalPath.startsWith('/datenschutz') ||
     internalPath.startsWith('/impressum') ||
+    internalPath.startsWith('/preise') ||
     pathname.startsWith('/auth') ||
     pathname.startsWith('/403')
   ) {

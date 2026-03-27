@@ -25,6 +25,12 @@ export default function LandingNav() {
         <div className="hidden items-center gap-4 sm:flex">
           <LocaleSwitcher />
           <Link
+            href={`/${locale}/preise`}
+            className="text-sm font-medium text-[#1A1A2E]/60 hover:text-[#1A1A2E] transition-colors"
+          >
+            {t('pricing')}
+          </Link>
+          <Link
             href={`/${locale}/auth/login`}
             className="text-sm font-medium text-[#1A1A2E]/60 hover:text-[#1A1A2E] transition-colors"
           >
@@ -56,6 +62,13 @@ export default function LandingNav() {
       {open && (
         <div className="border-t border-[#E8734A]/10 bg-[#FAFAF8] px-6 pb-4 sm:hidden">
           <div className="flex flex-col gap-3 pt-3">
+            <Link
+              href={`/${locale}/preise`}
+              onClick={() => setOpen(false)}
+              className="rounded-xl border border-[#E8734A]/20 px-4 py-3 text-center text-sm font-medium text-[#1A1A2E] hover:bg-[#E8734A]/5 transition-colors"
+            >
+              {t('pricing')}
+            </Link>
             <Link
               href={`/${locale}/auth/login`}
               onClick={() => setOpen(false)}

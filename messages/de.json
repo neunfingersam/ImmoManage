@@ -382,7 +382,7 @@
     "hostingBody": "Diese Website wird gehostet bei Vercel Inc., 340 Pine Street, Suite 701, San Francisco, CA 94104, USA."
   },
   "landing": {
-    "nav": { "bookDemo": "Demo buchen", "login": "Anmelden" },
+    "nav": { "bookDemo": "Demo buchen", "login": "Anmelden", "pricing": "Preise" },
     "hero": {
       "headline": "Schluss mit Zettelwirtschaft.",
       "headlineAccent": "Willkommen bei ImmoManage.",
