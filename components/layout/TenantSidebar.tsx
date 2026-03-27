@@ -4,7 +4,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { Home, AlertCircle, FolderOpen, MessageSquare, CalendarDays, Gauge, UserCircle, Building, Bot } from 'lucide-react'
+import { Home, AlertCircle, FolderOpen, MessageSquare, CalendarDays, Gauge, UserCircle, Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
@@ -72,11 +72,9 @@ function TenantNavLinks({ upcomingEventsCount = 0 }: { upcomingEventsCount?: num
 export function TenantSidebar({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {
   return (
     <aside className="hidden md:flex h-full w-64 flex-col bg-card border-r border-border">
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary">
-          <Building className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <p className="font-serif text-base text-foreground">ImmoManage</p>
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
       </div>
       <TenantNavLinks upcomingEventsCount={upcomingEventsCount} />
     </aside>
@@ -86,11 +84,9 @@ export function TenantSidebar({ upcomingEventsCount = 0 }: { upcomingEventsCount
 export function TenantMobileNav({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {
   return (
     <MobileNavTrigger>
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary">
-          <Building className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <p className="font-serif text-base text-foreground">ImmoManage</p>
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
       </div>
       <TenantNavLinks upcomingEventsCount={upcomingEventsCount} />
     </MobileNavTrigger>
