@@ -8,6 +8,7 @@ import { propertySchema, type PropertyFormValues } from '@/lib/schemas/property'
 import { unitSchema, type UnitFormValues } from '@/lib/schemas/unit'
 import type { ActionResult } from '@/lib/action-result'
 import type { Property, Unit } from '@/lib/generated/prisma'
+import { getPlanLimits } from '@/lib/plan-limits'
 
 export async function getProperties() {
   const session = await getAuthSession()
@@ -91,6 +92,17 @@ export async function createProperty(data: PropertyFormValues): Promise<ActionRe
     const parsed = propertySchema.safeParse(data)
     if (!parsed.success) return { success: false, error: (parsed.error as any).issues?.[0]?.message ?? parsed.error.message }
 
+    // Plan limit check
+    const company = await prisma.company.findUnique({ where: { id: session.user.companyId } })
+    if (!company) return { success: false, error: 'Company nicht gefunden' }
+    const limits = getPlanLimits(company.plan)
+    if (limits.maxProperties !== null) {
+      const count = await prisma.property.count({ where: { companyId: session.user.companyId } })
+      if (count >= limits.maxProperties) {
+        return { success: false, error: `Ihr ${limits.label}-Plan erlaubt max. ${limits.maxProperties} Objekt(e). Bitte upgraden Sie Ihren Plan.` }
+      }
+    }
+
     try {
       const property = await prisma.property.create({
         data: {
@@ -164,6 +176,17 @@ export async function createUnit(data: UnitFormValues): Promise<ActionResult<Uni
       where: { id: parsed.data.propertyId, ...getPropertyWhere(session) },
     })
     if (!property) return { success: false, error: 'Immobilie nicht gefunden' }
+
+    // Plan limit check
+    const company = await prisma.company.findUnique({ where: { id: session.user.companyId } })
+    if (!company) return { success: false, error: 'Company nicht gefunden' }
+    const limits = getPlanLimits(company.plan)
+    if (limits.maxUnits !== null) {
+      const count = await prisma.unit.count({ where: { property: { companyId: session.user.companyId } } })
+      if (count >= limits.maxUnits) {
+        return { success: false, error: `Ihr ${limits.label}-Plan erlaubt max. ${limits.maxUnits} Einheit(en). Bitte upgraden Sie Ihren Plan.` }
+      }
+    }
 
     try {
       const unit = await prisma.unit.create({

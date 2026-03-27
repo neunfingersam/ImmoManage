@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import type { ActionResult } from '@/lib/action-result'
-import type { Company } from '@/lib/generated/prisma'
+import type { Company, Plan } from '@/lib/generated/prisma'
 
 const companySchema = z.object({
   name: z.string().min(1, 'Name ist erforderlich'),
@@ -50,6 +50,23 @@ export async function toggleCompanyActive(companyId: string): Promise<ActionResu
     where: { id: companyId },
     data: { active: !company.active },
   })
+  revalidatePath('/superadmin/companies')
+  return { success: true, data: updated }
+}
+
+export async function updateCompanyPlan(companyId: string, plan: Plan): Promise<ActionResult<Company>> {
+  await requireSuperAdmin()
+  const validPlans: Plan[] = ['STARTER', 'STANDARD', 'PRO', 'ENTERPRISE']
+  if (!validPlans.includes(plan)) return { success: false, error: 'Ungültiger Plan' }
+
+  const company = await prisma.company.findUnique({ where: { id: companyId } })
+  if (!company) return { success: false, error: 'Company nicht gefunden' }
+
+  const updated = await prisma.company.update({
+    where: { id: companyId },
+    data: { plan },
+  })
+  revalidatePath(`/superadmin/companies/${companyId}`)
   revalidatePath('/superadmin/companies')
   return { success: true, data: updated }
 }

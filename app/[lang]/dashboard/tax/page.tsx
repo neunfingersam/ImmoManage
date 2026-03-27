@@ -4,6 +4,9 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { computeTaxSummary } from '@/lib/tax'
 import { TaxDashboard } from './TaxDashboard'
+import { prisma } from '@/lib/prisma'
+import { getPlanLimits } from '@/lib/plan-limits'
+import { UpgradeGate } from '@/components/shared/UpgradeGate'
 
 export default async function TaxPage({
   params,
@@ -16,6 +19,13 @@ export default async function TaxPage({
   if (!session?.user?.companyId) {
     const { lang } = await params
     redirect(`/${lang}/auth/login`)
+  }
+
+  // Plan gate
+  const company = await prisma.company.findUnique({ where: { id: session.user.companyId } })
+  const limits = getPlanLimits(company?.plan ?? 'STARTER')
+  if (!limits.features.taxFolder) {
+    return <UpgradeGate feature="Steuermappe" requiredPlan="Pro" />
   }
 
   const { year: yearParam } = await searchParams

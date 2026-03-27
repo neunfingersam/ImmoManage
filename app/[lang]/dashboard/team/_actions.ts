@@ -9,6 +9,7 @@ import { hash } from 'bcryptjs'
 import type { ActionResult } from '@/lib/action-result'
 import type { User } from '@/lib/generated/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
+import { getPlanLimits } from '@/lib/plan-limits'
 
 const createVermieterSchema = z.object({
   name: z.string().min(1, 'Name ist erforderlich'),
@@ -40,6 +41,19 @@ export async function createVermieter(data: { name: string; email: string; passw
   await requireCompanyAccess(session.user.companyId!)
   const parsed = createVermieterSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? 'Fehler' }
+
+  // Plan limit check
+  const company = await prisma.company.findUnique({ where: { id: session.user.companyId! } })
+  if (!company) return { success: false, error: 'Company nicht gefunden' }
+  const limits = getPlanLimits(company.plan)
+  if (limits.maxUsers !== null) {
+    const count = await prisma.user.count({
+      where: { companyId: session.user.companyId!, role: { in: ['ADMIN', 'VERMIETER'] } },
+    })
+    if (count >= limits.maxUsers) {
+      return { success: false, error: `Ihr ${limits.label}-Plan erlaubt max. ${limits.maxUsers} Benutzer. Bitte upgraden Sie Ihren Plan.` }
+    }
+  }
 
   const existing = await prisma.user.findUnique({ where: { email: parsed.data.email } })
   if (existing) return { success: false, error: 'E-Mail bereits registriert' }

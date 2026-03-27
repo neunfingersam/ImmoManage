@@ -136,12 +136,20 @@ enum AccountDeletionStatus {
   REJECTED
 }
 
+enum Plan {
+  STARTER
+  STANDARD
+  PRO
+  ENTERPRISE
+}
+
 model Company {
   id                   String          @id @default(cuid())
   name                 String
   slug                 String          @unique
   logoUrl              String?
   active               Boolean         @default(true)
+  plan                 Plan            @default(STARTER)
   onboardingCompleted  Boolean         @default(false)
   smtpConfig           Json?
   createdAt            DateTime        @default(now())

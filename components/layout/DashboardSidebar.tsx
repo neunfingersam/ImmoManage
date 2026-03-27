@@ -79,16 +79,12 @@ function DashboardNavLinks({ role, companyName }: DashboardSidebarProps) {
   return (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary">
-          <Building className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <div>
-          <p className="font-serif text-base text-foreground leading-tight">ImmoManage</p>
-          {companyName && (
-            <p className="text-xs text-muted-foreground truncate max-w-[130px]">{companyName}</p>
-          )}
-        </div>
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
+        {companyName && (
+          <p className="text-xs text-muted-foreground truncate max-w-[130px]">{companyName}</p>
+        )}
       </div>
 
       {/* Navigation */}

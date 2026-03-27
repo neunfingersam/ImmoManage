@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { getCompanies } from './_actions'
+import { PLAN_LIMITS } from '@/lib/plan-limits'
 
 export default async function CompaniesPage() {
   const companies = await getCompanies()
@@ -28,9 +29,15 @@ export default async function CompaniesPage() {
           {companies.map(c => (
             <Card key={c.id} className="p-4 flex items-center justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <p className="font-medium text-foreground">{c.name}</p>
                   <Badge variant={c.active ? 'default' : 'secondary'}>{c.active ? 'Aktiv' : 'Inaktiv'}</Badge>
+                  <span
+                    className="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                    style={{ backgroundColor: PLAN_LIMITS[c.plan].color }}
+                  >
+                    {PLAN_LIMITS[c.plan].label}
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {c._count.users} Nutzer · {c._count.properties} Immobilien · {c._count.tickets} Tickets
