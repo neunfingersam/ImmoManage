@@ -72,3 +72,28 @@ export async function createTicket(data: TicketFormValues): Promise<ActionResult
     return { success: false, error: 'Fehler beim Erstellen der Meldung' }
   }
 }
+
+export async function addTenantComment(ticketId: string, data: { text: string }): Promise<ActionResult<{ id: string }>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) return { success: false, error: 'Nicht autorisiert' }
+
+  const text = data.text?.trim()
+  if (!text) return { success: false, error: 'Kommentar darf nicht leer sein' }
+
+  const ticket = await prisma.ticket.findFirst({
+    where: { id: ticketId, tenantId: session.user.id },
+    select: { id: true },
+  })
+  if (!ticket) return { success: false, error: 'Meldung nicht gefunden' }
+
+  try {
+    const comment = await prisma.ticketComment.create({
+      data: { ticketId, authorId: session.user.id, text },
+      select: { id: true },
+    })
+    revalidatePath(`/tenant/tickets/${ticketId}`)
+    return { success: true, data: comment }
+  } catch {
+    return { success: false, error: 'Fehler beim Speichern des Kommentars' }
+  }
+}
