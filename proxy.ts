@@ -30,6 +30,8 @@ export async function proxy(req: NextRequest) {
   // Public routes: always allow through (intl handles locale prefix)
   if (
     internalPath === '/' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt' ||
     internalPath.startsWith('/auth') ||
     internalPath.startsWith('/403') ||
     internalPath.startsWith('/datenschutz') ||
@@ -84,6 +86,6 @@ export async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     // Match all paths except Next.js internals and static files (images, fonts, etc.)
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.webp|.*\\.ico|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.otf).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.webp|.*\\.ico|.*\\.xml|.*\\.txt|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.otf).*)',
   ],
 }
