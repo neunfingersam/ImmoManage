@@ -1,7 +1,6 @@
-import { getTranslations } from 'next-intl/server'
-import { Check, Minus } from 'lucide-react'
 import LandingNav from '@/components/landing/LandingNav'
 import LandingFooter from '@/components/landing/LandingFooter'
+import PricingCards from './PricingCards'
 import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,81 +10,6 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-const plans = [
-  {
-    key: 'starter',
-    price: 0,
-    priceNote: 'kostenlos',
-    highlight: false,
-    features: {
-      properties: '1 Objekt',
-      units: 'bis 4 Einheiten',
-      users: '1 Benutzer',
-      tenantPortal: true,
-      tickets: true,
-      documents: true,
-      qrInvoice: false,
-      taxFolder: false,
-      aiAssistant: false,
-      support: 'Community',
-    },
-  },
-  {
-    key: 'standard',
-    price: 39,
-    priceNote: 'pro Monat',
-    highlight: false,
-    features: {
-      properties: 'bis 5 Objekte',
-      units: 'bis 25 Einheiten',
-      users: '2 Benutzer',
-      tenantPortal: true,
-      tickets: true,
-      documents: true,
-      qrInvoice: true,
-      taxFolder: false,
-      aiAssistant: false,
-      support: 'E-Mail',
-    },
-  },
-  {
-    key: 'pro',
-    price: 79,
-    priceNote: 'pro Monat',
-    highlight: true,
-    features: {
-      properties: 'unbegrenzt',
-      units: 'unbegrenzt',
-      users: 'bis 5 Benutzer',
-      tenantPortal: true,
-      tickets: true,
-      documents: true,
-      qrInvoice: true,
-      taxFolder: true,
-      aiAssistant: true,
-      support: 'Priorität',
-    },
-  },
-  {
-    key: 'enterprise',
-    price: null,
-    priceNote: 'auf Anfrage',
-    highlight: false,
-    features: {
-      properties: 'unbegrenzt',
-      units: 'unbegrenzt',
-      users: 'unbegrenzt',
-      tenantPortal: true,
-      tickets: true,
-      documents: true,
-      qrInvoice: true,
-      taxFolder: true,
-      aiAssistant: true,
-      support: 'Dediziert',
-    },
-  },
-]
-
 const competitors = [
   { name: 'Fairwalter', price: '49–199', note: 'CH' },
   { name: 'Rimo R5', price: '59–299', note: 'CH' },
@@ -93,27 +17,7 @@ const competitors = [
   { name: 'ImmoManage', price: '0–79', note: '← Sie sind hier', highlight: true },
 ]
 
-const featureLabels: Record<string, string> = {
-  properties: 'Objekte',
-  units: 'Einheiten',
-  users: 'Benutzer',
-  tenantPortal: 'Mieter-Portal',
-  tickets: 'Schadensmeldungen',
-  documents: 'Dokumente & Vorlagen',
-  qrInvoice: 'QR-Rechnung (CH)',
-  taxFolder: 'Steuermappe',
-  aiAssistant: 'KI-Assistent',
-  support: 'Support',
-}
-
-const planLabels: Record<string, string> = {
-  starter: 'Starter',
-  standard: 'Standard',
-  pro: 'Pro',
-  enterprise: 'Enterprise',
-}
-
-export default async function PreisePage() {
+export default function PreisePage() {
   return (
     <main className="min-h-screen bg-[#FAFAF8]">
       <LandingNav />
@@ -138,78 +42,10 @@ export default async function PreisePage() {
         </p>
       </section>
 
-      {/* Pricing cards */}
+      {/* Pricing cards (interactive) */}
       <section className="pb-16 px-6">
-        <div className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {plans.map((plan) => (
-            <div
-              key={plan.key}
-              className="relative rounded-2xl border p-6 flex flex-col"
-              style={{
-                borderColor: plan.highlight ? '#E8734A' : '#E8734A20',
-                backgroundColor: plan.highlight ? '#fff' : '#fff',
-                boxShadow: plan.highlight ? '0 8px 40px rgba(232,115,74,0.15)' : '0 2px 12px rgba(0,0,0,0.04)',
-              }}
-            >
-              {plan.highlight && (
-                <div
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold text-white"
-                  style={{ backgroundColor: '#E8734A' }}
-                >
-                  Beliebteste Wahl
-                </div>
-              )}
-
-              <div className="mb-6">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#1A1A2E]/40 mb-2">
-                  {planLabels[plan.key]}
-                </p>
-                <div className="flex items-baseline gap-1">
-                  {plan.price !== null ? (
-                    <>
-                      <span className="text-4xl font-bold text-[#1A1A2E]">CHF {plan.price}</span>
-                      <span className="text-sm text-[#1A1A2E]/50">/Mt.</span>
-                    </>
-                  ) : (
-                    <span className="text-2xl font-bold text-[#1A1A2E]">Auf Anfrage</span>
-                  )}
-                </div>
-                <p className="text-xs text-[#1A1A2E]/40 mt-1">{plan.priceNote}</p>
-              </div>
-
-              <ul className="space-y-3 flex-1 mb-6">
-                {Object.entries(plan.features).map(([key, value]) => (
-                  <li key={key} className="flex items-start gap-2 text-sm text-[#1A1A2E]/70">
-                    {typeof value === 'boolean' ? (
-                      value ? (
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#E8734A' }} />
-                      ) : (
-                        <Minus className="h-4 w-4 mt-0.5 flex-shrink-0 text-[#1A1A2E]/20" />
-                      )
-                    ) : (
-                      <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#E8734A' }} />
-                    )}
-                    <span>
-                      <span className="text-[#1A1A2E]/40 text-xs">{featureLabels[key]}: </span>
-                      {typeof value === 'boolean' ? (value ? 'Ja' : '—') : value}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <a
-                href="#demo"
-                className="block text-center rounded-xl py-2.5 text-sm font-semibold transition-all"
-                style={
-                  plan.highlight
-                    ? { backgroundColor: '#E8734A', color: '#fff' }
-                    : { backgroundColor: '#E8734A10', color: '#E8734A' }
-                }
-              >
-                {plan.key === 'enterprise' ? 'Kontakt aufnehmen' : plan.price === 0 ? 'Kostenlos starten' : 'Demo anfragen'}
-              </a>
-            </div>
-          ))}
+        <div className="mx-auto max-w-6xl">
+          <PricingCards />
         </div>
       </section>
 
@@ -217,7 +53,9 @@ export default async function PreisePage() {
       <section className="pb-20 px-6">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-2xl font-bold text-[#1A1A2E] text-center mb-2">Marktvergleich</h2>
-          <p className="text-sm text-center text-[#1A1A2E]/50 mb-8">Monatliche Kosten für eine typische Verwaltung mit 15–20 Einheiten (CHF)</p>
+          <p className="text-sm text-center text-[#1A1A2E]/50 mb-8">
+            Monatliche Kosten für eine typische Verwaltung mit 15–20 Einheiten (CHF)
+          </p>
           <div className="overflow-hidden rounded-2xl border border-[#E8734A20]">
             <table className="w-full text-sm">
               <thead>
@@ -239,9 +77,11 @@ export default async function PreisePage() {
                   >
                     <td className="px-5 py-3 font-medium" style={{ color: c.highlight ? '#E8734A' : '#1A1A2E' }}>
                       {c.name}
-                      {c.highlight && <span className="ml-2 text-xs bg-[#E8734A20] text-[#E8734A] rounded-full px-2 py-0.5">Sie</span>}
+                      {c.highlight && (
+                        <span className="ml-2 text-xs bg-[#E8734A20] text-[#E8734A] rounded-full px-2 py-0.5">Sie</span>
+                      )}
                     </td>
-                    <td className="px-5 py-3 text-right font-mono" style={{ color: c.highlight ? '#E8734A' : '#1A1A2E/70' }}>
+                    <td className="px-5 py-3 text-right font-mono" style={{ color: c.highlight ? '#E8734A' : undefined }}>
                       CHF {c.price}
                     </td>
                     <td className="px-5 py-3 text-right text-[#1A1A2E]/40">{c.note}</td>
@@ -250,7 +90,9 @@ export default async function PreisePage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-[#1A1A2E]/30 text-center mt-3">* Preisangaben basieren auf öffentlich zugänglichen Informationen der Anbieter (Stand 2026). Ohne Gewähr.</p>
+          <p className="text-xs text-[#1A1A2E]/30 text-center mt-3">
+            * Preisangaben basieren auf öffentlich zugänglichen Informationen der Anbieter (Stand 2026). Ohne Gewähr.
+          </p>
         </div>
       </section>
 
@@ -260,22 +102,11 @@ export default async function PreisePage() {
           <h2 className="text-2xl font-bold text-[#1A1A2E] text-center mb-10">Häufige Fragen</h2>
           <div className="space-y-6">
             {[
-              {
-                q: 'Kann ich jederzeit kündigen?',
-                a: 'Ja. Alle Pläne sind monatlich kündbar — ohne Kündigungsfristen oder Mindestlaufzeiten.',
-              },
-              {
-                q: 'Gibt es versteckte Kosten?',
-                a: 'Nein. Der angegebene Preis ist alles. Keine Setup-Gebühren, keine Pro-Einheit-Kosten.',
-              },
-              {
-                q: 'Ist die QR-Rechnung wirklich CH-konform?',
-                a: 'Ja. Wir generieren ISO 20022-konforme QR-Rechnungen mit Referenznummer (QRR) nach SIX-Standard.',
-              },
-              {
-                q: 'Was passiert wenn ich mehr Einheiten bekomme?',
-                a: 'Sie können jederzeit upgraden — der neue Plan gilt ab dem nächsten Monat.',
-              },
+              { q: 'Kann ich jederzeit kündigen?', a: 'Ja. Alle Pläne sind monatlich kündbar — ohne Kündigungsfristen oder Mindestlaufzeiten.' },
+              { q: 'Gibt es versteckte Kosten?', a: 'Nein. Der angegebene Preis ist alles. Keine Setup-Gebühren, keine Pro-Einheit-Kosten.' },
+              { q: 'Ist die QR-Rechnung wirklich CH-konform?', a: 'Ja. Wir generieren ISO 20022-konforme QR-Rechnungen mit Referenznummer (QRR) nach SIX-Standard.' },
+              { q: 'Was passiert wenn ich mehr Einheiten bekomme?', a: 'Sie können jederzeit upgraden — der neue Plan gilt ab dem nächsten Monat.' },
+              { q: 'Wie schnell werde ich nach der Anfrage kontaktiert?', a: 'Wir melden uns innerhalb von 24 Stunden. Ihr Account wird nach Bestätigung sofort eingerichtet.' },
             ].map(({ q, a }) => (
               <div key={q} className="border-b border-[#E8734A10] pb-6 last:border-0">
                 <p className="font-semibold text-[#1A1A2E] mb-2">{q}</p>
@@ -288,7 +119,6 @@ export default async function PreisePage() {
 
       <LandingFooter />
 
-      {/* JSON-LD for pricing page */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -298,16 +128,11 @@ export default async function PreisePage() {
             name: 'ImmoManage',
             applicationCategory: 'BusinessApplication',
             operatingSystem: 'Web',
-            description: 'Schweizer Immobilienverwaltungssoftware für Hausverwaltungen und private Eigentümer',
-            url: 'https://immo-manage.ch',
-            offers: plans.filter(p => p.price !== null).map(p => ({
-              '@type': 'Offer',
-              name: planLabels[p.key],
-              price: p.price,
-              priceCurrency: 'CHF',
-              billingIncrement: 'P1M',
-              url: 'https://immo-manage.ch/de/preise',
-            })),
+            offers: [
+              { '@type': 'Offer', name: 'Starter', price: '0', priceCurrency: 'CHF' },
+              { '@type': 'Offer', name: 'Standard', price: '39', priceCurrency: 'CHF' },
+              { '@type': 'Offer', name: 'Pro', price: '79', priceCurrency: 'CHF' },
+            ],
           }),
         }}
       />
