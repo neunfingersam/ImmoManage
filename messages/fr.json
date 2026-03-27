@@ -321,6 +321,11 @@
     "MIETER": "Locataire",
     "EIGENTUEMER": "Propriétaire"
   },
+  "dataExport": {
+    "title": "Exporter mes données",
+    "description": "Téléchargez toutes les données vous concernant sous forme de fichier JSON (Art. 20 RGPD / Art. 28 LPD).",
+    "button": "Télécharger mes données"
+  },
   "deletion": {
     "title": "Supprimer le compte",
     "description": "Vous pouvez demander la suppression de votre compte. L'administration doit d'abord confirmer la demande.",
@@ -353,8 +358,8 @@
     "s2Body": "Nous collectons des données personnelles (nom, adresse e-mail, message éventuel) lorsque vous remplissez notre formulaire de démo ou vous inscrivez en tant qu'utilisateur. Ces données sont utilisées exclusivement pour traiter votre demande ou fournir notre service.",
     "s3Title": "3. Base juridique",
     "s3Body": "Le traitement est effectué sur la base de votre consentement (Art. 6 al. 1 lit. a RGPD) ou pour l'exécution d'un contrat (Art. 6 al. 1 lit. b RGPD). Pour les utilisateurs en Suisse, la loi fédérale sur la protection des données (LPD) s'applique également.",
-    "s4Title": "4. Transmission à des tiers",
-    "s4Body": "Vos données ne sont pas transmises à des tiers, sauf si cela est nécessaire à l'exécution du contrat (p. ex. hébergeur) ou requis par la loi. Notre hébergement est assuré par Vercel (USA) et Turso (EU/USA). Des contrats de traitement des données sont conclus avec tous les prestataires.",
+    "s4Title": "4. Sous-traitants & transmission à des tiers",
+    "s4Body": "Vos données ne sont pas revendues à des tiers. Pour fournir nos services, nous faisons appel aux sous-traitants suivants, avec lesquels des contrats de traitement des données sont conclus: Vercel Inc. (hébergement, USA), Turso / ChiselStrike Inc. (base de données, UE/USA), Resend Inc. (envoi d'e-mails, USA). Le transfert de données vers les États-Unis s'effectue sur la base des clauses contractuelles types de l'UE (Art. 46 RGPD) et du Swiss-U.S. Data Privacy Framework.",
     "s5Title": "5. Durée de conservation",
     "s5Body": "Les données personnelles ne sont conservées que le temps nécessaire aux finalités concernées ou en vertu d'obligations légales de conservation.",
     "s6Title": "6. Vos droits",
@@ -368,7 +373,7 @@
     "title": "Mentions légales",
     "back": "Retour à l'accueil",
     "companyTitle": "Éditeur",
-    "companyBody": "ImmoManage\nSuisse",
+    "companyBody": "ImmoManage\nKüntwilerstrasse 23\n6343 Rotkreuz\nSuisse",
     "contactTitle": "Contact",
     "contactBody": "E-mail: info@immo-manage.ch\nSite web: www.immo-manage.ch",
     "liabilityTitle": "Limitation de responsabilité",

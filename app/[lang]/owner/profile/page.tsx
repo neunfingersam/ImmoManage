@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { Card } from '@/components/ui/card'
 import { getTranslations } from 'next-intl/server'
 import { DeleteAccountSection } from '@/components/account/DeleteAccountSection'
+import { DataExportSection } from '@/components/account/DataExportSection'
 
 export default async function OwnerProfilePage() {
   const session = await getServerSession(authOptions)
@@ -33,6 +34,7 @@ export default async function OwnerProfilePage() {
           <p className="font-medium text-foreground">{session?.user?.email}</p>
         </div>
       </Card>
+      <DataExportSection />
       <DeleteAccountSection
         hasActiveLease={false}
         alreadyRequested={alreadyRequested}

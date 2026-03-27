@@ -321,6 +321,11 @@
     "MIETER": "Tenant",
     "EIGENTUEMER": "Owner"
   },
+  "dataExport": {
+    "title": "Export My Data",
+    "description": "Download all data stored about you as a JSON file (Art. 20 GDPR / Art. 28 FADP).",
+    "button": "Download my data"
+  },
   "deletion": {
     "title": "Delete Account",
     "description": "You can request the deletion of your account. The property manager must confirm the request first.",
@@ -353,8 +358,8 @@
     "s2Body": "We collect personal data (name, email address, and optionally a message) when you fill out our demo request form or register as a user. This data is used solely to process your request or to provide our service.",
     "s3Title": "3. Legal Basis",
     "s3Body": "Processing is carried out on the basis of your consent (Art. 6(1)(a) GDPR) or for the performance of a contract (Art. 6(1)(b) GDPR). For users in Switzerland, the Swiss Federal Act on Data Protection (FADP) also applies.",
-    "s4Title": "4. Disclosure to Third Parties",
-    "s4Body": "Your data is not passed on to third parties unless required for contract fulfilment (e.g. hosting provider) or required by law. Our hosting is provided by Vercel (USA) and Turso (EU/USA). Data processing agreements are in place with all service providers.",
+    "s4Title": "4. Processors & Disclosure to Third Parties",
+    "s4Body": "Your data is not sold to third parties. To provide our service, we use the following processors, with whom data processing agreements are in place: Vercel Inc. (hosting, USA), Turso / ChiselStrike Inc. (database, EU/USA), Resend Inc. (email delivery, USA). Data transfers to the USA are based on EU Standard Contractual Clauses (Art. 46 GDPR) and the Swiss-U.S. Data Privacy Framework.",
     "s5Title": "5. Retention Period",
     "s5Body": "Personal data is only stored for as long as necessary for the respective purposes or as required by statutory retention obligations.",
     "s6Title": "6. Your Rights",
@@ -368,7 +373,7 @@
     "title": "Imprint",
     "back": "Back to home",
     "companyTitle": "Provider",
-    "companyBody": "ImmoManage\nSwitzerland",
+    "companyBody": "ImmoManage\nKüntwilerstrasse 23\n6343 Rotkreuz\nSwitzerland",
     "contactTitle": "Contact",
     "contactBody": "Email: info@immo-manage.ch\nWebsite: www.immo-manage.ch",
     "liabilityTitle": "Disclaimer",

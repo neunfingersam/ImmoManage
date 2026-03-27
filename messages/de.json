@@ -321,6 +321,11 @@
     "MIETER": "Mieter",
     "EIGENTUEMER": "Eigentümer"
   },
+  "dataExport": {
+    "title": "Meine Daten exportieren",
+    "description": "Laden Sie alle zu Ihrer Person gespeicherten Daten als JSON-Datei herunter (Art. 20 DSGVO / Art. 28 DSG).",
+    "button": "Daten herunterladen"
+  },
   "deletion": {
     "title": "Konto löschen",
     "description": "Sie können die Löschung Ihres Kontos beantragen. Die Verwaltung muss den Antrag zuerst bestätigen.",
@@ -353,8 +358,8 @@
     "s2Body": "Wir erheben personenbezogene Daten (Name, E-Mail-Adresse, ggf. Nachricht), wenn Sie unser Demo-Formular ausfüllen oder sich als Nutzer registrieren. Diese Daten werden ausschliesslich zur Bearbeitung Ihrer Anfrage bzw. zur Erbringung unserer Dienstleistung verwendet.",
     "s3Title": "3. Rechtsgrundlage",
     "s3Body": "Die Verarbeitung erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) oder zur Erfüllung eines Vertrags (Art. 6 Abs. 1 lit. b DSGVO). Für Nutzer in der Schweiz gilt ergänzend das Schweizerische Datenschutzgesetz (DSG).",
-    "s4Title": "4. Weitergabe an Dritte",
-    "s4Body": "Ihre Daten werden nicht an Dritte weitergegeben, es sei denn, dies ist zur Vertragserfüllung erforderlich (z. B. Hosting-Anbieter) oder gesetzlich vorgeschrieben. Unser Hosting erfolgt über Vercel (USA) und Turso (EU/USA). Mit allen Dienstleistern bestehen Auftragsverarbeitungsverträge.",
+    "s4Title": "4. Auftragsverarbeiter & Weitergabe an Dritte",
+    "s4Body": "Ihre Daten werden nicht an Dritte verkauft. Zur Erbringung unserer Dienstleistung setzen wir folgende Auftragsverarbeiter ein, mit denen Auftragsverarbeitungsverträge bestehen: Vercel Inc. (Hosting, USA), Turso / ChiselStrike Inc. (Datenbank, EU/USA), Resend Inc. (E-Mail-Versand, USA). Der Datentransfer in die USA erfolgt auf Basis der EU-Standardvertragsklauseln (Art. 46 DSGVO) bzw. des Swiss-U.S. Data Privacy Framework.",
     "s5Title": "5. Speicherdauer",
     "s5Body": "Personenbezogene Daten werden nur so lange gespeichert, wie es für die jeweiligen Zwecke erforderlich ist oder gesetzliche Aufbewahrungspflichten bestehen.",
     "s6Title": "6. Ihre Rechte",
@@ -368,7 +373,7 @@
     "title": "Impressum",
     "back": "Zurück zur Startseite",
     "companyTitle": "Anbieter",
-    "companyBody": "ImmoManage\nSchweiz",
+    "companyBody": "ImmoManage\nKüntwilerstrasse 23\n6343 Rotkreuz\nSchweiz",
     "contactTitle": "Kontakt",
     "contactBody": "E-Mail: info@immo-manage.ch\nWebsite: www.immo-manage.ch",
     "liabilityTitle": "Haftungsausschluss",

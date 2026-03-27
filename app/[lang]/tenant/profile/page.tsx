@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import { ProfileForm } from './ProfileForm'
 import { DeleteAccountSection } from '@/components/account/DeleteAccountSection'
+import { DataExportSection } from '@/components/account/DataExportSection'
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions)
@@ -39,6 +40,7 @@ export default async function ProfilePage() {
           whatsapp: user.whatsapp ?? '',
         }}
       />
+      <DataExportSection />
       <DeleteAccountSection
         hasActiveLease={hasActiveLease}
         alreadyRequested={alreadyRequested}
