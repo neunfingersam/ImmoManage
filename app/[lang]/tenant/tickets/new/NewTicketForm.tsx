@@ -91,7 +91,12 @@ export function NewTicketForm({ options, action, backPath = '/tenant/tickets' }:
           <Label>Ihre Wohnung</Label>
           <Select defaultValue={options[0]?.unitId} onValueChange={(v) => handleOptionChange(v ?? '')}>
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue>
+                {(value: string) => {
+                  const opt = options.find(o => o.unitId === value)
+                  return opt ? `${opt.propertyName} · ${opt.unitNumber}` : value
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {options.map(o => (
@@ -170,7 +175,9 @@ export function NewTicketForm({ options, action, backPath = '/tenant/tickets' }:
         <Label>Priorität</Label>
         <Select value={watch('priority')} onValueChange={(v) => setValue('priority', (v ?? 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH')}>
           <SelectTrigger>
-            <SelectValue />
+            <SelectValue>
+              {(v: string) => ({ LOW: 'Niedrig', MEDIUM: 'Mittel', HIGH: 'Hoch' }[v] ?? v)}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="LOW">Niedrig</SelectItem>
