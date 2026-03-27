@@ -14,7 +14,7 @@ import {
 import { ticketSchema, type TicketFormValues } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
 import type { Ticket } from '@/lib/generated/prisma'
-import { Camera, Upload, X } from 'lucide-react'
+import { Camera, Upload, X, Home, Building2 } from 'lucide-react'
 
 type Option = { propertyId: string; propertyName: string; unitId: string; unitNumber: string }
 
@@ -36,6 +36,7 @@ export function NewTicketForm({ options, action, backPath = '/tenant/tickets' }:
     resolver: zodResolver(ticketSchema) as any,
     defaultValues: {
       priority: 'MEDIUM',
+      scope: 'UNIT',
       propertyId: options[0]?.propertyId ?? '',
       unitId: options[0]?.unitId ?? '',
     },
@@ -108,6 +109,34 @@ export function NewTicketForm({ options, action, backPath = '/tenant/tickets' }:
           </Select>
         </div>
       )}
+
+      <div className="space-y-2">
+        <Label>Betrifft</Label>
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            { value: 'UNIT', label: 'Meine Wohnung', icon: Home },
+            { value: 'BUILDING', label: 'Ganzes Gebäude', icon: Building2 },
+          ] as const).map(({ value, label, icon: Icon }) => {
+            const selected = watch('scope') === value
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setValue('scope', value)}
+                className={[
+                  'flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors',
+                  selected
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
+                ].join(' ')}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
       <div className="space-y-1">
         <Label htmlFor="title">Titel</Label>

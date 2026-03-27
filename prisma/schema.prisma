@@ -143,6 +143,11 @@ enum Plan {
   ENTERPRISE
 }
 
+enum TicketScope {
+  UNIT
+  BUILDING
+}
+
 model Company {
   id                   String          @id @default(cuid())
   name                 String
@@ -296,6 +301,7 @@ model Ticket {
   description String
   status      TicketStatus @default(OPEN)
   priority    Priority     @default(MEDIUM)
+  scope       TicketScope  @default(UNIT)
   images      Json
   repairCost  Float?
   createdAt   DateTime     @default(now())

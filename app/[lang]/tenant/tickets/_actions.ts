@@ -62,6 +62,7 @@ export async function createTicket(data: TicketFormValues): Promise<ActionResult
         title: parsed.data.title,
         description: parsed.data.description,
         priority: parsed.data.priority,
+        scope: parsed.data.scope,
         status: 'OPEN',
         images: JSON.stringify(parsed.data.images ?? []),
       },

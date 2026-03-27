@@ -6,6 +6,7 @@ export const ticketSchema = z.object({
   propertyId: z.string().min(1, 'Immobilie ist erforderlich'),
   unitId: z.string().optional().nullable(),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).default('MEDIUM'),
+  scope: z.enum(['UNIT', 'BUILDING']).default('UNIT'),
   images: z.array(z.string()).optional().default([]),
 })
 

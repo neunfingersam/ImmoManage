@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, User, MapPin, Clock } from 'lucide-react'
+import { ArrowLeft, User, MapPin, Clock, Home, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { TicketStatusBadge, TicketPriorityBadge } from '@/components/tickets/TicketStatusBadge'
@@ -54,6 +54,10 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
             <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{ticket.property.name}{ticket.unit ? ` · ${ticket.unit.unitNumber}` : ''}</span>
             <span className="flex items-center gap-1"><User className="h-3.5 w-3.5" />{ticket.tenant.name}</span>
             <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{date}</span>
+            {(ticket as any).scope === 'BUILDING'
+              ? <span className="flex items-center gap-1 text-amber-600"><Building2 className="h-3.5 w-3.5" />Ganzes Gebäude</span>
+              : <span className="flex items-center gap-1"><Home className="h-3.5 w-3.5" />Wohnung</span>
+            }
           </div>
         </div>
         <div className="flex items-center gap-2">
