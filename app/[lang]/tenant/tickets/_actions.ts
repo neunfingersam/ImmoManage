@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { ticketSchema, type TicketFormValues } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
-import type { Ticket } from '@/lib/generated/prisma'
+import type { Ticket, TicketComment } from '@/lib/generated/prisma'
 
 export async function getMyTickets() {
   const session = await getServerSession(authOptions)
@@ -73,7 +73,7 @@ export async function createTicket(data: TicketFormValues): Promise<ActionResult
   }
 }
 
-export async function addTenantComment(ticketId: string, data: { text: string }): Promise<ActionResult<{ id: string }>> {
+export async function addTenantComment(ticketId: string, data: { text: string }): Promise<ActionResult<TicketComment>> {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) return { success: false, error: 'Nicht autorisiert' }
 
@@ -89,7 +89,6 @@ export async function addTenantComment(ticketId: string, data: { text: string })
   try {
     const comment = await prisma.ticketComment.create({
       data: { ticketId, authorId: session.user.id, text },
-      select: { id: true },
     })
     revalidatePath(`/tenant/tickets/${ticketId}`)
     return { success: true, data: comment }
