@@ -12,17 +12,23 @@ export default async function NewTicketPage() {
     where: { tenantId: session.user.id, status: 'ACTIVE' },
     include: {
       unit: {
-        include: { property: { select: { id: true, name: true } } },
+        include: { property: { select: { id: true, name: true, address: true } } },
       },
     },
   })
 
-  const options = leases.map(l => ({
-    propertyId: l.unit.property.id,
-    propertyName: l.unit.property.name,
-    unitId: l.unit.id,
-    unitNumber: l.unit.unitNumber,
-  }))
+  const options = leases.map(l => {
+    const unit = l.unit
+    const floorLabel = unit.floor !== null && unit.floor !== undefined
+      ? unit.floor === 0 ? ' (EG)' : ` (${unit.floor}. OG)`
+      : ''
+    return {
+      propertyId: unit.property.id,
+      propertyName: unit.property.address || unit.property.name,
+      unitId: unit.id,
+      unitNumber: `Whg. ${unit.unitNumber}${floorLabel}`,
+    }
+  })
 
   if (options.length === 0) {
     return (

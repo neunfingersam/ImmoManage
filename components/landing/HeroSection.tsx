@@ -1,11 +1,10 @@
-// eslint-disable-next-line @next/next/no-img-element
 import { useTranslations } from 'next-intl'
 
 export default function HeroSection() {
   const t = useTranslations('landing.hero')
 
   return (
-    <section className="relative overflow-hidden bg-[#FAFAF8] py-20 md:py-32">
+    <section className="relative overflow-hidden bg-[#FAFAF8] py-16 md:py-32">
       {/* Background decoration */}
       <div
         className="pointer-events-none absolute -right-32 -top-32 h-[600px] w-[600px] rounded-full opacity-10"
@@ -28,34 +27,36 @@ export default function HeroSection() {
           </span>
         </div>
 
-        <div className="grid items-center gap-12 md:grid-cols-2">
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-12">
           {/* Text */}
-          <div>
-            <h1 className="mb-6 font-heading text-5xl font-bold leading-[1.1] tracking-tight text-[#1A1A2E] md:text-6xl lg:text-7xl">
+          <div className="text-center md:text-left">
+            <h1 className="mb-6 font-heading text-4xl font-bold leading-[1.1] tracking-tight text-[#1A1A2E] sm:text-5xl md:text-6xl lg:text-7xl">
               <span className="block">{t('headline')}</span>
               <span className="block" style={{ color: '#E8734A' }}>
                 {t('headlineAccent')}
               </span>
             </h1>
-            <p className="mb-10 max-w-lg text-lg leading-relaxed text-[#1A1A2E]/60">
+            <p className="mb-8 text-base leading-relaxed text-[#1A1A2E]/60 sm:text-lg md:mb-10 md:max-w-lg">
               {t('subtext')}
             </p>
-            <a
-              href="#demo"
-              className="inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0"
-              style={{ backgroundColor: '#E8734A', boxShadow: '0 8px 30px rgba(232,115,74,0.35)' }}
-            >
-              {t('cta')}
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </a>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start">
+              <a
+                href="#demo"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0"
+                style={{ backgroundColor: '#E8734A', boxShadow: '0 8px 30px rgba(232,115,74,0.35)' }}
+              >
+                {t('cta')}
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
           </div>
 
-          {/* Visual */}
-          <div className="flex justify-center md:justify-end">
+          {/* Visual — hidden on small mobile to save space */}
+          <div className="hidden justify-center sm:flex md:justify-end">
             <div
-              className="relative flex h-72 w-72 items-center justify-center rounded-3xl md:h-80 md:w-80"
+              className="relative flex h-64 w-64 items-center justify-center rounded-3xl md:h-80 md:w-80"
               style={{
                 background: 'linear-gradient(135deg, #fff 0%, #F0E6D3 100%)',
                 boxShadow: '0 25px 80px rgba(232,115,74,0.2), 0 0 0 1px rgba(232,115,74,0.1)',
@@ -65,7 +66,7 @@ export default function HeroSection() {
               <img
                 src="/logo.png"
                 alt="ImmoManage"
-                className="h-auto w-56 drop-shadow-lg"
+                className="h-auto w-48 drop-shadow-lg"
               />
             </div>
           </div>
