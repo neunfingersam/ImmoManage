@@ -60,6 +60,20 @@ export async function recordPaymentAction(data: unknown) {
   revalidatePath('/dashboard/payments')
 }
 
+export async function bulkRecordPaymentsAction(
+  matches: { rentDemandId: string; amount: number; paymentDate: string; note?: string }[]
+) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) throw new Error('Unauthorized')
+
+  for (const m of matches) {
+    await recordPaymentAction(m)
+  }
+
+  revalidatePath('/dashboard/payments')
+  return { count: matches.length }
+}
+
 export async function sendReminderAction(rentDemandId: string) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) throw new Error('Unauthorized')

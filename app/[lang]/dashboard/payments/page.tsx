@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { RentDemandTable } from '@/components/payments/RentDemandTable'
+import { CamtImport } from '@/components/payments/CamtImport'
 import { Button } from '@/components/ui/button'
 import { getTranslations } from 'next-intl/server'
 
@@ -44,6 +45,18 @@ export default async function PaymentsPage() {
     reminderLevel: d.reminders[0]?.level ?? 0,
   }))
 
+  type Row = typeof rows[number]
+  const openDemands = rows
+    .filter((r: Row) => r.status !== 'PAID')
+    .map((r: Row) => ({
+      id: r.id,
+      tenantName: r.tenantName,
+      propertyName: r.propertyName,
+      unitNumber: r.unitNumber,
+      amount: r.amount,
+      month: r.month,
+    }))
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -64,6 +77,19 @@ export default async function PaymentsPage() {
           <p className="text-2xl font-bold text-destructive">{overdueCount}</p>
         </div>
       </div>
+
+      {/* CAMT Import */}
+      {openDemands.length > 0 && (
+        <div className="rounded-xl border p-5 space-y-3">
+          <div>
+            <p className="font-medium text-sm">Zahlungsabgleich via CAMT.053</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Kontoauszug aus dem E-Banking exportieren und hochladen — offene Posten werden automatisch zugeordnet.
+            </p>
+          </div>
+          <CamtImport openDemands={openDemands} />
+        </div>
+      )}
 
       {rows.length === 0 ? (
         <p className="text-muted-foreground">

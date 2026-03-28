@@ -564,8 +564,8 @@
       "title": "Kennen Sie das?",
       "item1Title": "Excel-Tabellen die nie stimmen",
       "item1Desc": "Formeln die brechen, Versionen die sich widersprechen — Stunden verloren.",
-      "item2Title": "QR-Rechnungen manuell erstellen",
-      "item2Desc": "Jeder Mieter, jeder Monat, von Hand. Das kostet Stunden die Sie nicht haben.",
+      "item2Title": "Zahlungseingänge manuell nachverfolgen",
+      "item2Desc": "Kontoauszug durchsuchen, Beträge abgleichen, Tabellen pflegen — jeden Monat aufs Neue.",
       "item3Title": "Mieter anrufen statt digital erledigen",
       "item3Desc": "Reparaturmeldungen per Telefon, Dokumente per Post — obwohl es längst besser geht."
     },
@@ -573,7 +573,7 @@
       "title": "Alles was Sie brauchen — in einer Lösung",
       "f1Title": "Objekte & Einheiten", "f1Desc": "Alle Liegenschaften auf einen Blick. Status, Leerstand, Fotos.",
       "f2Title": "Mieter & Verträge", "f2Desc": "Stammdaten, Mietverträge, Kaution, Mieterwechsel-Assistent.",
-      "f3Title": "Zahlungen & QR-Rechnung", "f3Desc": "CH-konform. CAMT.053 Import. Automatische Mahnungen.",
+      "f3Title": "Zahlungsabgleich & CAMT", "f3Desc": "CAMT.053 Kontoauszug hochladen — Eingänge werden automatisch den Sollstellungen zugeordnet.",
       "f4Title": "Mieter-Portal", "f4Desc": "Tickets, Dokumente, Nachrichten — Ihre Mieter erledigen alles digital.",
       "f5Title": "KI-Assistent", "f5Desc": "Automatisierte Unterstützung im Verwaltungsalltag.",
       "f6Title": "Dokumente & Vorlagen", "f6Desc": "CH-Vorlagen (DE + FR), digitale Ablage, alles auf Knopfdruck."
@@ -613,7 +613,7 @@
       "colLegal": "Rechtliches",
       "linkPricing": "Preise & Pläne",
       "linkLogin": "Anmelden",
-      "linkQr": "QR-Rechnung (CH)",
+      "linkQr": "Zahlungsabgleich (CAMT)",
       "linkTenant": "Mieter-Portal",
       "linkAi": "KI-Assistent",
       "linkDocs": "Dokumente & Vorlagen",

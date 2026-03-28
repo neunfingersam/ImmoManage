@@ -1,10 +1,10 @@
 import { useTranslations } from 'next-intl'
-import { Building2, Users, CreditCard, MessageSquare, Sparkles, FileText } from 'lucide-react'
+import { Building2, Users, FileCheck2, MessageSquare, Sparkles, FileText } from 'lucide-react'
 
 const features = [
   { key: 'f1', Icon: Building2,     color: '#3b82f6', badge: null },
   { key: 'f2', Icon: Users,          color: '#16a34a', badge: null },
-  { key: 'f3', Icon: CreditCard,     color: '#E8734A', badge: 'CH-konform' },
+  { key: 'f3', Icon: FileCheck2,     color: '#E8734A', badge: 'CAMT.053' },
   { key: 'f4', Icon: MessageSquare,  color: '#8b5cf6', badge: null },
   { key: 'f5', Icon: Sparkles,       color: '#E8734A', badge: 'Neu' },
   { key: 'f6', Icon: FileText,       color: '#0d9488', badge: null },
