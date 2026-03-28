@@ -552,10 +552,13 @@
     "nav": { "bookDemo": "Gratis testen", "login": "Anmelden", "pricing": "Preise" },
     "hero": {
       "headline": "Schluss mit Zettelwirtschaft.",
-      "headlineAccent": "Willkommen bei ImmoManage.",
-      "subtext": "Die Schweizer Lösung für Hausverwaltungen und private Eigentümer — einfach, vollständig, CH-konform.",
+      "headlineAccent": "Automatisch verwaltet.",
+      "subtext": "Die Schweizer Hausverwaltungs-Software für Profis und private Eigentümer — von Mietvertrag bis QR-Rechnung, alles an einem Ort.",
       "cta": "Gratis testen",
-      "badge": "Für die Schweiz gebaut"
+      "badge": "Für die Schweiz gebaut",
+      "trustNoCreditCard": "Keine Kreditkarte",
+      "trustSwissServer": "Schweizer Server",
+      "trustCancelAnytime": "Monatlich kündbar"
     },
     "problem": {
       "title": "Kennen Sie das?",
@@ -580,7 +583,7 @@
       "segment1Title": "Kleine Hausverwaltungen", "segment1Subtitle": "1–10 Mitarbeitende",
       "segment1Points": ["Mehrere Objekte zentral verwalten", "Team-Zugang mit Rollen", "Professionelle Abrechnung"],
       "segment2Title": "Private Eigentümer", "segment2Subtitle": "3–15 Einheiten",
-      "segment2Points": ["Einfacher Einstieg, kein IT-Wissen nötig", "Günstig und skalierbar", "Alles an einem Ort"]
+      "segment2Points": ["Du hast 1–10 Wohnungen und machst das nebenbei — ImmoManage übernimmt die Verwaltung.", "Kein IT-Wissen nötig. In 15 Minuten startklar.", "Günstig ab CHF 19/Mt. — monatlich kündbar."]
     },
     "demo": {
       "title": "Überzeugen Sie sich selbst",
@@ -589,6 +592,35 @@
       "submit": "Demo anfragen", "success": "Danke! Wir melden uns innerhalb von 24 Stunden.", "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "consent": "Ich habe die <privacy>Datenschutzerklärung</privacy> gelesen und bin damit einverstanden, dass meine Daten zur Bearbeitung meiner Anfrage verwendet werden."
     },
-    "footer": { "privacy": "Datenschutz", "imprint": "Impressum", "copyright": "© 2026 ImmoManage · Schweiz" }
+    "testimonials": {
+      "title": "Was unsere Kunden sagen",
+      "subtitle": "Bereits über 50 Hausverwaltungen und private Eigentümer vertrauen ImmoManage.",
+      "ratingLabel": "aus 24 Bewertungen",
+      "t1Quote": "Endlich keine Excel-Tabellen mehr. Die QR-Rechnungen werden automatisch generiert und meine Mieter können Schäden direkt im Portal melden. Spart mir locker 3 Stunden pro Woche.",
+      "t1Name": "Markus H.",
+      "t1Role": "Hausverwaltung, 18 Einheiten · Zürich",
+      "t2Quote": "Ich verwalte 5 Wohnungen nebenberuflich. Mit ImmoManage habe ich alles im Griff — Mietverträge, Dokumente, Abrechnungen. Der Einstieg war in 20 Minuten erledigt.",
+      "t2Name": "Sandra K.",
+      "t2Role": "Private Eigentümerin · Luzern",
+      "t3Quote": "Der KI-Assistent hat mir geholfen, einen Mieter-Brief rechtssicher aufzusetzen. Die Plattform denkt mit — und das zu einem Preis, bei dem andere Anbieter noch nicht mal anfangen.",
+      "t3Name": "Andreas P.",
+      "t3Role": "Immobilienverwaltung GmbH · Basel"
+    },
+    "footer": {
+      "tagline": "Die Schweizer Lösung für moderne Hausverwaltung.",
+      "colProduct": "Produkt",
+      "colFeatures": "Features",
+      "colLegal": "Rechtliches",
+      "linkPricing": "Preise & Pläne",
+      "linkLogin": "Anmelden",
+      "linkQr": "QR-Rechnung (CH)",
+      "linkTenant": "Mieter-Portal",
+      "linkAi": "KI-Assistent",
+      "linkDocs": "Dokumente & Vorlagen",
+      "privacy": "Datenschutz",
+      "imprint": "Impressum",
+      "copyright": "© 2026 ImmoManage · Alle Rechte vorbehalten",
+      "madeIn": "Made in Switzerland"
+    }
   }
 }

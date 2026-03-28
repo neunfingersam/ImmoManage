@@ -1,5 +1,79 @@
 import { useTranslations, useLocale } from 'next-intl'
 import Link from 'next/link'
+import { Shield, CreditCard, X } from 'lucide-react'
+
+function DashboardMockup() {
+  return (
+    <div
+      className="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
+      style={{ boxShadow: '0 30px 80px rgba(232,115,74,0.25), 0 0 0 1px rgba(232,115,74,0.12)' }}
+    >
+      {/* Window chrome */}
+      <div className="flex items-center gap-1.5 bg-[#1A1A2E] px-4 py-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+        <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+        <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
+        <span className="ml-3 text-xs text-white/30">immo-manage.ch/dashboard</span>
+      </div>
+      {/* App layout */}
+      <div className="flex bg-[#F7F3EE]" style={{ minHeight: 260 }}>
+        {/* Sidebar */}
+        <div className="w-14 bg-white flex flex-col items-center gap-3 py-4 border-r border-gray-100">
+          {['🏠','👥','📄','🔔','💳'].map((icon, i) => (
+            <div key={i} className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm ${i === 0 ? 'bg-[#E8734A]' : 'hover:bg-gray-50'}`}>
+              {icon}
+            </div>
+          ))}
+        </div>
+        {/* Content */}
+        <div className="flex-1 p-4 space-y-3">
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: 'Objekte', value: '12', color: '#E8734A' },
+              { label: 'Mieter', value: '34', color: '#16a34a' },
+              { label: 'Offen', value: '3', color: '#d97706' },
+            ].map((s) => (
+              <div key={s.label} className="rounded-xl bg-white p-3 shadow-sm">
+                <p className="text-xs text-gray-400">{s.label}</p>
+                <p className="text-lg font-bold" style={{ color: s.color }}>{s.value}</p>
+              </div>
+            ))}
+          </div>
+          {/* List items */}
+          <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+            <div className="px-3 py-2 border-b border-gray-50">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Liegenschaften</p>
+            </div>
+            {[
+              { name: 'Bahnhofstr. 4', units: '6 Einheiten', status: 'Vermietet', ok: true },
+              { name: 'Seeweg 12', units: '4 Einheiten', status: '1 Leer', ok: false },
+              { name: 'Hauptgasse 7', units: '8 Einheiten', status: 'Vermietet', ok: true },
+            ].map((row) => (
+              <div key={row.name} className="flex items-center justify-between px-3 py-2 border-b border-gray-50 last:border-0">
+                <div>
+                  <p className="text-xs font-medium text-gray-700">{row.name}</p>
+                  <p className="text-xs text-gray-400">{row.units}</p>
+                </div>
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${row.ok ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}`}>
+                  {row.status}
+                </span>
+              </div>
+            ))}
+          </div>
+          {/* QR Invoice hint */}
+          <div className="rounded-xl bg-[#E8734A] p-3 flex items-center gap-2">
+            <span className="text-lg">📄</span>
+            <div>
+              <p className="text-xs font-semibold text-white">3 QR-Rechnungen bereit</p>
+              <p className="text-xs text-white/70">April 2026 · CHF 9&apos;450</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function HeroSection() {
   const t = useTranslations('landing.hero')
@@ -29,7 +103,7 @@ export default function HeroSection() {
           </span>
         </div>
 
-        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-12">
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
           {/* Text */}
           <div className="text-center md:text-left">
             <h1 className="mb-6 font-heading text-4xl font-bold leading-[1.1] tracking-tight text-[#1A1A2E] sm:text-5xl md:text-6xl lg:text-7xl">
@@ -53,24 +127,24 @@ export default function HeroSection() {
                 </svg>
               </Link>
             </div>
+            {/* Trust bar */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start">
+              {[
+                { icon: <X className="h-3 w-3" />, text: t('trustNoCreditCard') },
+                { icon: <Shield className="h-3 w-3" />, text: t('trustSwissServer') },
+                { icon: <CreditCard className="h-3 w-3" />, text: t('trustCancelAnytime') },
+              ].map((item) => (
+                <span key={item.text} className="inline-flex items-center gap-1.5 text-xs font-medium text-[#1A1A2E]/50">
+                  <span style={{ color: '#E8734A' }}>{item.icon}</span>
+                  {item.text}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* Visual — hidden on small mobile to save space */}
+          {/* Dashboard Mockup */}
           <div className="hidden justify-center sm:flex md:justify-end">
-            <div
-              className="relative flex h-64 w-64 items-center justify-center rounded-3xl md:h-80 md:w-80"
-              style={{
-                background: 'linear-gradient(135deg, #fff 0%, #F0E6D3 100%)',
-                boxShadow: '0 25px 80px rgba(232,115,74,0.2), 0 0 0 1px rgba(232,115,74,0.1)',
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logo.png"
-                alt="ImmoManage"
-                className="h-auto w-48 drop-shadow-lg"
-              />
-            </div>
+            <DashboardMockup />
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import LandingNav from '@/components/landing/LandingNav'
 import HeroSection from '@/components/landing/HeroSection'
 import ProblemSection from '@/components/landing/ProblemSection'
 import FeaturesSection from '@/components/landing/FeaturesSection'
+import TestimonialsSection from '@/components/landing/TestimonialsSection'
 import ForWhomSection from '@/components/landing/ForWhomSection'
 import DemoCtaSection from '@/components/landing/DemoCtaSection'
 import LandingFooter from '@/components/landing/LandingFooter'
@@ -37,6 +38,7 @@ export default async function LocaleRootPage({
       <HeroSection />
       <ProblemSection />
       <FeaturesSection />
+      <TestimonialsSection />
       <ForWhomSection />
       <DemoCtaSection />
       <LandingFooter />
