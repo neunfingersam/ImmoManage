@@ -2,6 +2,7 @@ import { Receipt, FileDown } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { BillForm } from '@/components/billing/BillForm'
+import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton'
 import { getBills, getLeasesForBilling } from './_actions'
 
 export default async function BillingPage() {
@@ -9,9 +10,12 @@ export default async function BillingPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="font-serif text-2xl text-foreground">Nebenkostenabrechnung</h1>
-        <p className="text-sm text-muted-foreground mt-1">{bills.length} Abrechnungen</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="font-serif text-2xl text-foreground">Nebenkostenabrechnung</h1>
+          <p className="text-sm text-muted-foreground mt-1">{bills.length} Abrechnungen</p>
+        </div>
+        <ManageSubscriptionButton />
       </div>
 
       <section className="space-y-3">
