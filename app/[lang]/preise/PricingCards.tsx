@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Check, Minus, X, Loader2, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
@@ -11,10 +11,9 @@ const plans = [
   {
     key: 'STARTER',
     label: 'Starter',
-    price: 0,
-    priceNote: 'kostenlos',
+    price: 19,
+    trial: true,
     highlight: false,
-    cta: 'Kostenlos starten',
     features: {
       properties: '1 Objekt',
       units: 'bis 4 Einheiten',
@@ -32,9 +31,8 @@ const plans = [
     key: 'STANDARD',
     label: 'Standard',
     price: 39,
-    priceNote: 'pro Monat',
+    trial: false,
     highlight: false,
-    cta: 'Jetzt registrieren',
     features: {
       properties: 'bis 5 Objekte',
       units: 'bis 25 Einheiten',
@@ -52,9 +50,8 @@ const plans = [
     key: 'PRO',
     label: 'Pro',
     price: 79,
-    priceNote: 'pro Monat',
+    trial: false,
     highlight: true,
-    cta: 'Jetzt registrieren',
     features: {
       properties: 'unbegrenzt',
       units: 'unbegrenzt',
@@ -72,9 +69,8 @@ const plans = [
     key: 'ENTERPRISE',
     label: 'Enterprise',
     price: null,
-    priceNote: 'auf Anfrage',
+    trial: false,
     highlight: false,
-    cta: 'Kontakt aufnehmen',
     features: {
       properties: 'unbegrenzt',
       units: 'unbegrenzt',
@@ -90,34 +86,35 @@ const plans = [
   },
 ]
 
-const featureLabels: Record<string, string> = {
-  properties: 'Objekte',
-  units: 'Einheiten',
-  users: 'Benutzer',
-  tenantPortal: 'Mieter-Portal',
-  tickets: 'Schadensmeldungen',
-  documents: 'Dokumente & Vorlagen',
-  qrInvoice: 'QR-Rechnung (CH)',
-  taxFolder: 'Steuermappe',
-  aiAssistant: 'KI-Assistent',
-  support: 'Support',
-}
-
 const inputClass =
   'w-full rounded-xl border border-[#E8734A20] bg-white px-4 py-3 text-[#1A1A2E] placeholder-[#1A1A2E]/30 outline-none text-sm transition-all focus:ring-2 focus:ring-[#E8734A]/30 focus:border-[#E8734A]'
 
 export default function PricingCards() {
   const locale = useLocale()
   const router = useRouter()
+  const t = useTranslations('pricing')
 
-  const [modalPlan, setModalPlan] = useState<{ key: string; label: string } | null>(null)
+  const featureLabels: Record<string, string> = {
+    properties: t('featProperties'),
+    units: t('featUnits'),
+    users: t('featUsers'),
+    tenantPortal: t('featTenantPortal'),
+    tickets: t('featTickets'),
+    documents: t('featDocuments'),
+    qrInvoice: t('featQrInvoice'),
+    taxFolder: t('featTaxFolder'),
+    aiAssistant: t('featAiAssistant'),
+    support: t('featSupport'),
+  }
+
+  const [modalPlan, setModalPlan] = useState<{ key: string; label: string; trial: boolean } | null>(null)
   const [form, setForm] = useState({ name: '', email: '', password: '', companyName: '', consent: false })
   const [showPw, setShowPw] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
-  function openModal(key: string, label: string) {
-    setModalPlan({ key, label })
+  function openModal(key: string, label: string, trial: boolean) {
+    setModalPlan({ key, label, trial })
     setStatus('idle')
     setErrorMsg('')
     setForm({ name: '', email: '', password: '', companyName: '', consent: false })
@@ -148,15 +145,15 @@ export default function PricingCards() {
         })
         if (!res.ok) throw new Error()
         closeModal()
-        alert('Danke! Wir melden uns innerhalb von 24 Stunden bei Ihnen.')
+        alert(t('errorContact'))
       } catch {
-        setErrorMsg('Fehler beim Senden. Bitte versuchen Sie es erneut.')
+        setErrorMsg(t('errorSend'))
         setStatus('error')
       }
       return
     }
 
-    // STANDARD / PRO → self-registration
+    // STANDARD / PRO / STARTER → self-registration
     try {
       const res = await fetch('/api/register', {
         method: 'POST',
@@ -165,7 +162,7 @@ export default function PricingCards() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setErrorMsg(data.error ?? 'Registrierung fehlgeschlagen')
+        setErrorMsg(data.error ?? t('errorGeneric'))
         setStatus('error')
         return
       }
@@ -185,12 +182,13 @@ export default function PricingCards() {
         router.push(`/${locale}/auth/login?registered=1`)
       }
     } catch {
-      setErrorMsg('Fehler bei der Registrierung. Bitte versuchen Sie es erneut.')
+      setErrorMsg(t('errorGeneric'))
       setStatus('error')
     }
   }
 
   const isEnterprise = modalPlan?.key === 'ENTERPRISE'
+  const isTrialModal = modalPlan?.trial === true
 
   return (
     <>
@@ -210,23 +208,47 @@ export default function PricingCards() {
                 className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold text-white whitespace-nowrap"
                 style={{ backgroundColor: '#E8734A' }}
               >
-                Beliebteste Wahl
+                {t('mostPopular')}
               </div>
             )}
 
             <div className="mb-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-[#1A1A2E]/40 mb-2">{plan.label}</p>
-              <div className="flex items-baseline gap-1">
-                {plan.price !== null ? (
-                  <>
-                    <span className="text-4xl font-bold text-[#1A1A2E]">CHF {plan.price}</span>
-                    <span className="text-sm text-[#1A1A2E]/50">/Mt.</span>
-                  </>
-                ) : (
-                  <span className="text-2xl font-bold text-[#1A1A2E]">Auf Anfrage</span>
-                )}
-              </div>
-              <p className="text-xs text-[#1A1A2E]/40 mt-1">{plan.priceNote}</p>
+
+              {plan.trial ? (
+                <>
+                  {/* Trial badge */}
+                  <div
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white mb-2"
+                    style={{ backgroundColor: '#E8734A' }}
+                  >
+                    {t('trialBadge')}
+                  </div>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-4xl font-bold text-[#1A1A2E]">CHF 0</span>
+                    <span className="text-sm text-[#1A1A2E]/50">{t('perMonth')}</span>
+                  </div>
+                  <p className="text-xs text-[#1A1A2E]/40 mt-1">
+                    {t('trialNote', { price: plan.price! })}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-1">
+                    {plan.price !== null ? (
+                      <>
+                        <span className="text-4xl font-bold text-[#1A1A2E]">CHF {plan.price}</span>
+                        <span className="text-sm text-[#1A1A2E]/50">{t('perMonth')}</span>
+                      </>
+                    ) : (
+                      <span className="text-2xl font-bold text-[#1A1A2E]">{t('onRequest')}</span>
+                    )}
+                  </div>
+                  {plan.price !== null && (
+                    <p className="text-xs text-[#1A1A2E]/40 mt-1">{t('monthly')}</p>
+                  )}
+                </>
+              )}
             </div>
 
             <ul className="space-y-3 flex-1 mb-6">
@@ -241,14 +263,14 @@ export default function PricingCards() {
                   )}
                   <span>
                     <span className="text-[#1A1A2E]/40 text-xs">{featureLabels[key]}: </span>
-                    {typeof value === 'boolean' ? (value ? 'Ja' : '—') : value}
+                    {typeof value === 'boolean' ? (value ? t('yes') : '—') : value}
                   </span>
                 </li>
               ))}
             </ul>
 
             <button
-              onClick={() => openModal(plan.key, plan.label)}
+              onClick={() => openModal(plan.key, plan.label, plan.trial)}
               className="block w-full text-center rounded-xl py-2.5 text-sm font-semibold transition-all hover:opacity-90"
               style={
                 plan.highlight
@@ -256,7 +278,11 @@ export default function PricingCards() {
                   : { backgroundColor: '#E8734A10', color: '#E8734A' }
               }
             >
-              {plan.cta}
+              {plan.key === 'STARTER'
+                ? t('starterCta')
+                : plan.key === 'ENTERPRISE'
+                  ? t('contactCta')
+                  : t('registerCta')}
             </button>
           </div>
         ))}
@@ -285,12 +311,14 @@ export default function PricingCards() {
                 {modalPlan.label}-Plan
               </span>
               <h2 className="text-xl font-bold text-[#1A1A2E]">
-                {isEnterprise ? 'Anfrage senden' : 'Account erstellen'}
+                {isEnterprise ? t('modalTitleEnterprise') : t('modalTitle')}
               </h2>
               <p className="text-sm text-[#1A1A2E]/55 mt-1">
                 {isEnterprise
-                  ? 'Wir kontaktieren Sie innerhalb von 24 Stunden.'
-                  : 'Konto anlegen und direkt starten — in unter 1 Minute.'}
+                  ? t('modalSubtitleEnterprise')
+                  : isTrialModal
+                    ? t('modalSubtitleTrial')
+                    : t('modalSubtitle')}
               </p>
             </div>
 
@@ -298,7 +326,7 @@ export default function PricingCards() {
               <input
                 required
                 type="text"
-                placeholder="Ihr Name *"
+                placeholder={t('nameLabel')}
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 className={inputClass}
@@ -306,7 +334,7 @@ export default function PricingCards() {
               <input
                 required
                 type="email"
-                placeholder="E-Mail Adresse *"
+                placeholder={t('emailLabel')}
                 value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                 className={inputClass}
@@ -317,7 +345,7 @@ export default function PricingCards() {
                     <input
                       required
                       type={showPw ? 'text' : 'password'}
-                      placeholder="Passwort (min. 6 Zeichen) *"
+                      placeholder={t('passwordLabel')}
                       minLength={6}
                       value={form.password}
                       onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
@@ -335,7 +363,7 @@ export default function PricingCards() {
                   <input
                     required
                     type="text"
-                    placeholder="Name Ihrer Verwaltung / Firma *"
+                    placeholder={t('companyLabel')}
                     value={form.companyName}
                     onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))}
                     className={inputClass}
@@ -352,11 +380,13 @@ export default function PricingCards() {
                   className="mt-0.5 h-4 w-4 shrink-0 accent-[#E8734A]"
                 />
                 <span className="text-xs text-[#1A1A2E]/55 leading-relaxed">
-                  Ich habe die{' '}
-                  <Link href={`/${locale}/datenschutz`} target="_blank" className="underline hover:text-[#E8734A]">
-                    Datenschutzerklärung
-                  </Link>{' '}
-                  gelesen und stimme der Verarbeitung meiner Daten zu.
+                  {t.rich('consentText', {
+                    privacy: (chunks) => (
+                      <Link href={`/${locale}/datenschutz`} target="_blank" className="underline hover:text-[#E8734A]">
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
                 </span>
               </label>
 
@@ -372,15 +402,15 @@ export default function PricingCards() {
               >
                 {status === 'loading' && <Loader2 className="h-4 w-4 animate-spin" />}
                 {status === 'loading'
-                  ? isEnterprise ? 'Senden...' : 'Account wird erstellt...'
-                  : isEnterprise ? 'Anfrage absenden' : 'Account erstellen & starten'}
+                  ? isEnterprise ? t('submittingEnterprise') : t('submitting')
+                  : isEnterprise ? t('submitBtnEnterprise') : t('submitBtn')}
               </button>
 
               {!isEnterprise && (
                 <p className="text-center text-xs text-[#1A1A2E]/40 pt-1">
-                  Bereits registriert?{' '}
+                  {t('alreadyRegistered')}{' '}
                   <Link href={`/${locale}/auth/login`} className="underline hover:text-[#E8734A]">
-                    Anmelden
+                    {t('signIn')}
                   </Link>
                 </p>
               )}

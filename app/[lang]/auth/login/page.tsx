@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Building2 } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,6 +16,7 @@ import { loginSchema, type LoginInput } from '@/lib/schemas/auth'
 
 export default function LoginPage() {
   const router = useRouter()
+  const t = useTranslations('auth')
   const [fehler, setFehler] = useState<string | null>(null)
 
   const {
@@ -35,7 +37,7 @@ export default function LoginPage() {
     })
 
     if (ergebnis?.error) {
-      setFehler('E-Mail oder Passwort ist falsch.')
+      setFehler(t('loginError'))
       return
     }
 
@@ -54,7 +56,7 @@ export default function LoginPage() {
           </div>
           <h1 className="font-serif text-3xl text-foreground">ImmoManage</h1>
           <p className="mt-2 text-muted-foreground">
-            Melde dich an, um fortzufahren.
+            {t('loginSubtitle')}
           </p>
         </div>
 
@@ -63,11 +65,11 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* E-Mail */}
             <div className="space-y-1.5">
-              <Label htmlFor="email">E-Mail-Adresse</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@beispiel.de"
+                placeholder={t('emailPlaceholder')}
                 autoComplete="email"
                 aria-describedby="email-error"
                 {...register('email')}
@@ -80,11 +82,11 @@ export default function LoginPage() {
 
             {/* Passwort */}
             <div className="space-y-1.5">
-              <Label htmlFor="password">Passwort</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Dein Passwort"
+                placeholder={t('passwordPlaceholder')}
                 autoComplete="current-password"
                 aria-describedby="password-error"
                 {...register('password')}
@@ -98,7 +100,7 @@ export default function LoginPage() {
             {/* Passwort vergessen */}
             <div className="text-right">
               <Link href="/auth/forgot-password" className="text-sm text-[#E8734A] hover:underline">
-                Passwort vergessen?
+                {t('forgotPassword')}
               </Link>
             </div>
 
@@ -118,10 +120,10 @@ export default function LoginPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Anmelden...
+                  {t('loggingIn')}
                 </>
               ) : (
-                'Anmelden'
+                t('login')
               )}
             </Button>
           </form>
