@@ -58,7 +58,10 @@ export async function POST(req: NextRequest) {
       const customerId = typeof subscription.customer === 'string'
         ? subscription.customer : subscription.customer?.id
       if (!customerId) break
-      const newStatus = statusMap[subscription.status]
+      // If cancel_at_period_end is set, treat as cancelled so admin can request deletion
+      const newStatus = subscription.cancel_at_period_end
+        ? 'CANCELLED'
+        : statusMap[subscription.status]
       if (!newStatus) break
       await prisma.company.updateMany({
         where: { stripeCustomerId: customerId },

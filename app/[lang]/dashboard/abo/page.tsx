@@ -3,6 +3,8 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton'
+import { RequestDeletionButton } from '@/components/billing/RequestDeletionButton'
+import { getMyDeletionRequest } from '@/lib/account-deletion-actions'
 import { CreditCard, CheckCircle2, Clock, AlertTriangle, XCircle, Ban } from 'lucide-react'
 
 const planLabels: Record<string, string> = {
@@ -62,10 +64,13 @@ export default async function AboPage({ params }: { params: Promise<{ lang: stri
   })
   if (!company) redirect(`/${locale}/dashboard`)
 
+  const deletionRequest = await getMyDeletionRequest()
   const hasStripe = !!company.stripeCustomerId
   const trialDays = company.trialEndsAt ? daysLeft(company.trialEndsAt) : null
   const isTrial = company.planStatus === 'TRIAL'
   const isActive = company.planStatus === 'ACTIVE'
+  const isCancelled = company.planStatus === 'CANCELLED'
+  const hasActiveSubscription = !!company.stripeSubscriptionId && (isActive || isTrial)
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -157,18 +162,32 @@ export default async function AboPage({ params }: { params: Promise<{ lang: stri
         )}
       </div>
 
-      {/* Deletion notice */}
-      <div className="rounded-2xl border border-border bg-card p-5">
-        <h2 className="font-semibold text-foreground mb-1">Account löschen</h2>
-        <p className="text-sm text-muted-foreground">
-          {company.stripeSubscriptionId && (company.planStatus === 'ACTIVE' || company.planStatus === 'TRIAL')
-            ? 'Du hast ein aktives Abonnement. Bitte kündige zuerst dein Abo über das Stripe-Kundenportal, bevor du deinen Account löschen kannst.'
-            : 'Um deinen Account zu löschen, wende dich an den Support unter flaviopeter@immo-manage.ch.'}
-        </p>
-        {company.stripeSubscriptionId && (company.planStatus === 'ACTIVE' || company.planStatus === 'TRIAL') && (
-          <div className="mt-3">
+      {/* Deletion section */}
+      <div className="rounded-2xl border border-destructive/20 bg-card p-5 space-y-3">
+        <h2 className="font-semibold text-destructive">Account & Company löschen</h2>
+        {hasActiveSubscription ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              Du hast ein aktives Abonnement. Kündige zuerst dein Abo über das Stripe-Kundenportal — danach kannst du hier die Löschung beantragen.
+            </p>
             <ManageSubscriptionButton />
-          </div>
+          </>
+        ) : isCancelled || !hasStripe ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              {isCancelled
+                ? 'Dein Abo ist gekündigt. Du kannst jetzt die Löschung deines Accounts und deiner Company beantragen. Der Superadmin wird die Anfrage prüfen und bestätigen.'
+                : 'Du kannst die Löschung deines Accounts beantragen. Der Superadmin wird die Anfrage prüfen und bestätigen.'}
+            </p>
+            <RequestDeletionButton alreadyRequested={!!deletionRequest} />
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Bei Fragen zur Löschung kontaktiere uns unter{' '}
+            <a href="mailto:flaviopeter@immo-manage.ch" className="underline hover:text-foreground">
+              flaviopeter@immo-manage.ch
+            </a>.
+          </p>
         )}
       </div>
     </div>

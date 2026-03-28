@@ -51,7 +51,7 @@ export async function requestAccountDeletion(): Promise<ActionResult<null>> {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, email: true, companyId: true },
+      select: { name: true, email: true, companyId: true, role: true },
     })
     if (!user?.companyId) return { success: false, error: 'no_company' }
 
@@ -59,24 +59,41 @@ export async function requestAccountDeletion(): Promise<ActionResult<null>> {
       data: { userId, companyId: user.companyId },
     })
 
-    // Notify admin/vermieter
-    const admin = await prisma.user.findFirst({
-      where: {
-        companyId: user.companyId,
-        role: { in: ['ADMIN', 'VERMIETER'] },
-        active: true,
-      },
-      select: { name: true, email: true },
-    })
-    if (admin) {
-      await sendDeletionRequestEmail({
-        adminEmail: admin.email,
-        adminName: admin.name,
-        userName: user.name,
-        userEmail: user.email,
-        approveUrl: '',
-        rejectUrl: '',
+    // If requester is ADMIN → notify SUPER_ADMIN; otherwise notify company admin
+    if (user.role === 'ADMIN') {
+      const superAdmin = await prisma.user.findFirst({
+        where: { role: 'SUPER_ADMIN', active: true },
+        select: { name: true, email: true },
       })
+      if (superAdmin) {
+        await sendDeletionRequestEmail({
+          adminEmail: superAdmin.email,
+          adminName: superAdmin.name,
+          userName: user.name,
+          userEmail: user.email,
+          approveUrl: '',
+          rejectUrl: '',
+        })
+      }
+    } else {
+      const admin = await prisma.user.findFirst({
+        where: {
+          companyId: user.companyId,
+          role: { in: ['ADMIN', 'VERMIETER'] },
+          active: true,
+        },
+        select: { name: true, email: true },
+      })
+      if (admin) {
+        await sendDeletionRequestEmail({
+          adminEmail: admin.email,
+          adminName: admin.name,
+          userName: user.name,
+          userEmail: user.email,
+          approveUrl: '',
+          rejectUrl: '',
+        })
+      }
     }
 
     return { success: true, data: null }
@@ -88,21 +105,21 @@ export async function approveAccountDeletion(
   requestId: string
 ): Promise<ActionResult<null>> {
   return withAuthAction(async (session) => {
-    const role = session.user.role
-    if (role !== 'ADMIN' && role !== 'VERMIETER' && role !== 'SUPER_ADMIN') {
+    const sessionRole = session.user.role
+    if (sessionRole !== 'ADMIN' && sessionRole !== 'VERMIETER' && sessionRole !== 'SUPER_ADMIN') {
       return { success: false, error: 'forbidden' }
     }
 
     const request = await prisma.accountDeletionRequest.findUnique({
       where: { id: requestId },
-      include: { user: { select: { name: true, email: true } } },
+      include: { user: { select: { name: true, email: true, role: true, companyId: true } } },
     })
     if (!request) return { success: false, error: 'not_found' }
     if (request.status !== 'PENDING') {
       return { success: false, error: 'already_resolved' }
     }
 
-    const { name, email } = request.user
+    const { name, email, role, companyId } = request.user
 
     // Anonymise: replace PII
     await prisma.user.update({
@@ -117,6 +134,14 @@ export async function approveAccountDeletion(
         active: false,
       },
     })
+
+    // If the deleted user was the company ADMIN, deactivate the entire company
+    if (role === 'ADMIN' && companyId) {
+      await prisma.company.update({
+        where: { id: companyId },
+        data: { active: false },
+      })
+    }
 
     await prisma.accountDeletionRequest.update({
       where: { id: requestId },
@@ -183,12 +208,16 @@ export async function getMyDeletionRequest() {
   })
 }
 
-// Get all pending deletion requests for admin
+// Get all pending deletion requests for admin/superadmin
 export async function getDeletionRequests() {
   const session = await getAuthSession()
   if (!session) return []
+  const isSuperAdmin = session.user.role === 'SUPER_ADMIN'
   return prisma.accountDeletionRequest.findMany({
-    where: { companyId: session.user.companyId!, status: 'PENDING' },
+    where: {
+      status: 'PENDING',
+      ...(isSuperAdmin ? {} : { companyId: session.user.companyId! }),
+    },
     include: { user: { select: { id: true, name: true, email: true, role: true, createdAt: true } } },
     orderBy: { createdAt: 'asc' },
   })
