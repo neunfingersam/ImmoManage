@@ -91,7 +91,8 @@ export async function POST(req: NextRequest) {
   // Create Stripe Checkout Session for paid plans
   let checkoutUrl: string | null = null
   if (plan === 'STARTER' || plan === 'STANDARD' || plan === 'PRO') {
-    const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
+    const rawBase = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
+    const baseUrl = rawBase.startsWith('http') ? rawBase.replace(/\/$/, '') : `https://${rawBase.replace(/\/$/, '')}`
     const stripeData = await createStripeCheckout({
       email: normalizedEmail,
       name: name.trim(),
