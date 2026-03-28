@@ -19,6 +19,12 @@ export function MobileNavTrigger({ children }: MobileNavTriggerProps) {
     setOpen(false)
   }, [pathname])
 
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
   return (
     <>
       {/* Hamburger button — visible only on mobile */}

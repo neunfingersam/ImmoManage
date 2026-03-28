@@ -39,7 +39,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="fixed inset-0 flex overflow-hidden bg-background">
       <DashboardSidebar role={session.user.role} companyName={companyName} planFeatures={planFeatures} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardHeader

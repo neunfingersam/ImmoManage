@@ -50,7 +50,7 @@ export default async function TenantLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="fixed inset-0 flex overflow-hidden bg-background">
       <TenantSidebar upcomingEventsCount={upcomingEventsCount} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardHeader
