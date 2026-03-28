@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
       companyId: company.id,
       successUrl: `${baseUrl}/de/dashboard?checkout=success`,
       cancelUrl: `${baseUrl}/de/preise`,
-    }).catch(() => null)
+    }).catch((err) => { console.error('[Stripe Checkout Error]', err?.message); return null })
 
     if (stripeData) {
       checkoutUrl = stripeData.checkoutUrl

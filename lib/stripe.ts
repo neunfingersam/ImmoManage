@@ -30,7 +30,8 @@ export async function createStripeCheckout(opts: {
   cancelUrl: string
 }): Promise<{ customerId: string; checkoutUrl: string } | null> {
   const priceId = STRIPE_PRICE_IDS[opts.plan]
-  if (!process.env.STRIPE_SECRET_KEY || !priceId) return null
+  if (!process.env.STRIPE_SECRET_KEY) { console.error('[Stripe] STRIPE_SECRET_KEY not set'); return null }
+  if (!priceId) { console.error('[Stripe] Price ID not set for plan:', opts.plan); return null }
 
   const customer = await stripe.customers.create({
     email: opts.email,
