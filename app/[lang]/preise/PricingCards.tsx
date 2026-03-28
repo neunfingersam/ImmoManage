@@ -167,17 +167,19 @@ export default function PricingCards() {
         return
       }
 
-      // Auto-login
+      // Auto-login first
       const result = await signIn('credentials', {
         email: form.email,
         password: form.password,
         redirect: false,
       })
 
-      if (result?.ok) {
+      if (data.checkoutUrl) {
+        // Redirect to Stripe Checkout for payment / card setup
+        window.location.href = data.checkoutUrl
+      } else if (result?.ok) {
         router.push(`/${locale}/dashboard`)
       } else {
-        // Login failed but account was created — send to login page
         closeModal()
         router.push(`/${locale}/auth/login?registered=1`)
       }

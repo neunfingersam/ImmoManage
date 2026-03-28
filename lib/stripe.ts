@@ -15,36 +15,44 @@ export const STRIPE_PRICE_IDS: Record<string, string | undefined> = {
 export const TRIAL_DAYS = 90
 
 /**
- * Creates a Stripe Customer + Subscription (with trial for STARTER).
- * Returns { customerId, subscriptionId } or null if Stripe is not configured.
+ * Creates a Stripe Customer + Checkout Session.
+ * For STARTER: 90-day trial, card required but not charged until trial ends.
+ * For STANDARD/PRO: immediate payment.
+ * Returns { customerId, checkoutUrl } or null if Stripe is not configured.
  */
-export async function createStripeSubscription(opts: {
+export async function createStripeCheckout(opts: {
   email: string
   name: string
   companyName: string
   plan: 'STARTER' | 'STANDARD' | 'PRO'
-}): Promise<{ customerId: string; subscriptionId: string } | null> {
+  companyId: string
+  successUrl: string
+  cancelUrl: string
+}): Promise<{ customerId: string; checkoutUrl: string } | null> {
   const priceId = STRIPE_PRICE_IDS[opts.plan]
   if (!process.env.STRIPE_SECRET_KEY || !priceId) return null
 
   const customer = await stripe.customers.create({
     email: opts.email,
     name: opts.name,
-    metadata: { company: opts.companyName, plan: opts.plan },
+    metadata: { company: opts.companyName, plan: opts.plan, companyId: opts.companyId },
   })
 
-  const subscription = await stripe.subscriptions.create({
+  const session = await stripe.checkout.sessions.create({
     customer: customer.id,
-    items: [{ price: priceId }],
-    trial_period_days: opts.plan === 'STARTER' ? TRIAL_DAYS : undefined,
-    payment_settings: {
-      save_default_payment_method: 'on_subscription',
-    },
-    // Send Stripe's hosted trial reminder emails
-    trial_settings: opts.plan === 'STARTER'
-      ? { end_behavior: { missing_payment_method: 'cancel' } }
-      : undefined,
+    mode: 'subscription',
+    line_items: [{ price: priceId, quantity: 1 }],
+    subscription_data: opts.plan === 'STARTER'
+      ? {
+          trial_period_days: TRIAL_DAYS,
+          trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
+          metadata: { companyId: opts.companyId },
+        }
+      : { metadata: { companyId: opts.companyId } },
+    success_url: opts.successUrl,
+    cancel_url: opts.cancelUrl,
+    metadata: { companyId: opts.companyId },
   })
 
-  return { customerId: customer.id, subscriptionId: subscription.id }
+  return { customerId: customer.id, checkoutUrl: session.url! }
 }

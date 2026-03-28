@@ -24,49 +24,54 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Webhook signature invalid' }, { status: 400 })
   }
 
-  const subscription = (event.data.object as Stripe.Subscription)
-  const customerId = typeof subscription.customer === 'string'
-    ? subscription.customer
-    : subscription.customer?.id
-
-  if (!customerId) {
-    return NextResponse.json({ ok: true })
-  }
-
   const statusMap: Record<Stripe.Subscription.Status, PlanStatus | null> = {
-    active:            'ACTIVE',
-    trialing:          'TRIAL',
-    past_due:          'PAST_DUE',
-    canceled:          'CANCELLED',
-    unpaid:            'PAST_DUE',
-    incomplete:        null,
+    active:             'ACTIVE',
+    trialing:           'TRIAL',
+    past_due:           'PAST_DUE',
+    canceled:           'CANCELLED',
+    unpaid:             'PAST_DUE',
+    incomplete:         null,
     incomplete_expired: 'CANCELLED',
-    paused:            'PAST_DUE',
+    paused:             'PAST_DUE',
   }
 
   switch (event.type) {
+    case 'checkout.session.completed': {
+      // Checkout finished — link subscription to company via companyId in metadata
+      const session = event.data.object as Stripe.Checkout.Session
+      const companyId = session.metadata?.companyId
+      const subscriptionId = typeof session.subscription === 'string'
+        ? session.subscription
+        : session.subscription?.id
+      if (companyId && subscriptionId) {
+        await prisma.company.update({
+          where: { id: companyId },
+          data: { stripeSubscriptionId: subscriptionId },
+        })
+      }
+      break
+    }
+
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted': {
+      const subscription = event.data.object as Stripe.Subscription
+      const customerId = typeof subscription.customer === 'string'
+        ? subscription.customer : subscription.customer?.id
+      if (!customerId) break
       const newStatus = statusMap[subscription.status]
       if (!newStatus) break
-
       await prisma.company.updateMany({
         where: { stripeCustomerId: customerId },
-        data: {
-          planStatus: newStatus,
-          stripeSubscriptionId: subscription.id,
-        },
+        data: { planStatus: newStatus, stripeSubscriptionId: subscription.id },
       })
       break
     }
 
-    case 'customer.subscription.trial_will_end': {
-      // 3 days before trial ends — Stripe sends this event
-      // You could send a custom reminder email here
-      break
-    }
-
     case 'invoice.payment_succeeded': {
+      const invoice = event.data.object as Stripe.Invoice
+      const customerId = typeof invoice.customer === 'string'
+        ? invoice.customer : invoice.customer?.id
+      if (!customerId) break
       await prisma.company.updateMany({
         where: { stripeCustomerId: customerId },
         data: { planStatus: 'ACTIVE' },
@@ -75,6 +80,10 @@ export async function POST(req: NextRequest) {
     }
 
     case 'invoice.payment_failed': {
+      const invoice = event.data.object as Stripe.Invoice
+      const customerId = typeof invoice.customer === 'string'
+        ? invoice.customer : invoice.customer?.id
+      if (!customerId) break
       await prisma.company.updateMany({
         where: { stripeCustomerId: customerId },
         data: { planStatus: 'PAST_DUE' },
