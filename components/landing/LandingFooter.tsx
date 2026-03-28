@@ -15,8 +15,10 @@ export default function LandingFooter() {
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto mb-4" />
+            <div className="mb-4">
+              <span className="font-heading text-xl font-bold text-white">Immo</span>
+              <span className="font-heading text-xl font-bold" style={{ color: '#E8734A' }}>Manage</span>
+            </div>
             <p className="text-sm text-white/40 leading-relaxed max-w-[180px]">
               {t('tagline')}
             </p>
