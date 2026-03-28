@@ -61,6 +61,7 @@ const sections: { items: NavItem[] }[] = [
       { key: 'templates', path: '/dashboard/templates', icon: FileText },
       { key: 'deletionRequests', path: '/dashboard/deletion-requests', icon: Trash2, rolesOnly: ['ADMIN', 'VERMIETER'] },
       { key: 'team', path: '/dashboard/team', icon: UserCog, rolesOnly: ['ADMIN'] },
+      { key: 'abo', path: '/dashboard/abo', icon: CreditCard, rolesOnly: ['ADMIN'] },
       { key: 'assistant', path: '/dashboard/assistant', icon: Bot, featureGate: 'aiAssistant' },
       { key: 'onboarding', path: '/dashboard/onboarding/import', icon: Rocket },
     ],

@@ -13,6 +13,7 @@ export function DeleteAccountSection({ hasActiveLease, alreadyRequested }: Props
   const t = useTranslations('deletion')
   const [showConfirm, setShowConfirm] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
+  const [errorCode, setErrorCode] = useState<string | undefined>()
   const [requested, setRequested] = useState(alreadyRequested)
 
   async function handleRequest() {
@@ -23,6 +24,7 @@ export function DeleteAccountSection({ hasActiveLease, alreadyRequested }: Props
       setStatus('done')
       setShowConfirm(false)
     } else {
+      setErrorCode(result.error)
       setStatus('error')
     }
   }
@@ -50,7 +52,11 @@ export function DeleteAccountSection({ hasActiveLease, alreadyRequested }: Props
               <p className="text-sm font-medium text-foreground">{t('confirmTitle')}</p>
               <p className="text-sm text-muted-foreground">{t('confirmBody')}</p>
               {status === 'error' && (
-                <p className="text-sm text-destructive">{t('error')}</p>
+                <p className="text-sm text-destructive">
+                  {errorCode === 'active_subscription'
+                    ? 'Du hast ein aktives Abonnement. Bitte kündige zuerst dein Abo unter "Abo & Plan".'
+                    : t('error')}
+                </p>
               )}
               <div className="flex gap-3">
                 <button

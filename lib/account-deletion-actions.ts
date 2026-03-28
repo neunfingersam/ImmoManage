@@ -24,6 +24,23 @@ export async function requestAccountDeletion(): Promise<ActionResult<null>> {
       return { success: false, error: 'active_lease' }
     }
 
+    // Check for active Stripe subscription (admin accounts)
+    const userCompany = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        company: {
+          select: { planStatus: true, stripeSubscriptionId: true },
+        },
+      },
+    })
+    const co = userCompany?.company
+    if (
+      co?.stripeSubscriptionId &&
+      (co.planStatus === 'ACTIVE' || co.planStatus === 'TRIAL')
+    ) {
+      return { success: false, error: 'active_subscription' }
+    }
+
     // Check if request already exists
     const existing = await prisma.accountDeletionRequest.findUnique({
       where: { userId },
