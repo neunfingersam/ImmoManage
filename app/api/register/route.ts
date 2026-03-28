@@ -55,10 +55,24 @@ export async function POST(req: NextRequest) {
   const passwordHash = await hash(password, 12)
 
   const planLabels: Record<Plan, string> = {
-    STARTER: 'Starter (CHF 0/Mt.)',
-    STANDARD: 'Standard (CHF 39/Mt.)',
-    PRO: 'Pro (CHF 79/Mt.)',
+    STARTER: 'Starter',
+    STANDARD: 'Standard',
+    PRO: 'Pro',
     ENTERPRISE: 'Enterprise',
+  }
+
+  const planPrices: Record<Plan, string> = {
+    STARTER: 'CHF 19/Monat',
+    STANDARD: 'CHF 39/Monat',
+    PRO: 'CHF 79/Monat',
+    ENTERPRISE: 'Auf Anfrage',
+  }
+
+  const trialMonths: Record<Plan, number | null> = {
+    STARTER: 3,
+    STANDARD: 2,
+    PRO: 1,
+    ENTERPRISE: null,
   }
 
   const trialDays = (plan === 'STARTER' || plan === 'STANDARD' || plan === 'PRO')
@@ -115,6 +129,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Welcome email to new user
+  const planKey = plan as Plan
+  const months = trialMonths[planKey]
+  const trialEndDate = trialEndsAt
+    ? trialEndsAt.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    : null
+
   sendEmail(
     normalizedEmail,
     'Willkommen bei ImmoManage!',
@@ -125,17 +145,29 @@ export async function POST(req: NextRequest) {
       </div>
       <div style="background: #f9fafb; padding: 28px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p style="font-size: 16px; color: #1A1A2E;">Hallo ${name.trim()},</p>
-        <p style="color: #374151;">Ihr Account wurde erfolgreich erstellt. Sie können sich jetzt anmelden:</p>
+        <p style="color: #374151;">Ihr Account wurde erfolgreich erstellt. Hier eine Zusammenfassung:</p>
         <table style="margin: 16px 0; width: 100%; border-collapse: collapse;">
-          <tr><td style="padding: 6px 0; font-weight: 600; color: #374151; width: 140px;">Plan:</td>
-              <td style="padding: 6px 0; color: #E8734A; font-weight: 700;">${planLabels[plan as Plan]}</td></tr>
+          <tr><td style="padding: 6px 0; font-weight: 600; color: #374151; width: 160px;">Plan:</td>
+              <td style="padding: 6px 0; color: #E8734A; font-weight: 700;">${planLabels[planKey]}</td></tr>
+          ${months ? `
+          <tr><td style="padding: 6px 0; font-weight: 600; color: #374151;">Gratis-Testphase:</td>
+              <td style="padding: 6px 0; font-weight: 600; color: #16a34a;">${months} ${months === 1 ? 'Monat' : 'Monate'} kostenlos${trialEndDate ? ` (bis ${trialEndDate})` : ''}</td></tr>
+          <tr><td style="padding: 6px 0; font-weight: 600; color: #374151;">Danach:</td>
+              <td style="padding: 6px 0;">${planPrices[planKey]} — jederzeit kündbar</td></tr>
+          ` : `
+          <tr><td style="padding: 6px 0; font-weight: 600; color: #374151;">Preis:</td>
+              <td style="padding: 6px 0;">${planPrices[planKey]}</td></tr>
+          `}
           <tr><td style="padding: 6px 0; font-weight: 600; color: #374151;">Firma:</td>
               <td style="padding: 6px 0;">${companyName.trim()}</td></tr>
           <tr><td style="padding: 6px 0; font-weight: 600; color: #374151;">E-Mail:</td>
               <td style="padding: 6px 0;">${normalizedEmail}</td></tr>
         </table>
+        ${months ? `<p style="font-size: 13px; color: #6b7280; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px;">
+          ℹ️ Während der Testphase wird keine Zahlung fällig. Nach Ablauf der ${months} ${months === 1 ? 'Monats' : 'Monate'} wird automatisch ${planPrices[planKey]} abgebucht, sofern du nicht vorher kündigst.
+        </p>` : ''}
         <p style="margin: 24px 0;">
-          <a href="${process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'}/de/auth/login"
+          <a href="https://immo-manage.ch/de/auth/login"
              style="background: #E8734A; color: white; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px;">
             Jetzt anmelden →
           </a>
@@ -151,14 +183,16 @@ export async function POST(req: NextRequest) {
   // Notification to you
   sendEmail(
     'flaviopeter@immo-manage.ch',
-    `Neue Registrierung: ${planLabels[plan as Plan]} – ${name.trim()}`,
+    `Neue Registrierung: ${planLabels[planKey]} (${planPrices[planKey]}) – ${name.trim()}`,
     `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background: #E8734A; padding: 20px 24px; border-radius: 8px 8px 0 0;">
         <h1 style="color: #fff; margin: 0; font-size: 18px;">🎉 Neue Registrierung</h1>
       </div>
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p><strong>Plan:</strong> <span style="color: #E8734A; font-weight: 700;">${planLabels[plan as Plan]}</span></p>
+        <p><strong>Plan:</strong> <span style="color: #E8734A; font-weight: 700;">${planLabels[planKey]}</span></p>
+        <p><strong>Preis nach Testphase:</strong> ${planPrices[planKey]}</p>
+        ${months ? `<p><strong>Testphase:</strong> ${months} ${months === 1 ? 'Monat' : 'Monate'}${trialEndDate ? ` (endet am ${trialEndDate})` : ''}</p>` : ''}
         <p><strong>Name:</strong> ${name.trim()}</p>
         <p><strong>E-Mail:</strong> <a href="mailto:${normalizedEmail}">${normalizedEmail}</a></p>
         <p><strong>Firma:</strong> ${companyName.trim()}</p>
