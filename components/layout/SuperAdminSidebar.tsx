@@ -12,11 +12,11 @@ const navItems = [
   { key: 'overview', path: '/superadmin', icon: LayoutDashboard },
   { key: 'companies', path: '/superadmin/companies', icon: Building },
   { key: 'admins', path: '/superadmin/admins', icon: UserCog },
-  { key: 'deletionRequests', path: '/superadmin/deletion-requests', icon: Trash2 },
+  { key: 'deletionRequests', path: '/superadmin/deletion-requests', icon: Trash2, badge: true },
   { key: 'logs', path: '/superadmin/logs', icon: ScrollText },
 ]
 
-function SuperAdminNavLinks() {
+function SuperAdminNavLinks({ deletionCount }: { deletionCount: number }) {
   const pathname = usePathname()
   const locale = useLocale()
   const t = useTranslations('nav')
@@ -36,6 +36,7 @@ function SuperAdminNavLinks() {
             item.path === '/superadmin'
               ? pathname === `/${locale}/superadmin`
               : pathname.startsWith(href)
+          const count = item.badge ? deletionCount : 0
 
           return (
             <Link
@@ -49,7 +50,12 @@ function SuperAdminNavLinks() {
               )}
             >
               <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-              {t(item.key as Parameters<typeof t>[0])}
+              <span className="flex-1">{t(item.key as Parameters<typeof t>[0])}</span>
+              {count > 0 && (
+                <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white" style={{ backgroundColor: '#E8734A' }}>
+                  {count}
+                </span>
+              )}
             </Link>
           )
         })}
@@ -58,18 +64,18 @@ function SuperAdminNavLinks() {
   )
 }
 
-export function SuperAdminSidebar() {
+export function SuperAdminSidebar({ deletionCount = 0 }: { deletionCount?: number }) {
   return (
     <aside className="hidden md:flex h-full w-64 flex-col bg-card border-r border-border">
-      <SuperAdminNavLinks />
+      <SuperAdminNavLinks deletionCount={deletionCount} />
     </aside>
   )
 }
 
-export function SuperAdminMobileNav() {
+export function SuperAdminMobileNav({ deletionCount = 0 }: { deletionCount?: number }) {
   return (
     <MobileNavTrigger>
-      <SuperAdminNavLinks />
+      <SuperAdminNavLinks deletionCount={deletionCount} />
     </MobileNavTrigger>
   )
 }
