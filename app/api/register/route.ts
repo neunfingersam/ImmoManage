@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
 import { createStripeCheckout, TRIAL_DAYS } from '@/lib/stripe'
+import type { Prisma } from '@/lib/generated/prisma/client'
 import type { Plan } from '@/lib/generated/prisma/enums'
 
 const VALID_PLANS: Plan[] = ['STARTER', 'STANDARD', 'PRO', 'ENTERPRISE']
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
     : null
 
   // Create company + admin user in one transaction
-  const company = await prisma.$transaction(async (tx: typeof prisma) => {
+  const company = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const company = await tx.company.create({
       data: {
         name: companyName.trim(),
