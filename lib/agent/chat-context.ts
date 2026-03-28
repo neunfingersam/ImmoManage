@@ -67,7 +67,10 @@ export async function searchTenantDocuments(
   propertyIds: string[],
   queryChunksFn: (vec: number[], opts: { companyId: string; tenantId: string; propertyIds: string[] }) => Promise<Array<{ text: string; documentId: string }>>
 ): Promise<{ contextText: string; chunkIds: string[] }> {
-  const chunks = await queryChunksFn(queryVector, { companyId, tenantId: userId, propertyIds })
+  let chunks: Array<{ text: string; documentId: string }> = []
+  try {
+    chunks = await queryChunksFn(queryVector, { companyId, tenantId: userId, propertyIds })
+  } catch { /* vectra not available on serverless — DB fallback below */ }
 
   if (chunks.length > 0) {
     return {
