@@ -12,12 +12,14 @@ export const STRIPE_PRICE_IDS: Record<string, string | undefined> = {
   PRO:      process.env.STRIPE_PRICE_PRO,        // CHF 79/mo
 }
 
-export const TRIAL_DAYS = 90
+export const TRIAL_DAYS: Record<string, number> = {
+  STARTER:  90, // 3 Monate
+  STANDARD: 60, // 2 Monate
+  PRO:      30, // 1 Monat
+}
 
 /**
- * Creates a Stripe Customer + Checkout Session.
- * For STARTER: 90-day trial, card required but not charged until trial ends.
- * For STANDARD/PRO: immediate payment.
+ * Creates a Stripe Customer + Checkout Session with trial period per plan.
  * Returns { customerId, checkoutUrl } or null if Stripe is not configured.
  */
 export async function createStripeCheckout(opts: {
@@ -43,13 +45,11 @@ export async function createStripeCheckout(opts: {
     customer: customer.id,
     mode: 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
-    subscription_data: opts.plan === 'STARTER'
-      ? {
-          trial_period_days: TRIAL_DAYS,
-          trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
-          metadata: { companyId: opts.companyId },
-        }
-      : { metadata: { companyId: opts.companyId } },
+    subscription_data: {
+      trial_period_days: TRIAL_DAYS[opts.plan] ?? 0,
+      trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
+      metadata: { companyId: opts.companyId },
+    },
     success_url: opts.successUrl,
     cancel_url: opts.cancelUrl,
     metadata: { companyId: opts.companyId },

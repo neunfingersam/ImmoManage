@@ -13,6 +13,7 @@ const plans = [
     label: 'Starter',
     price: 19,
     trial: true,
+    trialMonths: 3,
     highlight: false,
     features: {
       properties: '1 Objekt',
@@ -31,7 +32,8 @@ const plans = [
     key: 'STANDARD',
     label: 'Standard',
     price: 39,
-    trial: false,
+    trial: true,
+    trialMonths: 2,
     highlight: false,
     features: {
       properties: 'bis 5 Objekte',
@@ -50,7 +52,8 @@ const plans = [
     key: 'PRO',
     label: 'Pro',
     price: 79,
-    trial: false,
+    trial: true,
+    trialMonths: 1,
     highlight: true,
     features: {
       properties: 'unbegrenzt',
@@ -107,14 +110,14 @@ export default function PricingCards() {
     support: t('featSupport'),
   }
 
-  const [modalPlan, setModalPlan] = useState<{ key: string; label: string; trial: boolean } | null>(null)
+  const [modalPlan, setModalPlan] = useState<{ key: string; label: string; trial: boolean; trialMonths?: number } | null>(null)
   const [form, setForm] = useState({ name: '', email: '', password: '', companyName: '', consent: false })
   const [showPw, setShowPw] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
-  function openModal(key: string, label: string, trial: boolean) {
-    setModalPlan({ key, label, trial })
+  function openModal(key: string, label: string, trial: boolean, trialMonths?: number) {
+    setModalPlan({ key, label, trial, trialMonths })
     setStatus('idle')
     setErrorMsg('')
     setForm({ name: '', email: '', password: '', companyName: '', consent: false })
@@ -224,14 +227,14 @@ export default function PricingCards() {
                     className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white mb-2"
                     style={{ backgroundColor: '#E8734A' }}
                   >
-                    {t('trialBadge')}
+                    {plan.trialMonths} {plan.trialMonths === 1 ? 'Monat' : 'Monate'} gratis testen
                   </div>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-4xl font-bold text-[#1A1A2E]">CHF 0</span>
                     <span className="text-sm text-[#1A1A2E]/50">{t('perMonth')}</span>
                   </div>
                   <p className="text-xs text-[#1A1A2E]/40 mt-1">
-                    {t('trialNote', { price: plan.price! })}
+                    danach CHF {plan.price}/Monat
                   </p>
                 </>
               ) : (
@@ -272,7 +275,7 @@ export default function PricingCards() {
             </ul>
 
             <button
-              onClick={() => openModal(plan.key, plan.label, plan.trial)}
+              onClick={() => openModal(plan.key, plan.label, plan.trial, (plan as any).trialMonths)}
               className="block w-full text-center rounded-xl py-2.5 text-sm font-semibold transition-all hover:opacity-90"
               style={
                 plan.highlight
@@ -319,7 +322,7 @@ export default function PricingCards() {
                 {isEnterprise
                   ? t('modalSubtitleEnterprise')
                   : isTrialModal
-                    ? t('modalSubtitleTrial')
+                    ? `${modalPlan.trialMonths} ${modalPlan.trialMonths === 1 ? 'Monat' : 'Monate'} gratis — keine Kreditkarte erforderlich.`
                     : t('modalSubtitle')}
               </p>
             </div>

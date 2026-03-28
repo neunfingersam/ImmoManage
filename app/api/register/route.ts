@@ -61,8 +61,11 @@ export async function POST(req: NextRequest) {
     ENTERPRISE: 'Enterprise',
   }
 
-  const trialEndsAt = plan === 'STARTER'
-    ? new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000)
+  const trialDays = (plan === 'STARTER' || plan === 'STANDARD' || plan === 'PRO')
+    ? TRIAL_DAYS[plan]
+    : 0
+  const trialEndsAt = trialDays > 0
+    ? new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000)
     : null
 
   // Create company + admin user in one transaction
@@ -72,7 +75,7 @@ export async function POST(req: NextRequest) {
         name: companyName.trim(),
         slug,
         plan,
-        planStatus: plan === 'STARTER' ? 'TRIAL' : 'PENDING_PAYMENT',
+        planStatus: trialDays > 0 ? 'TRIAL' : 'ACTIVE',
         trialEndsAt,
       },
     })
