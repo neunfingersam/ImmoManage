@@ -64,7 +64,7 @@ export function RevenueBarChart({ data }: { data: MonthlyRevenue[] }) {
           {data.map((entry, i) => (
             <Cell
               key={i}
-              fill={entry.isCurrent ? '#E8734A' : 'hsl(var(--primary) / 0.35)'}
+              fill={entry.isCurrent ? '#E8734A' : 'rgba(232, 115, 74, 0.22)'}
             />
           ))}
         </Bar>

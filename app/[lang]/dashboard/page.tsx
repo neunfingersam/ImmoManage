@@ -11,7 +11,6 @@ import {
   CalendarClock,
   CheckSquare,
   ChevronRight,
-  ArrowUpRight,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { RevenueBarChart, type MonthlyRevenue } from './DashboardCharts'
@@ -192,11 +191,8 @@ export default async function DashboardPage() {
         <Link href="/dashboard/payments">
           <Card className="p-5 hover:shadow-card-hover transition-shadow cursor-pointer group relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-            <div className="flex items-start justify-between">
-              <div className="rounded-xl bg-primary/10 p-2.5">
-                <TrendingUp className="h-5 w-5 text-primary" />
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+            <div className="rounded-xl bg-primary/10 p-2.5 w-fit">
+              <TrendingUp className="h-5 w-5 text-primary" />
             </div>
             <p className="mt-4 text-2xl font-bold text-foreground">
               CHF {formatChf(data.currentMonthRevenue)}
@@ -208,44 +204,20 @@ export default async function DashboardPage() {
         {/* Belegungsrate */}
         <Link href="/dashboard/properties">
           <Card className="p-5 hover:shadow-card-hover transition-shadow cursor-pointer group relative overflow-hidden">
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  data.occupancyRate >= 90
-                    ? 'linear-gradient(135deg, rgb(22 163 74 / 0.06), transparent)'
-                    : data.occupancyRate >= 75
-                    ? 'linear-gradient(135deg, rgb(234 179 8 / 0.06), transparent)'
-                    : 'linear-gradient(135deg, rgb(239 68 68 / 0.06), transparent)',
-              }}
-            />
-            <div className="flex items-start justify-between">
-              <div
-                className="rounded-xl p-2.5"
-                style={{
-                  backgroundColor:
-                    data.occupancyRate >= 90
-                      ? 'rgb(22 163 74 / 0.12)'
-                      : data.occupancyRate >= 75
-                      ? 'rgb(234 179 8 / 0.12)'
-                      : 'rgb(239 68 68 / 0.12)',
-                }}
-              >
-                <Home
-                  className="h-5 w-5"
-                  style={{
-                    color:
-                      data.occupancyRate >= 90
-                        ? 'rgb(22 163 74)'
-                        : data.occupancyRate >= 75
-                        ? 'rgb(202 138 4)'
-                        : 'rgb(220 38 38)',
-                  }}
-                />
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
-            </div>
-            <p className="mt-4 text-2xl font-bold text-foreground">{data.occupancyRate}%</p>
+            {(() => {
+              const isGood = data.occupancyRate >= 90
+              const isOk = data.occupancyRate >= 75
+              const iconColor = isGood ? '#16a34a' : isOk ? '#ca8a04' : '#dc2626'
+              const bgColor = isGood ? 'rgba(22,163,74,0.1)' : isOk ? 'rgba(234,179,8,0.1)' : 'rgba(239,68,68,0.1)'
+              return (
+                <>
+                  <div className="rounded-xl p-2.5 w-fit" style={{ backgroundColor: bgColor }}>
+                    <Home className="h-5 w-5" style={{ color: iconColor }} />
+                  </div>
+                  <p className="mt-4 text-2xl font-bold text-foreground">{data.occupancyRate}%</p>
+                </>
+              )
+            })()}
             <p className="text-xs text-muted-foreground mt-1">
               Belegungsrate · {data.vacantUnits} leer
             </p>
@@ -263,7 +235,7 @@ export default async function DashboardPage() {
                 <CreditCard className={`h-5 w-5 ${data.openPayments > 0 ? 'text-amber-600' : 'text-muted-foreground'}`} />
               </div>
               {data.overdueCount > 0 && (
-                <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-bold text-destructive">
+                <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600 dark:bg-red-900/30 dark:text-red-400">
                   {data.overdueCount} überfällig
                 </span>
               )}
@@ -281,11 +253,8 @@ export default async function DashboardPage() {
             {data.openTickets.length > 0 && (
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none" />
             )}
-            <div className="flex items-start justify-between">
-              <div className={`rounded-xl p-2.5 ${data.openTickets.length > 0 ? 'bg-red-500/10' : 'bg-muted'}`}>
-                <AlertCircle className={`h-5 w-5 ${data.openTickets.length > 0 ? 'text-red-500' : 'text-muted-foreground'}`} />
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+            <div className={`rounded-xl p-2.5 w-fit ${data.openTickets.length > 0 ? 'bg-red-500/10' : 'bg-muted'}`}>
+              <AlertCircle className={`h-5 w-5 ${data.openTickets.length > 0 ? 'text-red-500' : 'text-muted-foreground'}`} />
             </div>
             <p className={`mt-4 text-2xl font-bold ${data.openTickets.length > 0 ? 'text-red-500' : 'text-foreground'}`}>
               {data.openTickets.length}
