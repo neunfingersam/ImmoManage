@@ -15,7 +15,9 @@ export type AuthSession = Session & {
  */
 export async function getAuthSession(): Promise<AuthSession | null> {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return null
+  // SUPER_ADMIN has no companyId — allow them through with an empty string placeholder
+  if (!session?.user) return null
+  if (!session.user.companyId && session.user.role !== 'SUPER_ADMIN') return null
   return session as AuthSession
 }
 
