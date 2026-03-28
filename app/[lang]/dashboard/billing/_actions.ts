@@ -135,7 +135,7 @@ export async function savePaymentSettings(data: unknown): Promise<ActionResult<n
   if (session.user.role !== 'ADMIN') return { success: false, error: 'Nur Admins können das ändern' }
 
   const parsed = paymentSettingsSchema.safeParse(data)
-  if (!parsed.success) return { success: false, error: parsed.error.errors[0].message }
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
 
   const company = await prisma.company.findUnique({
     where: { id: session.user.companyId },
