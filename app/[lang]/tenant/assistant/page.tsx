@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 
 type Message = { role: 'user' | 'agent'; content: string; escalated?: boolean }
 
 export default function AssistantPage() {
+  const t = useTranslations('tenant')
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -58,7 +60,7 @@ export default function AssistantPage() {
 
       if (res.status === 503) {
         setUnavailable(true)
-        setMessages(prev => [...prev, { role: 'agent', content: 'KI-Assistent ist momentan nicht verfügbar. Bitte kontaktiere deinen Vermieter direkt.' }])
+        setMessages(prev => [...prev, { role: 'agent', content: t('aiUnavailable') }])
         setLoading(false)
         return
       }
@@ -94,7 +96,7 @@ export default function AssistantPage() {
         }
       }
     } catch {
-      setMessages(prev => [...prev, { role: 'agent', content: 'Fehler beim Senden. Bitte versuche es erneut.' }])
+      setMessages(prev => [...prev, { role: 'agent', content: t('aiSendError') }])
     }
     setLoading(false)
   }
@@ -109,14 +111,14 @@ export default function AssistantPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] space-y-4">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">KI-Assistent</h1>
-        <p className="text-sm text-muted-foreground mt-1">Fragen zu Ihren Dokumenten und Ihrer Wohnung</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('aiAssistant')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('aiSubtitle')}</p>
       </div>
 
       {unavailable && (
         <Card className="p-3 flex items-center gap-2 bg-yellow-50 border-yellow-200">
           <AlertTriangle className="h-4 w-4 text-yellow-600 shrink-0" />
-          <p className="text-sm text-yellow-800">KI-Assistent momentan nicht verfügbar.</p>
+          <p className="text-sm text-yellow-800">{t('aiUnavailableBanner')}</p>
         </Card>
       )}
 
@@ -127,7 +129,7 @@ export default function AssistantPage() {
               <Bot className="h-7 w-7" />
             </div>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Stellen Sie Fragen zu Ihren Dokumenten, z.B. zur Hausordnung oder Ihrem Mietvertrag.
+              {t('aiIntro')}
             </p>
           </div>
         )}
@@ -140,7 +142,7 @@ export default function AssistantPage() {
             </div>
             {m.escalated && (
               <Badge variant="outline" className="mt-1 text-xs text-yellow-700 border-yellow-300">
-                Weitergeleitet an Ihren Vermieter
+                {t('aiEscalated')}
               </Badge>
             )}
           </div>
@@ -148,7 +150,7 @@ export default function AssistantPage() {
         {loading && (
           <div className="flex items-start">
             <div className="bg-secondary rounded-2xl px-4 py-3 text-sm text-muted-foreground animate-pulse">
-              Denkt nach…
+              {t('aiThinking')}
             </div>
           </div>
         )}
@@ -160,7 +162,7 @@ export default function AssistantPage() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Frage stellen…"
+          placeholder={t('aiPlaceholder')}
           rows={2}
           className="flex-1 resize-none"
           disabled={loading}

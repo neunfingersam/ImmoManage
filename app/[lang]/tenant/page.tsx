@@ -2,13 +2,18 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { Home, MapPin, Layers, Ruler, DoorOpen } from 'lucide-react'
+import { Home, MapPin } from 'lucide-react'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 export default async function TenantPage() {
-  const session = await getServerSession(authOptions)
+  const [t, locale, session] = await Promise.all([
+    getTranslations('tenant'),
+    getLocale(),
+    getServerSession(authOptions),
+  ])
   if (!session?.user?.id) return null
 
   const lease = await prisma.lease.findFirst({
@@ -23,17 +28,17 @@ export default async function TenantPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Meine Wohnung</h1>
+        <h1 className="font-serif text-2xl text-foreground">{t('myApartment')}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Willkommen, {session.user.name?.split(' ')[0]}!
+          {t('welcome', { name: session.user.name?.split(' ')[0] })}
         </p>
       </div>
 
       {!lease ? (
         <EmptyState
           icon={<Home className="h-7 w-7" />}
-          titel="Noch keine Wohnung zugewiesen"
-          beschreibung="Dein Vermieter hat noch keine Wohnung für dich eingerichtet."
+          titel={t('noApartmentTitle')}
+          beschreibung={t('noApartmentDesc')}
         />
       ) : (
         <div className="space-y-4 max-w-lg">
@@ -53,24 +58,24 @@ export default async function TenantPage() {
 
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
               <div>
-                <p className="text-xs text-muted-foreground">Einheit</p>
+                <p className="text-xs text-muted-foreground">{t('unit')}</p>
                 <p className="text-sm font-medium text-foreground">{lease.unit.unitNumber}</p>
               </div>
               {lease.unit.floor != null && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Etage</p>
+                  <p className="text-xs text-muted-foreground">{t('floor')}</p>
                   <p className="text-sm font-medium text-foreground">{lease.unit.floor}</p>
                 </div>
               )}
               {lease.unit.size != null && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Größe</p>
+                  <p className="text-xs text-muted-foreground">{t('size')}</p>
                   <p className="text-sm font-medium text-foreground">{lease.unit.size} m²</p>
                 </div>
               )}
               {lease.unit.rooms != null && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Zimmer</p>
+                  <p className="text-xs text-muted-foreground">{t('rooms')}</p>
                   <p className="text-sm font-medium text-foreground">{lease.unit.rooms}</p>
                 </div>
               )}
@@ -78,29 +83,29 @@ export default async function TenantPage() {
 
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
               <div>
-                <p className="text-xs text-muted-foreground">Kaltmiete</p>
+                <p className="text-xs text-muted-foreground">{t('coldRent')}</p>
                 <p className="text-sm font-medium text-foreground">{lease.coldRent.toFixed(2)} €</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Nebenkosten</p>
+                <p className="text-xs text-muted-foreground">{t('extraCosts')}</p>
                 <p className="text-sm font-medium text-foreground">{lease.extraCosts.toFixed(2)} €</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Warmmiete</p>
+                <p className="text-xs text-muted-foreground">{t('warmRent')}</p>
                 <p className="text-sm font-medium text-foreground font-serif">
                   {(lease.coldRent + lease.extraCosts).toFixed(2)} €
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Mietbeginn</p>
+                <p className="text-xs text-muted-foreground">{t('startDate')}</p>
                 <p className="text-sm font-medium text-foreground">
-                  {new Date(lease.startDate).toLocaleDateString('de-DE')}
+                  {new Date(lease.startDate).toLocaleDateString(locale)}
                 </p>
               </div>
             </div>
 
             <div className="pt-2 border-t border-border">
-              <Badge variant="secondary">Aktiver Mietvertrag</Badge>
+              <Badge variant="secondary">{t('activeLease')}</Badge>
             </div>
           </Card>
         </div>

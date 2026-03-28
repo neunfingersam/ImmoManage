@@ -5,9 +5,13 @@ import { MessageInput } from '@/components/messages/MessageInput'
 import { getMyMessages, getMyVermieter, sendTenantMessage } from './_actions'
 import { MessageSquare } from 'lucide-react'
 import { EmptyState } from '@/components/shared/EmptyState'
+import { getTranslations } from 'next-intl/server'
 
 export default async function TenantMessagesPage() {
-  const session = await getServerSession(authOptions)
+  const [t, session] = await Promise.all([
+    getTranslations('tenant'),
+    getServerSession(authOptions),
+  ])
   if (!session?.user?.id) return null
 
   const [messages, vermieter] = await Promise.all([getMyMessages(), getMyVermieter()])
@@ -15,11 +19,11 @@ export default async function TenantMessagesPage() {
   if (!vermieter) {
     return (
       <div className="space-y-6">
-        <h1 className="font-serif text-2xl text-foreground">Nachrichten</h1>
+        <h1 className="font-serif text-2xl text-foreground">{t('messages')}</h1>
         <EmptyState
           icon={<MessageSquare className="h-7 w-7" />}
-          titel="Kein Ansprechpartner"
-          beschreibung="Bitte kontaktieren Sie Ihre Verwaltung direkt."
+          titel={t('noContactTitle')}
+          beschreibung={t('noContactDesc')}
         />
       </div>
     )
@@ -33,13 +37,13 @@ export default async function TenantMessagesPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] space-y-4">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Nachrichten</h1>
-        <p className="text-sm text-muted-foreground mt-1">Ihr Ansprechpartner: {vermieter.name}</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('messages')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('contactPerson', { name: vermieter.name })}</p>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-4 py-2">
         {messages.length === 0 && (
-          <p className="text-center text-sm text-muted-foreground py-8">Noch keine Nachrichten.</p>
+          <p className="text-center text-sm text-muted-foreground py-8">{t('noMessages')}</p>
         )}
         {messages.map(m => (
           <MessageBubble

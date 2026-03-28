@@ -3,9 +3,13 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { NewTicketForm } from './NewTicketForm'
 import { createTicket } from '../_actions'
+import { getTranslations } from 'next-intl/server'
 
 export default async function NewTicketPage() {
-  const session = await getServerSession(authOptions)
+  const [t, session] = await Promise.all([
+    getTranslations('tenant'),
+    getServerSession(authOptions),
+  ])
   if (!session?.user?.id) return null
 
   const leases = await prisma.lease.findMany({
@@ -34,11 +38,11 @@ export default async function NewTicketPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="font-serif text-2xl text-foreground">Neue Schadensmeldung</h1>
+          <h1 className="font-serif text-2xl text-foreground">{t('newDamageReport')}</h1>
         </div>
         <div className="py-12 text-center">
-          <p className="text-muted-foreground">Kein aktiver Mietvertrag vorhanden.</p>
-          <p className="text-sm text-muted-foreground mt-1">Bitte wenden Sie sich an Ihren Vermieter.</p>
+          <p className="text-muted-foreground">{t('noLease')}</p>
+          <p className="text-sm text-muted-foreground mt-1">{t('noLeaseContact')}</p>
         </div>
       </div>
     )
@@ -47,8 +51,8 @@ export default async function NewTicketPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Neue Schadensmeldung</h1>
-        <p className="text-sm text-muted-foreground mt-1">Meldung einreichen</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('newDamageReport')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('submitReport')}</p>
       </div>
       <NewTicketForm options={options} action={createTicket} />
     </div>

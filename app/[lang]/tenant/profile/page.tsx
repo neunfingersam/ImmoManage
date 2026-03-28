@@ -5,9 +5,13 @@ import { redirect } from 'next/navigation'
 import { ProfileForm } from './ProfileForm'
 import { DeleteAccountSection } from '@/components/account/DeleteAccountSection'
 import { DataExportSection } from '@/components/account/DataExportSection'
+import { getTranslations } from 'next-intl/server'
 
 export default async function ProfilePage() {
-  const session = await getServerSession(authOptions)
+  const [t, session] = await Promise.all([
+    getTranslations('tenant'),
+    getServerSession(authOptions),
+  ])
   if (!session?.user?.id) redirect('/auth/login')
 
   const user = await prisma.user.findUnique({
@@ -29,8 +33,8 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-8 max-w-lg">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Mein Profil</h1>
-        <p className="text-sm text-muted-foreground mt-1">Kontaktdaten aktualisieren</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('myProfile')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('profileSubtitle')}</p>
       </div>
       <ProfileForm
         defaultValues={{

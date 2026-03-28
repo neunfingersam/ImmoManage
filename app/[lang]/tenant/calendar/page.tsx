@@ -5,11 +5,7 @@ import { CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/shared/EmptyState'
-
-const typeLabels: Record<string, string> = {
-  VERTRAGSENDE: 'Vertragsende', ABLESUNG: 'Ablesung', KUENDIGUNG: 'Kündigung',
-  WARTUNG: 'Wartung', SONSTIGES: 'Sonstiges',
-}
+import { getTranslations, getLocale } from 'next-intl/server'
 
 type EventItem = {
   id: string
@@ -21,7 +17,11 @@ type EventItem = {
 }
 
 export default async function TenantCalendarPage() {
-  const session = await getServerSession(authOptions)
+  const [t, locale, session] = await Promise.all([
+    getTranslations('tenant'),
+    getLocale(),
+    getServerSession(authOptions),
+  ])
   if (!session?.user?.id || !session?.user?.companyId) return null
 
   // Aktive Leases des Mieters
@@ -55,50 +55,58 @@ export default async function TenantCalendarPage() {
   const upcoming = events.filter(e => new Date(e.date) >= now)
   const past = events.filter(e => new Date(e.date) < now)
 
+  const typeKeyMap: Record<string, string> = {
+    VERTRAGSENDE: 'typeVERTRAGSENDE',
+    ABLESUNG: 'typeABLESUNG',
+    KUENDIGUNG: 'typeKUENDIGUNG',
+    WARTUNG: 'typeWARTUNG',
+    SONSTIGES: 'typeSONSTIGES',
+  }
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Meine Termine</h1>
-        <p className="text-sm text-muted-foreground mt-1">{upcoming.length} bevorstehend</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('myCalendar')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('upcomingCount', { count: upcoming.length })}</p>
       </div>
 
       {events.length === 0 ? (
-        <EmptyState icon={<CalendarDays className="h-7 w-7" />} titel="Keine Termine" beschreibung="Aktuell keine Termine für Ihre Wohnung." />
+        <EmptyState icon={<CalendarDays className="h-7 w-7" />} titel={t('noEventsTitle')} beschreibung={t('noEventsDesc')} />
       ) : (
         <>
           {upcoming.length > 0 && (
             <section className="space-y-2">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Bevorstehend</h2>
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('upcoming')}</h2>
               {upcoming.map(e => (
                 <Card key={e.id} className="p-4 flex items-center gap-4">
                   <div className="text-center shrink-0 w-12">
                     <p className="text-lg font-serif text-foreground">{new Date(e.date).getDate()}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString('de-DE', { month: 'short' })}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString(locale, { month: 'short' })}</p>
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-foreground">{e.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {e.property?.name}{e.unit ? ` · Einheit ${e.unit.unitNumber}` : ' · Gesamtes Haus'}
+                      {e.property?.name}{e.unit ? ` · ${t('unitLabel', { number: e.unit.unitNumber })}` : ` · ${t('wholeBuilding')}`}
                     </p>
                   </div>
-                  <Badge variant="outline">{typeLabels[e.type] ?? e.type}</Badge>
+                  <Badge variant="outline">{typeKeyMap[e.type] ? t(typeKeyMap[e.type] as Parameters<typeof t>[0]) : e.type}</Badge>
                 </Card>
               ))}
             </section>
           )}
           {past.length > 0 && (
             <section className="space-y-2 opacity-60">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Vergangen</h2>
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('past')}</h2>
               {past.slice(0, 5).map(e => (
                 <Card key={e.id} className="p-4 flex items-center gap-4">
                   <div className="text-center shrink-0 w-12">
                     <p className="text-lg font-serif">{new Date(e.date).getDate()}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString('de-DE', { month: 'short' })}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString(locale, { month: 'short' })}</p>
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">{e.title}</p>
                   </div>
-                  <Badge variant="outline">{typeLabels[e.type] ?? e.type}</Badge>
+                  <Badge variant="outline">{typeKeyMap[e.type] ? t(typeKeyMap[e.type] as Parameters<typeof t>[0]) : e.type}</Badge>
                 </Card>
               ))}
             </section>

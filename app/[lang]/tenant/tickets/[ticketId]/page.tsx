@@ -7,6 +7,7 @@ import { TicketStatusBadge, TicketPriorityBadge } from '@/components/tickets/Tic
 import { TicketCommentForm } from '@/components/tickets/TicketCommentForm'
 import { getMyTicket } from '../_actions'
 import { addTenantComment } from '../_actions'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 function parseImages(raw: unknown): string[] {
   if (!raw) return []
@@ -20,11 +21,15 @@ export default async function TenantTicketDetailPage({
   params: Promise<{ ticketId: string }>
 }) {
   const { ticketId } = await params
-  const ticket = await getMyTicket(ticketId)
+  const [t, locale, ticket] = await Promise.all([
+    getTranslations('tenant'),
+    getLocale(),
+    getMyTicket(ticketId),
+  ])
   if (!ticket) notFound()
 
   const images = parseImages(ticket.images)
-  const date = new Date(ticket.createdAt).toLocaleDateString('de-CH')
+  const date = new Date(ticket.createdAt).toLocaleDateString(locale)
 
   async function handleComment(data: { text: string }) {
     'use server'
@@ -34,7 +39,7 @@ export default async function TenantTicketDetailPage({
   return (
     <div className="space-y-6 max-w-2xl">
       <Button render={<Link href="/tenant/tickets" />} variant="ghost" size="sm">
-        <ArrowLeft className="h-4 w-4 mr-1" />Zurück
+        <ArrowLeft className="h-4 w-4 mr-1" />{t('back')}
       </Button>
 
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -60,7 +65,7 @@ export default async function TenantTicketDetailPage({
 
       {images.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-foreground">Fotos</p>
+          <p className="text-sm font-medium text-foreground">{t('photos')}</p>
           <div className="flex flex-wrap gap-3">
             {images.map((url, i) => (
               <a key={i} href={url} target="_blank" rel="noreferrer">
@@ -73,18 +78,18 @@ export default async function TenantTicketDetailPage({
       )}
 
       <div className="space-y-4">
-        <h2 className="font-medium text-foreground">Verlauf ({ticket.comments.length})</h2>
+        <h2 className="font-medium text-foreground">{t('history', { count: ticket.comments.length })}</h2>
         {ticket.comments.map((c) => (
           <Card key={c.id} className="p-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-foreground">
                 {c.author.name}
                 {c.author.role !== 'MIETER' && (
-                  <span className="ml-2 text-xs text-primary font-normal">Verwaltung</span>
+                  <span className="ml-2 text-xs text-primary font-normal">{t('management')}</span>
                 )}
               </span>
               <span className="text-xs text-muted-foreground">
-                {new Date(c.createdAt).toLocaleDateString('de-CH')}
+                {new Date(c.createdAt).toLocaleDateString(locale)}
               </span>
             </div>
             <p className="text-sm text-muted-foreground">{c.text}</p>
