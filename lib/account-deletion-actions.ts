@@ -210,9 +210,12 @@ export async function getMyDeletionRequest() {
 
 // Get all pending deletion requests for admin/superadmin
 export async function getDeletionRequests() {
-  const session = await getAuthSession()
-  if (!session) return []
+  const { getServerSession } = await import('next-auth')
+  const { authOptions } = await import('@/lib/auth')
+  const session = await getServerSession(authOptions)
+  if (!session?.user) return []
   const isSuperAdmin = session.user.role === 'SUPER_ADMIN'
+  if (!isSuperAdmin && !session.user.companyId) return []
   return prisma.accountDeletionRequest.findMany({
     where: {
       status: 'PENDING',
