@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   }
 
   const statusMap: Record<Stripe.Subscription.Status, PlanStatus | null> = {
-    active:             'ACTIVE',
+    active:             'ACTIVE',  // clears PENDING_PAYMENT too
     trialing:           'TRIAL',
     past_due:           'PAST_DUE',
     canceled:           'CANCELLED',

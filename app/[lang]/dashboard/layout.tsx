@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { DashboardSidebar, DashboardMobileNav } from '@/components/layout/DashboardSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { TrialBanner } from '@/components/layout/TrialBanner'
+import { PaymentRequiredWall } from '@/components/layout/PaymentRequiredWall'
 import { getPlanLimits } from '@/lib/plan-limits'
 
 export default async function DashboardLayout({
@@ -55,6 +56,7 @@ export default async function DashboardLayout({
         />
         <TrialBanner trialEndsAt={trialEndsAt} planStatus={planStatus} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          {planStatus === 'PENDING_PAYMENT' && <PaymentRequiredWall />}
           {children}
         </main>
       </div>

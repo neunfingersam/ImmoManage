@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         name: companyName.trim(),
         slug,
         plan,
-        planStatus: plan === 'STARTER' ? 'TRIAL' : 'ACTIVE',
+        planStatus: plan === 'STARTER' ? 'TRIAL' : 'PENDING_PAYMENT',
         trialEndsAt,
       },
     })
