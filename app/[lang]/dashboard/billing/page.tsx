@@ -3,10 +3,15 @@ import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { BillForm } from '@/components/billing/BillForm'
 import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton'
-import { getBills, getLeasesForBilling } from './_actions'
+import { PaymentSettingsForm } from '@/components/billing/PaymentSettingsForm'
+import { getBills, getLeasesForBilling, getPaymentSettings } from './_actions'
 
 export default async function BillingPage() {
-  const [bills, leases] = await Promise.all([getBills(), getLeasesForBilling()])
+  const [bills, leases, paymentSettings] = await Promise.all([
+    getBills(),
+    getLeasesForBilling(),
+    getPaymentSettings(),
+  ])
 
   return (
     <div className="space-y-8">
@@ -17,6 +22,16 @@ export default async function BillingPage() {
         </div>
         <ManageSubscriptionButton />
       </div>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Zahlungsangaben (QR-Rechnung)</h2>
+        <Card className="p-5">
+          <p className="text-xs text-muted-foreground mb-4">
+            Diese IBAN und Adresse erscheinen im Zahlungsschein der Nebenkostenabrechnung (Swiss QR Bill).
+          </p>
+          <PaymentSettingsForm initial={paymentSettings ?? { bankIban: '', bankName: '', street: '', zip: '', city: '' }} />
+        </Card>
+      </section>
 
       <section className="space-y-3">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Neue Abrechnung</h2>
@@ -37,7 +52,7 @@ export default async function BillingPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right shrink-0">
-                    <p className="font-serif text-foreground">{b.amount.toFixed(2)} €</p>
+                    <p className="font-serif text-foreground">CHF {b.amount.toFixed(2)}</p>
                     {b.sentAt && <p className="text-xs text-muted-foreground">Gesendet {new Date(b.sentAt).toLocaleDateString('de-DE')}</p>}
                   </div>
                   <a

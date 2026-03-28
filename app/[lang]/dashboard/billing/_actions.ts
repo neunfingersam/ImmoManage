@@ -101,3 +101,62 @@ export async function getLeasesForBilling() {
     orderBy: { createdAt: 'desc' },
   })
 }
+
+// ─── Company payment settings (IBAN + address) ────────────────────────────────
+
+const paymentSettingsSchema = z.object({
+  bankIban: z.string().min(15, 'Bitte gültige IBAN eingeben'),
+  bankName: z.string().optional(),
+  street: z.string().min(1, 'Strasse erforderlich'),
+  zip: z.string().min(4, 'PLZ erforderlich'),
+  city: z.string().min(1, 'Ort erforderlich'),
+})
+
+export async function getPaymentSettings() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return null
+  const company = await prisma.company.findUnique({
+    where: { id: session.user.companyId },
+    select: { smtpConfig: true },
+  })
+  const cfg = company?.smtpConfig as Record<string, string> | null
+  return {
+    bankIban: cfg?.bankIban ?? '',
+    bankName: cfg?.bankName ?? '',
+    street: cfg?.street ?? '',
+    zip: cfg?.zip ?? '',
+    city: cfg?.city ?? '',
+  }
+}
+
+export async function savePaymentSettings(data: unknown): Promise<ActionResult<null>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+  if (session.user.role !== 'ADMIN') return { success: false, error: 'Nur Admins können das ändern' }
+
+  const parsed = paymentSettingsSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.errors[0].message }
+
+  const company = await prisma.company.findUnique({
+    where: { id: session.user.companyId },
+    select: { smtpConfig: true },
+  })
+  const existing = (company?.smtpConfig ?? {}) as Record<string, string>
+
+  await prisma.company.update({
+    where: { id: session.user.companyId },
+    data: {
+      smtpConfig: {
+        ...existing,
+        bankIban: parsed.data.bankIban.replace(/\s/g, ''),
+        bankName: parsed.data.bankName ?? '',
+        street: parsed.data.street,
+        zip: parsed.data.zip,
+        city: parsed.data.city,
+      },
+    },
+  })
+
+  revalidatePath('/dashboard/billing')
+  return { success: true, data: null }
+}

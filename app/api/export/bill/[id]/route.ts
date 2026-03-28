@@ -3,6 +3,8 @@ import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import QRCode from 'qrcode'
+import { buildQrPayload, formatSwissIban } from '@/lib/qr-invoice'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -11,23 +13,146 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     return new Response('Nicht autorisiert', { status: 401 })
   }
 
-  const bill = await prisma.utilityBill.findFirst({
-    where: { id, companyId: session.user.companyId },
-    include: {
-      lease: {
-        include: {
-          tenant: { select: { name: true, email: true, phone: true } },
-          unit: { select: { unitNumber: true, floor: true } },
+  const [bill, company] = await Promise.all([
+    prisma.utilityBill.findFirst({
+      where: { id, companyId: session.user.companyId },
+      include: {
+        lease: {
+          include: {
+            tenant: { select: { name: true, email: true, phone: true } },
+            unit: { select: { unitNumber: true, floor: true } },
+          },
         },
+        property: { select: { name: true, address: true } },
       },
-      property: { select: { name: true, address: true } },
-    },
-  })
+    }),
+    prisma.company.findUnique({
+      where: { id: session.user.companyId },
+      select: { name: true, smtpConfig: true },
+    }),
+  ])
 
   if (!bill) return new Response('Nicht gefunden', { status: 404 })
 
   const warmmiete = bill.lease.coldRent + bill.lease.extraCosts
-  const dateStr = new Date().toLocaleDateString('de-DE')
+  const dateStr = new Date().toLocaleDateString('de-CH')
+  const akontoTotal = bill.lease.extraCosts * 12
+  const diff = akontoTotal - bill.amount
+  const isNachzahlung = diff < 0
+  const nachzahlungBetrag = Math.abs(diff)
+
+  // ─── Swiss QR Bill ────────────────────────────────────────────────────────
+  const cfg = (company?.smtpConfig ?? {}) as Record<string, string>
+  const iban = cfg.bankIban ?? ''
+  const hasQrConfig = iban.length >= 15 && cfg.street && cfg.zip && cfg.city
+  const companyName = company?.name ?? 'ImmoManage'
+
+  let qrDataUrl = ''
+  if (hasQrConfig && isNachzahlung) {
+    try {
+      const payload = buildQrPayload({
+        iban,
+        creditorName: companyName,
+        creditorAddress: `${cfg.street}, ${cfg.zip} ${cfg.city}`,
+        creditorCity: `${cfg.zip} ${cfg.city}`,
+        amount: nachzahlungBetrag,
+        currency: 'CHF',
+        reference: `NK ${bill.year} ${bill.lease.tenant.name}`,
+        debtorName: bill.lease.tenant.name,
+      })
+      qrDataUrl = await QRCode.toDataURL(payload, {
+        errorCorrectionLevel: 'M',
+        margin: 0,
+        width: 166,
+        color: { dark: '#000000', light: '#ffffff' },
+      })
+    } catch {
+      // QR generation failed — continue without it
+    }
+  }
+
+  const qrSlipHtml = hasQrConfig && isNachzahlung && qrDataUrl ? `
+  <!-- QR-Bill Perforationslinie -->
+  <div style="margin-top: 40px; border-top: 1px dashed #aaa; padding-top: 8px; display: flex; align-items: center; gap: 8px; color: #aaa; font-size: 10px;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9L12 15L18 9"/></svg>
+    Hier abtrennen
+  </div>
+
+  <!-- QR-Zahlungsschein -->
+  <div style="margin-top: 0; page-break-inside: avoid;">
+    <div style="display: flex; border: 1px solid #000; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10px;">
+
+      <!-- Empfangsschein -->
+      <div style="width: 62mm; border-right: 1px solid #000; padding: 5mm; flex-shrink: 0;">
+        <div style="font-size: 11px; font-weight: 700; margin-bottom: 3mm;">Empfangsschein</div>
+
+        <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Konto / Zahlbar an</div>
+        <div style="margin-bottom: 3mm; line-height: 1.4;">
+          <div>${formatSwissIban(iban)}</div>
+          <div>${companyName}</div>
+          <div>${cfg.street}</div>
+          <div>${cfg.zip} ${cfg.city}</div>
+        </div>
+
+        <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Zahlbar durch</div>
+        <div style="margin-bottom: 3mm; line-height: 1.4;">
+          <div>${bill.lease.tenant.name}</div>
+        </div>
+
+        <div style="margin-top: auto;">
+          <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Währung</div>
+          <div style="display: flex; gap: 10mm;">
+            <div>CHF</div>
+            <div>
+              <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Betrag</div>
+              <div>${nachzahlungBetrag.toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 3mm; font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6mm;">Annahmestelle</div>
+        <div style="height: 8mm; border: 1px solid #000; width: 30mm;"></div>
+      </div>
+
+      <!-- Zahlteil -->
+      <div style="flex: 1; padding: 5mm;">
+        <div style="font-size: 11px; font-weight: 700; margin-bottom: 3mm;">Zahlteil</div>
+
+        <div style="display: flex; gap: 5mm; margin-bottom: 3mm;">
+          <!-- QR Code -->
+          <div style="flex-shrink: 0;">
+            <div style="width: 46mm; height: 46mm; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <img src="${qrDataUrl}" width="166" height="166" style="width: 100%; height: 100%; display: block;" alt="Swiss QR Code" />
+            </div>
+          </div>
+
+          <!-- Betrag/Währung rechts vom QR -->
+          <div>
+            <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Währung</div>
+            <div style="margin-bottom: 3mm;">CHF</div>
+            <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Betrag</div>
+            <div style="font-size: 14px; font-weight: 700;">${nachzahlungBetrag.toFixed(2)}</div>
+          </div>
+        </div>
+
+        <!-- Konto + Empfänger -->
+        <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Konto / Zahlbar an</div>
+        <div style="margin-bottom: 3mm; line-height: 1.5;">
+          <div>${formatSwissIban(iban)}</div>
+          <div>${companyName}</div>
+          <div>${cfg.street}, ${cfg.zip} ${cfg.city}</div>
+        </div>
+
+        <!-- Mitteilung -->
+        <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Mitteilung</div>
+        <div style="margin-bottom: 3mm;">Nebenkostenabrechnung ${bill.year} · ${bill.lease.tenant.name}</div>
+
+        <!-- Zahlbar durch -->
+        <div style="font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1mm;">Zahlbar durch</div>
+        <div style="line-height: 1.5;">${bill.lease.tenant.name}</div>
+      </div>
+    </div>
+  </div>` : ''
 
   const html = `<!DOCTYPE html>
 <html lang="de">
@@ -57,7 +182,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   .footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #eee; font-size: 11px; color: #aaa; text-align: center; }
   @media print {
     body { padding: 32px; }
-    @page { margin: 20mm; }
+    @page { margin: 15mm; }
   }
 </style>
 </head>
@@ -103,7 +228,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   <thead>
     <tr>
       <th>Position</th>
-      <th style="text-align: right;">Betrag (€)</th>
+      <th style="text-align: right;">Betrag (CHF)</th>
     </tr>
   </thead>
   <tbody>
@@ -113,7 +238,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     </tr>
     <tr>
       <td>Vorauszahlung Nebenkosten (monatlich × 12)</td>
-      <td class="amount">${(bill.lease.extraCosts * 12).toFixed(2)}</td>
+      <td class="amount">${akontoTotal.toFixed(2)}</td>
     </tr>
     <tr class="highlight">
       <td>Tatsächliche Nebenkosten ${bill.year}</td>
@@ -121,7 +246,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     </tr>
     <tr>
       <td>Differenz (Vorauszahlung – tatsächlich)</td>
-      <td class="amount">${((bill.lease.extraCosts * 12) - bill.amount).toFixed(2)}</td>
+      <td class="amount">${diff.toFixed(2)}</td>
     </tr>
     <tr class="total-row">
       <td>Gesamtmiete ${bill.year} (Kalt + tatsächliche NK)</td>
@@ -135,31 +260,33 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     <div class="section-title">Monatliche Miete</div>
     <div class="field">
       <div class="field-label">Kaltmiete</div>
-      <div class="field-value">${bill.lease.coldRent.toFixed(2)} €</div>
+      <div class="field-value">CHF ${bill.lease.coldRent.toFixed(2)}</div>
     </div>
     <div class="field">
       <div class="field-label">Nebenkosten-Vorauszahlung</div>
-      <div class="field-value">${bill.lease.extraCosts.toFixed(2)} €</div>
+      <div class="field-value">CHF ${bill.lease.extraCosts.toFixed(2)}</div>
     </div>
     <div class="field">
       <div class="field-label">Warmmiete</div>
-      <div class="field-value" style="font-size: 16px; color: #E8734A;">${warmmiete.toFixed(2)} €</div>
+      <div class="field-value" style="font-size: 16px; color: #E8734A;">CHF ${warmmiete.toFixed(2)}</div>
     </div>
   </div>
   <div>
     <div class="section-title">Ergebnis</div>
-    ${(bill.lease.extraCosts * 12) >= bill.amount
-      ? `<div style="color: #16a34a; font-weight: 600; font-size: 15px;">Guthaben: ${((bill.lease.extraCosts * 12) - bill.amount).toFixed(2)} €</div>
+    ${!isNachzahlung
+      ? `<div style="color: #16a34a; font-weight: 600; font-size: 15px;">Guthaben: CHF ${diff.toFixed(2)}</div>
          <div style="font-size: 12px; color: #888; margin-top: 4px;">Der Mieter hat zu viel vorausgezahlt.</div>`
-      : `<div style="color: #dc2626; font-weight: 600; font-size: 15px;">Nachzahlung: ${(bill.amount - (bill.lease.extraCosts * 12)).toFixed(2)} €</div>
+      : `<div style="color: #dc2626; font-weight: 600; font-size: 15px;">Nachzahlung: CHF ${nachzahlungBetrag.toFixed(2)}</div>
          <div style="font-size: 12px; color: #888; margin-top: 4px;">Der Mieter hat zu wenig vorausgezahlt.</div>`
     }
   </div>
 </div>
 
 <div class="footer">
-  Erstellt mit ImmoManage · ${dateStr} · Nur zur internen Verwendung
+  Erstellt mit ImmoManage · ${dateStr} · ${companyName}
 </div>
+
+${qrSlipHtml}
 
 <script>
   window.onload = function() { window.print(); }
