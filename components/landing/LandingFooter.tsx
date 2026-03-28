@@ -16,7 +16,7 @@ export default function LandingFooter() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto mb-4 brightness-0 invert" />
+            <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto mb-4" />
             <p className="text-sm text-white/40 leading-relaxed max-w-[180px]">
               {t('tagline')}
             </p>
