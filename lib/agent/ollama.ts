@@ -3,9 +3,17 @@
 
 const OLLAMA_BASE = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434'
 
+// ngrok adds a browser-warning page on free plans — skip it for API calls
+const NGROK_HEADERS = OLLAMA_BASE.includes('ngrok')
+  ? { 'ngrok-skip-browser-warning': 'true' }
+  : {}
+
 export async function isOllamaAvailable(): Promise<boolean> {
   try {
-    const res = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(2000) })
+    const res = await fetch(`${OLLAMA_BASE}/api/tags`, {
+      headers: NGROK_HEADERS,
+      signal: AbortSignal.timeout(2000),
+    })
     return res.ok
   } catch {
     return false
@@ -15,7 +23,7 @@ export async function isOllamaAvailable(): Promise<boolean> {
 export async function getEmbedding(text: string): Promise<number[]> {
   const res = await fetch(`${OLLAMA_BASE}/api/embed`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
     body: JSON.stringify({ model: 'nomic-embed-text', input: text }),
   })
   if (!res.ok) throw new Error('Ollama Embedding fehlgeschlagen')
@@ -29,7 +37,7 @@ export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: stri
 export async function generateText(messages: ChatMessage[]): Promise<string> {
   const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
     body: JSON.stringify({
       model: process.env.OLLAMA_MODEL ?? 'llama3.2:1b',
       messages,
@@ -44,7 +52,7 @@ export async function generateText(messages: ChatMessage[]): Promise<string> {
 export async function* streamChat(messages: ChatMessage[]): AsyncGenerator<string> {
   const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
     body: JSON.stringify({
       model: process.env.OLLAMA_MODEL ?? 'llama3.2:1b',
       messages,

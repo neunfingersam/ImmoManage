@@ -39,10 +39,12 @@ export async function POST(req: NextRequest) {
   // Kontext aufbauen (extrahiert)
   const { leaseContext, billContext, propertyIds, unitInfo } = await buildTenantContext(userId)
 
-  // Dokument-Suche (extrahiert)
-  const queryVector = await getEmbedding(message)
+  // Dokument-Suche (extrahiert) — Embedding optional, DB-Fallback greift wenn nicht verfügbar
+  let queryVector: number[] = []
+  try { queryVector = await getEmbedding(message) } catch { /* nomic-embed-text nicht installiert */ }
   const { contextText, chunkIds } = await searchTenantDocuments(
-    queryVector, companyId, userId, propertyIds, queryChunks
+    queryVector, companyId, userId, propertyIds,
+    queryVector.length > 0 ? queryChunks : async () => []
   )
 
   const structuredContext = [leaseContext, billContext].filter(Boolean).join('\n\n')
