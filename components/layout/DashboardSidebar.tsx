@@ -93,7 +93,7 @@ function DashboardNavLinks({ role, companyName, planFeatures }: DashboardSidebar
   return (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+      <div className="flex h-16 items-center gap-3 px-4 border-b border-border">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
         {companyName && (

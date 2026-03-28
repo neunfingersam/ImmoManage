@@ -72,7 +72,7 @@ function TenantNavLinks({ upcomingEventsCount = 0 }: { upcomingEventsCount?: num
 export function TenantSidebar({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {
   return (
     <aside className="hidden md:flex h-full w-64 flex-col bg-card border-r border-border">
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+      <div className="flex h-16 items-center gap-3 px-4 border-b border-border">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
       </div>
@@ -84,7 +84,7 @@ export function TenantSidebar({ upcomingEventsCount = 0 }: { upcomingEventsCount
 export function TenantMobileNav({ upcomingEventsCount = 0 }: { upcomingEventsCount?: number }) {
   return (
     <MobileNavTrigger>
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+      <div className="flex h-16 items-center gap-3 px-4 border-b border-border">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="ImmoManage" className="h-9 w-auto" />
       </div>
