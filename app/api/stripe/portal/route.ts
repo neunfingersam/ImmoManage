@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Kein Stripe-Konto verknüpft' }, { status: 400 })
   }
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
+  const baseUrl = 'https://immo-manage.ch'
   const { searchParams } = new URL(req.url)
   const locale = searchParams.get('locale') ?? 'de'
 
