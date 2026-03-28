@@ -38,8 +38,8 @@ export default async function LocaleRootPage({
       <HeroSection />
       <ProblemSection />
       <FeaturesSection />
-      <TestimonialsSection />
       <ForWhomSection />
+      <TestimonialsSection />
       <DemoCtaSection />
       <LandingFooter />
       <script
