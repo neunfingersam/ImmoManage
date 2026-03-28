@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { DashboardSidebar, DashboardMobileNav } from '@/components/layout/DashboardSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
+import { TrialBanner } from '@/components/layout/TrialBanner'
 import { getPlanLimits } from '@/lib/plan-limits'
 
 export default async function DashboardLayout({
@@ -27,15 +28,19 @@ export default async function DashboardLayout({
 
   let companyName: string | undefined
   let planFeatures = { qrInvoice: true, taxFolder: true, aiAssistant: true }
+  let trialEndsAt: string | null = null
+  let planStatus = 'ACTIVE'
   if (session.user.companyId) {
     const company = await prisma.company.findUnique({
       where: { id: session.user.companyId },
-      select: { name: true, plan: true },
+      select: { name: true, plan: true, planStatus: true, trialEndsAt: true },
     })
     companyName = company?.name ?? undefined
     if (company?.plan) {
       planFeatures = getPlanLimits(company.plan).features
     }
+    planStatus = company?.planStatus ?? 'ACTIVE'
+    trialEndsAt = company?.trialEndsAt?.toISOString() ?? null
   }
 
   return (
@@ -48,6 +53,7 @@ export default async function DashboardLayout({
           userRole={session.user.role}
           mobileNav={<DashboardMobileNav role={session.user.role} companyName={companyName} planFeatures={planFeatures} />}
         />
+        <TrialBanner trialEndsAt={trialEndsAt} planStatus={planStatus} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>

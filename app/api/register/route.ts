@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
+import { createStripeSubscription, TRIAL_DAYS } from '@/lib/stripe'
 import type { Plan } from '@/lib/generated/prisma'
 
 const VALID_PLANS: Plan[] = ['STARTER', 'STANDARD', 'PRO', 'ENTERPRISE']
@@ -59,10 +60,33 @@ export async function POST(req: NextRequest) {
     ENTERPRISE: 'Enterprise',
   }
 
+  // For paid plans, try to create Stripe subscription
+  let stripeData: { customerId: string; subscriptionId: string } | null = null
+  if (plan === 'STARTER' || plan === 'STANDARD' || plan === 'PRO') {
+    stripeData = await createStripeSubscription({
+      email: normalizedEmail,
+      name: name.trim(),
+      companyName: companyName.trim(),
+      plan,
+    }).catch(() => null) // Don't block registration if Stripe is not yet configured
+  }
+
+  const trialEndsAt = plan === 'STARTER'
+    ? new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000)
+    : null
+
   // Create company + admin user in one transaction
   const user = await prisma.$transaction(async (tx) => {
     const company = await tx.company.create({
-      data: { name: companyName.trim(), slug, plan },
+      data: {
+        name: companyName.trim(),
+        slug,
+        plan,
+        planStatus: plan === 'STARTER' ? 'TRIAL' : 'ACTIVE',
+        trialEndsAt,
+        stripeCustomerId: stripeData?.customerId ?? null,
+        stripeSubscriptionId: stripeData?.subscriptionId ?? null,
+      },
     })
     return tx.user.create({
       data: {

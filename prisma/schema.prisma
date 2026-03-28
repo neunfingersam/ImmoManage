@@ -143,6 +143,13 @@ enum Plan {
   ENTERPRISE
 }
 
+enum PlanStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+}
+
 enum TicketScope {
   UNIT
   BUILDING
@@ -155,6 +162,10 @@ model Company {
   logoUrl              String?
   active               Boolean         @default(true)
   plan                 Plan            @default(STARTER)
+  planStatus           PlanStatus      @default(ACTIVE)
+  trialEndsAt          DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
   onboardingCompleted  Boolean         @default(false)
   smtpConfig           Json?
   createdAt            DateTime        @default(now())
