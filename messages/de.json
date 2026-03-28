@@ -548,12 +548,12 @@
     "metaDesc": "Transparente Preise für Schweizer Immobilienverwaltung. Kein Abo-Falle, keine versteckten Kosten. 3 Monate gratis testen."
   },
   "landing": {
-    "nav": { "bookDemo": "Demo buchen", "login": "Anmelden", "pricing": "Preise" },
+    "nav": { "bookDemo": "Gratis testen", "login": "Anmelden", "pricing": "Preise" },
     "hero": {
       "headline": "Schluss mit Zettelwirtschaft.",
       "headlineAccent": "Willkommen bei ImmoManage.",
       "subtext": "Die Schweizer Lösung für Hausverwaltungen und private Eigentümer — einfach, vollständig, CH-konform.",
-      "cta": "Demo buchen",
+      "cta": "Gratis testen",
       "badge": "Für die Schweiz gebaut"
     },
     "problem": {

@@ -548,12 +548,12 @@
     "metaDesc": "Prezzi trasparenti per la gestione immobiliare svizzera. Nessuna trappola. 3 mesi di prova gratuita."
   },
   "landing": {
-    "nav": { "bookDemo": "Prenota una demo", "login": "Accedi", "pricing": "Prezzi" },
+    "nav": { "bookDemo": "Prova gratuita", "login": "Accedi", "pricing": "Prezzi" },
     "hero": {
       "headline": "Basta fogli Excel.",
       "headlineAccent": "Benvenuto su ImmoManage.",
       "subtext": "La soluzione svizzera per amministratori e proprietari — semplice, completa, conforme alla Svizzera.",
-      "cta": "Prenota una demo",
+      "cta": "Prova gratuita",
       "badge": "Costruito per la Svizzera"
     },
     "problem": {

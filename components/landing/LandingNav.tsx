@@ -36,13 +36,13 @@ export default function LandingNav() {
           >
             {t('login')}
           </Link>
-          <a
-            href="#demo"
+          <Link
+            href={`/${locale}/preise`}
             className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-px hover:shadow-lg active:translate-y-0"
             style={{ backgroundColor: '#E8734A' }}
           >
             {t('bookDemo')}
-          </a>
+          </Link>
         </div>
 
         {/* Mobile: locale + hamburger */}
@@ -76,14 +76,14 @@ export default function LandingNav() {
             >
               {t('login')}
             </Link>
-            <a
-              href="#demo"
+            <Link
+              href={`/${locale}/preise`}
               onClick={() => setOpen(false)}
               className="rounded-xl px-4 py-3 text-center text-sm font-semibold text-white"
               style={{ backgroundColor: '#E8734A' }}
             >
               {t('bookDemo')}
-            </a>
+            </Link>
           </div>
         </div>
       )}

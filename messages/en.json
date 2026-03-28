@@ -548,12 +548,12 @@
     "metaDesc": "Transparent pricing for Swiss property management. No subscription traps. 3 months free trial."
   },
   "landing": {
-    "nav": { "bookDemo": "Book a demo", "login": "Login", "pricing": "Pricing" },
+    "nav": { "bookDemo": "Start free trial", "login": "Login", "pricing": "Pricing" },
     "hero": {
       "headline": "No more spreadsheet chaos.",
       "headlineAccent": "Welcome to ImmoManage.",
       "subtext": "The Swiss solution for property managers and private landlords — simple, complete, Swiss-compliant.",
-      "cta": "Book a demo",
+      "cta": "Start free trial",
       "badge": "Built for Switzerland"
     },
     "problem": {

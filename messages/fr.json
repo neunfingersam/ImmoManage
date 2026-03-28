@@ -548,12 +548,12 @@
     "metaDesc": "Tarifs transparents pour la gestion immobilière suisse. Pas de piège d'abonnement. 3 mois gratuits."
   },
   "landing": {
-    "nav": { "bookDemo": "Réserver une démo", "login": "Connexion", "pricing": "Tarifs" },
+    "nav": { "bookDemo": "Essai gratuit", "login": "Connexion", "pricing": "Tarifs" },
     "hero": {
       "headline": "Fini la paperasse.",
       "headlineAccent": "Bienvenue sur ImmoManage.",
       "subtext": "La solution suisse pour les gérants et propriétaires — simple, complète, conforme CH.",
-      "cta": "Réserver une démo",
+      "cta": "Essai gratuit",
       "badge": "Conçu pour la Suisse"
     },
     "problem": {

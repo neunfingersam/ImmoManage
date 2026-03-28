@@ -1,7 +1,9 @@
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link'
 
 export default function HeroSection() {
   const t = useTranslations('landing.hero')
+  const locale = useLocale()
 
   return (
     <section className="relative overflow-hidden bg-[#FAFAF8] py-16 md:py-32">
@@ -40,8 +42,8 @@ export default function HeroSection() {
               {t('subtext')}
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start">
-              <a
-                href="#demo"
+              <Link
+                href={`/${locale}/preise`}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0"
                 style={{ backgroundColor: '#E8734A', boxShadow: '0 8px 30px rgba(232,115,74,0.35)' }}
               >
@@ -49,7 +51,7 @@ export default function HeroSection() {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
 
