@@ -4,7 +4,7 @@
 const OLLAMA_BASE = process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434'
 
 // ngrok adds a browser-warning page on free plans — skip it for API calls
-const NGROK_HEADERS = OLLAMA_BASE.includes('ngrok')
+const NGROK_HEADERS: Record<string, string> = OLLAMA_BASE.includes('ngrok')
   ? { 'ngrok-skip-browser-warning': 'true' }
   : {}
 
