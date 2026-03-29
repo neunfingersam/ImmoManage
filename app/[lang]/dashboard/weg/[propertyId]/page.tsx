@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Building2, Users, Settings, ChevronRight, AlertTriangle, CheckCircle2, Plus } from 'lucide-react'
+import { Building2, Users, Settings, ChevronRight, AlertTriangle, CheckCircle2, Plus, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { getWegProperty } from '../_actions'
@@ -118,6 +118,25 @@ export default async function WegDetailPage({
           </div>
         </div>
       )}
+
+      {/* Module Links */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link href={`/dashboard/weg/${propertyId}/fonds`}>
+          <Card className="p-4 hover:border-primary/50 transition-colors cursor-pointer">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-sm">Erneuerungsfonds</p>
+                <p className="text-xs text-muted-foreground">
+                  {cfg?.fondsStand != null ? `CHF ${fmt(cfg.fondsStand)}` : 'Noch nicht erfasst'}
+                </p>
+              </div>
+            </div>
+          </Card>
+        </Link>
+      </div>
 
       {/* Owners */}
       <div className="space-y-3">
