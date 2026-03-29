@@ -3,6 +3,11 @@ import { Resend } from 'resend'
 
 const FROM = 'ImmoManage <noreply@immo-manage.ch>'
 
+const EMAIL_HEADER = `
+  <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+    <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #E8734A;">Immo</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">Manage</span>
+  </div>`
+
 function getResend() {
   const key = process.env.RESEND_API_KEY
   if (!key) throw new Error('RESEND_API_KEY is not set')
@@ -23,9 +28,7 @@ export async function sendTenantInviteEmail(opts: {
   const expires = opts.expiresHours ?? 72
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 48px; width: auto;" />
-      </div>
+      ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.tenantName},</p>
         <p><strong>${opts.companyName}</strong> hat ein Mieter-Konto für Sie eingerichtet. Mit ImmoManage können Sie Ihre Mietunterlagen einsehen, Schadensmeldungen erstellen und mit Ihrer Hausverwaltung kommunizieren.</p>
@@ -51,16 +54,18 @@ export async function sendEscalationEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #1e3a5f;">KI-Assistent: Weiterleitungsanfrage</h2>
-      <p>Hallo ${opts.vermieterName},</p>
-      <p>Ein Mieter hat eine Frage gestellt, die der KI-Assistent nicht beantworten konnte:</p>
-      <blockquote style="border-left: 3px solid #1e3a5f; padding-left: 16px; color: #555;">
-        ${opts.question}
-      </blockquote>
-      <p>Mieter: <strong>${opts.tenantName}</strong></p>
-      <p>Bitte melde dich direkt beim Mieter.</p>
-      <hr style="border: none; border-top: 1px solid #eee;">
-      <p style="font-size: 12px; color: #999;">ImmoManage · Automatische Benachrichtigung</p>
+      ${EMAIL_HEADER}
+      <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+        <p>Hallo ${opts.vermieterName},</p>
+        <p>Ein Mieter hat eine Frage gestellt, die der KI-Assistent nicht beantworten konnte:</p>
+        <blockquote style="border-left: 3px solid #1e3a5f; padding-left: 16px; color: #555;">
+          ${opts.question}
+        </blockquote>
+        <p>Mieter: <strong>${opts.tenantName}</strong></p>
+        <p>Bitte melde dich direkt beim Mieter.</p>
+        <hr style="border: none; border-top: 1px solid #eee;">
+        <p style="font-size: 12px; color: #999;">ImmoManage · Automatische Benachrichtigung</p>
+      </div>
     </div>
   `
   await sendEmail(opts.vermieterEmail, `Mieterfrage weitergeleitet von ${opts.tenantName}`, html)
@@ -76,9 +81,7 @@ export async function sendDeletionRequestEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
-      </div>
+      ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.adminName},</p>
         <p>Der folgende Nutzer hat beantragt, sein Konto zu löschen:</p>
@@ -101,9 +104,7 @@ export async function sendDeletionApprovedEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
-      </div>
+      ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.userName},</p>
         <p>Ihr Antrag auf Kontolöschung wurde genehmigt. Ihre persönlichen Daten wurden gemäss Art. 17 DSGVO / DSG aus unserem System entfernt.</p>
@@ -123,9 +124,7 @@ export async function sendDeletionRejectedEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
-      </div>
+      ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.userName},</p>
         <p>Ihr Antrag auf Kontolöschung wurde abgelehnt.</p>
@@ -149,9 +148,7 @@ export async function sendEventNotificationEmail(opts: {
   const dateStr = opts.eventDate.toLocaleDateString('de-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
-      </div>
+      ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.tenantName},</p>
         <p>Es wurde ein neuer Termin für Sie eingetragen:</p>
