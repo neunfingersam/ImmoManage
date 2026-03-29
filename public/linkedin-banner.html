@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  .wrapper { width: 1584px; height: 396px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<svg width="1584" height="396" viewBox="0 0 1584 396" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="17%" cy="50%" r="38%">
+      <stop offset="0%" stop-color="#E8734A" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#E8734A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="80%" cy="50%" r="30%">
+      <stop offset="0%" stop-color="#E8734A" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#E8734A" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ── Icon symbols (22×22) ── -->
+    <symbol id="ico-building" viewBox="0 0 22 22">
+      <rect x="2" y="7" width="18" height="14" rx="1" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <rect x="6" y="3" width="10" height="4" rx="1" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <rect x="4.5" y="10" width="3" height="3" rx="0.5" fill="#E8734A"/>
+      <rect x="9.5" y="10" width="3" height="3" rx="0.5" fill="#E8734A"/>
+      <rect x="14.5" y="10" width="3" height="3" rx="0.5" fill="#E8734A"/>
+      <rect x="8.5" y="15" width="5" height="6" rx="0.5" fill="#E8734A"/>
+    </symbol>
+
+    <symbol id="ico-person" viewBox="0 0 22 22">
+      <circle cx="11" cy="7" r="3.5" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <path d="M3 20c0-4 3.5-7 8-7s8 3 8 7" fill="none" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="ico-document" viewBox="0 0 22 22">
+      <path d="M4 2h9l5 5v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <path d="M13 2v5h5" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <line x1="6" y1="10" x2="16" y2="10" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="6" y1="14" x2="16" y2="14" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="6" y1="18" x2="11" y2="18" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="ico-chat" viewBox="0 0 22 22">
+      <rect x="2" y="3" width="18" height="13" rx="2" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <path d="M6 19l2-3" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="6" y1="8" x2="10" y2="8" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="6" y1="12" x2="14" y2="12" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="ico-clipboard" viewBox="0 0 22 22">
+      <rect x="4" y="5" width="14" height="16" rx="1.5" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <path d="M8 5V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <polyline points="8,12 10,14 14,10" fill="none" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="ico-gear" viewBox="0 0 22 22">
+      <circle cx="11" cy="11" r="3" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <path d="M11 2v2M11 18v2M2 11h2M18 11h2M4.2 4.2l1.4 1.4M16.4 16.4l1.4 1.4M4.2 17.8l1.4-1.4M16.4 5.6l1.4-1.4" stroke="#E8734A" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="ico-calculator" viewBox="0 0 22 22">
+      <rect x="3" y="2" width="16" height="20" rx="2" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <rect x="6" y="5" width="10" height="4" rx="1" fill="#E8734A" opacity="0.5"/>
+      <circle cx="7.5" cy="13" r="1" fill="#E8734A"/>
+      <circle cx="11" cy="13" r="1" fill="#E8734A"/>
+      <circle cx="14.5" cy="13" r="1" fill="#E8734A"/>
+      <circle cx="7.5" cy="17" r="1" fill="#E8734A"/>
+      <circle cx="11" cy="17" r="1" fill="#E8734A"/>
+      <circle cx="14.5" cy="17" r="1" fill="#E8734A"/>
+    </symbol>
+
+    <symbol id="ico-qr" viewBox="0 0 22 22">
+      <rect x="2" y="2" width="7" height="7" rx="1" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <rect x="13" y="2" width="7" height="7" rx="1" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <rect x="2" y="13" width="7" height="7" rx="1" fill="none" stroke="#E8734A" stroke-width="1.5"/>
+      <rect x="4" y="4" width="3" height="3" fill="#E8734A"/>
+      <rect x="15" y="4" width="3" height="3" fill="#E8734A"/>
+      <rect x="4" y="15" width="3" height="3" fill="#E8734A"/>
+      <rect x="13" y="13" width="2" height="2" fill="#E8734A"/>
+      <rect x="16" y="13" width="2" height="2" fill="#E8734A"/>
+      <rect x="13" y="16" width="2" height="2" fill="#E8734A"/>
+      <rect x="16" y="16" width="2" height="2" fill="#E8734A"/>
+    </symbol>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1584" height="396" fill="#1A1A2E"/>
+  <rect width="1584" height="396" fill="url(#glow)"/>
+  <rect width="1584" height="396" fill="url(#glow2)"/>
+
+  <!-- ── Circle (CIRCLE_CX=265, CIRCLE_CY=198, R=155) ── -->
+  <circle cx="265" cy="198" r="158" fill="#EDECEA" opacity="0.09"/>
+  <circle cx="265" cy="198" r="140" fill="#EDECEA" opacity="0.055"/>
+
+  <!-- ── iM mark — width=152, height=108, centered at (265,198) ──
+       half-w=76, half-h=54 → translate(265-76, 198-54) = translate(189, 144) -->
+  <g transform="translate(189, 144)" fill="#E8734A">
+    <!-- i dot -->
+    <rect x="0" y="0" width="16" height="8" rx="3"/>
+    <!-- i stem -->
+    <rect x="0" y="12" width="16" height="90" rx="3"/>
+    <!-- M left leg -->
+    <rect x="24" y="0" width="19" height="102" rx="3"/>
+    <!-- M right leg -->
+    <rect x="133" y="0" width="19" height="102" rx="3"/>
+    <!-- M V-shape -->
+    <polygon points="24,0 43,0 85,62 127,0 152,0 152,22 85,84 24,22"/>
+    <!-- AI subscript -->
+    <text x="85" y="116"
+      font-family="'Helvetica Neue', Arial, sans-serif"
+      font-size="13" font-weight="700"
+      fill="#E8734A" opacity="0.8"
+      text-anchor="middle">AI</text>
+  </g>
+
+  <!-- ── Icons at radius 128 around (265, 198) ──
+       r=128, 45° steps, icon size 24px (offset -12)
+       cos45 ≈ 0.7071 → 128×0.7071 ≈ 90.5
+         Top     : (265,   70)  → (253,  58)
+         TopR    : (355,  108)  → (343,  96)
+         Right   : (393,  198)  → (381, 186)
+         BotR    : (355,  288)  → (343, 276)
+         Bottom  : (265,  326)  → (253, 314)
+         BotL    : (175,  288)  → (163, 276)
+         Left    : (137,  198)  → (125, 186)
+         TopL    : (175,  108)  → (163,  96)
+  -->
+  <use href="#ico-building"    x="253" y="58"  width="24" height="24" opacity="0.9"/>
+  <use href="#ico-person"      x="343" y="96"  width="24" height="24" opacity="0.9"/>
+  <use href="#ico-document"    x="381" y="186" width="24" height="24" opacity="0.9"/>
+  <use href="#ico-calculator"  x="343" y="276" width="24" height="24" opacity="0.9"/>
+  <use href="#ico-clipboard"   x="253" y="314" width="24" height="24" opacity="0.9"/>
+  <use href="#ico-gear"        x="163" y="276" width="24" height="24" opacity="0.9"/>
+  <use href="#ico-chat"        x="125" y="186" width="24" height="24" opacity="0.9"/>
+  <use href="#ico-qr"          x="163" y="96"  width="24" height="24" opacity="0.9"/>
+
+  <!-- ── Separator ── -->
+  <line x1="475" y1="72" x2="475" y2="324" stroke="#E8734A" stroke-width="1" opacity="0.22"/>
+
+  <!-- ── Right side text ── -->
+  <!-- Wordmark -->
+  <text x="518" y="185"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="72" font-weight="700" letter-spacing="-1.5"
+    fill="white">Immo<tspan fill="#E8734A">Manage</tspan></text>
+
+  <!-- Tagline -->
+  <text x="522" y="236"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="26" font-weight="300" letter-spacing="0.3"
+    fill="rgba(255,255,255,0.58)">Hausverwaltung. Automatisiert.</text>
+
+  <!-- URL -->
+  <text x="522" y="278"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="17" font-weight="400"
+    fill="#E8734A" opacity="0.85">immo-manage.ch</text>
+
+  <!-- Feature pills -->
+  <g transform="translate(520, 304)">
+    <rect x="0"   y="0" width="90"  height="24" rx="12" fill="#E8734A" opacity="0.14"/>
+    <text x="45"  y="16" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#E8734A" text-anchor="middle">CAMT.053</text>
+
+    <rect x="100" y="0" width="80"  height="24" rx="12" fill="#E8734A" opacity="0.14"/>
+    <text x="140" y="16" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#E8734A" text-anchor="middle">QR-Bill</text>
+
+    <rect x="190" y="0" width="122" height="24" rx="12" fill="#E8734A" opacity="0.14"/>
+    <text x="251" y="16" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#E8734A" text-anchor="middle">Automatisierung</text>
+
+    <rect x="322" y="0" width="96"  height="24" rx="12" fill="#E8734A" opacity="0.14"/>
+    <text x="370" y="16" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#E8734A" text-anchor="middle">🇨🇭 Schweiz</text>
+  </g>
+</svg>
+</div>
+</body>
+</html>

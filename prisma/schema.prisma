@@ -227,15 +227,24 @@ model PropertyAssignment {
 }
 
 model PropertyOwner {
-  id         String    @id @default(cuid())
-  userId     String
-  propertyId String
-  unitId     String?
-  ownerSince DateTime?
-  createdAt  DateTime  @default(now())
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  unit     Unit?    @relation(fields: [unitId], references: [id])
+  id               String    @id @default(cuid())
+  userId           String
+  propertyId       String
+  unitId           String?
+  ownerSince       DateTime?
+  createdAt        DateTime  @default(now())
+  wertquote        Float     @default(0)
+  hypothekarbetrag Float?
+  hypothekarzins   Float?
+  bankverbindung   String?
+  zahlungsIban     String?
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property           Property             @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unit               Unit?                @relation(fields: [unitId], references: [id])
+  taxEntries         WegTaxEntry[]
+  expensePayments    OwnerExpensePayment[]
+  assemblyVotes      AssemblyVote[]
+  assemblyAttendance AssemblyAttendance[]
 }
 
 model Property {
@@ -247,6 +256,7 @@ model Property {
   unitCount   Int
   year        Int?
   description String?
+  isWeg       Boolean      @default(false)
   createdAt   DateTime     @default(now())
   company        Company              @relation(fields: [companyId], references: [id])
   units          Unit[]
@@ -257,6 +267,7 @@ model Property {
   utilityBills   UtilityBill[]
   calendarEvents CalendarEvent[]
   tasks          Task[]
+  wegConfig      WegConfig?
 }
 
 model Unit {
@@ -552,4 +563,155 @@ model AccountDeletionRequest {
   resolvedAt DateTime?
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   company Company @relation(fields: [companyId], references: [id])
+}
+
+// ─── WEG Enums ────────────────────────────────────────────────────────────────
+
+enum ExpenseCategory {
+  VERSICHERUNG
+  HAUSWART
+  REINIGUNG
+  ALLGEMEINSTROM
+  LIFT_SERVICE
+  GARTEN
+  SCHNEERAEUMUNG
+  VERWALTUNGSHONORAR
+  HEIZUNG
+  SONSTIGES
+}
+
+enum ExpenseStatus {
+  OFFEN
+  BEZAHLT
+  UEBERFAELLIG
+}
+
+enum PaymentRhythm {
+  MONATLICH
+  QUARTAL
+  JAEHRLICH
+}
+
+// ─── WEG Models ───────────────────────────────────────────────────────────────
+
+model WegConfig {
+  id                    String    @id @default(cuid())
+  propertyId            String    @unique
+  kanton                String?
+  gebVersicherungswert  Float?
+  fondsBeitragssatz     Float     @default(0.4)
+  fondsObergrenze       Float     @default(5.0)
+  fondsStand            Float?
+  fondsLetzteEinzahlung DateTime?
+  createdAt             DateTime  @default(now())
+  property     Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  renewalItems RenewalPlanItem[]
+  expenses     CommunityExpense[]
+  assemblies   Assembly[]
+}
+
+model RenewalPlanItem {
+  id                String   @id @default(cuid())
+  wegConfigId       String
+  bauteil           String
+  restlebensdauer   Int?
+  erneuerungskosten Float?
+  letzteErneuerung  Int?
+  createdAt         DateTime @default(now())
+  wegConfig WegConfig @relation(fields: [wegConfigId], references: [id], onDelete: Cascade)
+}
+
+model CommunityExpense {
+  id                String          @id @default(cuid())
+  wegConfigId       String
+  kategorie         ExpenseCategory @default(SONSTIGES)
+  beschreibung      String?
+  betrag            Float
+  rhythmus          PaymentRhythm   @default(JAEHRLICH)
+  status            ExpenseStatus   @default(OFFEN)
+  lieferant         String?
+  faelligkeitsdatum DateTime?
+  createdAt         DateTime        @default(now())
+  wegConfig WegConfig             @relation(fields: [wegConfigId], references: [id], onDelete: Cascade)
+  payments  OwnerExpensePayment[]
+}
+
+model OwnerExpensePayment {
+  id         String        @id @default(cuid())
+  expenseId  String
+  ownerId    String
+  betrag     Float
+  bezahltAm  DateTime?
+  status     ExpenseStatus @default(OFFEN)
+  createdAt  DateTime      @default(now())
+  expense CommunityExpense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  owner   PropertyOwner    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model WegTaxEntry {
+  id             String   @id @default(cuid())
+  ownerId        String
+  steuerjahr     Int
+  kanton         String?
+  eigenmietwert  Float?
+  abzugsmethode  String   @default("PAUSCHAL")
+  createdAt      DateTime @default(now())
+  owner      PropertyOwner    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  deductions WegTaxDeduction[]
+}
+
+model WegTaxDeduction {
+  id           String    @id @default(cuid())
+  taxEntryId   String
+  datum        DateTime?
+  beschreibung String
+  betrag       Float
+  kategorie    String
+  taxEntry WegTaxEntry @relation(fields: [taxEntryId], references: [id], onDelete: Cascade)
+}
+
+model Assembly {
+  id              String   @id @default(cuid())
+  wegConfigId     String
+  datum           DateTime
+  ort             String?
+  einladungsFrist Int      @default(10)
+  status          String   @default("GEPLANT")
+  protokoll       String?
+  createdAt       DateTime @default(now())
+  wegConfig  WegConfig            @relation(fields: [wegConfigId], references: [id], onDelete: Cascade)
+  agenda     AgendaItem[]
+  attendance AssemblyAttendance[]
+}
+
+model AgendaItem {
+  id            String   @id @default(cuid())
+  assemblyId    String
+  position      Int
+  titel         String
+  beschreibung  String?
+  antragsteller String?
+  createdAt     DateTime @default(now())
+  assembly Assembly      @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
+  votes    AssemblyVote[]
+}
+
+model AssemblyVote {
+  id           String @id @default(cuid())
+  agendaItemId String
+  ownerId      String
+  stimme       String
+  agendaItem AgendaItem    @relation(fields: [agendaItemId], references: [id], onDelete: Cascade)
+  owner      PropertyOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  @@unique([agendaItemId, ownerId])
+}
+
+model AssemblyAttendance {
+  id         String  @id @default(cuid())
+  assemblyId String
+  ownerId    String
+  anwesend   Boolean @default(false)
+  assembly Assembly      @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
+  owner    PropertyOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  @@unique([assemblyId, ownerId])
 }
