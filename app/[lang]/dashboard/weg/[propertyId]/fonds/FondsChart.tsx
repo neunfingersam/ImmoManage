@@ -49,8 +49,8 @@ export function FondsChart({ fondsStand, fondsBeitragssatz, gebVersicherungswert
         <XAxis dataKey="year" tick={{ fontSize: 12 }} />
         <YAxis tickFormatter={(v) => `${fmt(v / 1000)}k`} tick={{ fontSize: 12 }} width={70} />
         <Tooltip
-          formatter={(value: number, name: string) => [
-            `CHF ${fmt(value)}`,
+          formatter={(value, name) => [
+            `CHF ${fmt(Number(value))}`,
             name === 'fondsStand' ? 'Fondsstand' : 'Erneuerungskosten',
           ]}
           labelFormatter={(l) => `Jahr ${l}`}
