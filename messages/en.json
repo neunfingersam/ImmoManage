@@ -647,5 +647,31 @@
       "t3Name": "Andreas P.",
       "t3Role": "Property Management GmbH · Basel"
     }
+  },
+  "ownerTax": {
+    "title": "Tax Dossier",
+    "subtitle": "Tax year {year} · Owner share",
+    "noProperties": "No properties found.",
+    "unit": "Unit",
+    "floor": "Floor",
+    "propertyValue": "Property value",
+    "totalValue": "Total value (market/tax value)",
+    "notSet": "Not recorded",
+    "wertquote": "Ownership share",
+    "yourShare": "Your share ({percent} of {total})",
+    "taxCalculation": "Tax calculation",
+    "eigenmietwert": "Imputed rental value",
+    "estimated": "(estimated 3.5%)",
+    "mortgageInterest": "− Mortgage interest p.a.",
+    "maintenanceFlat": "− Maintenance flat rate {rate}%",
+    "maintenanceEffective": "− Maintenance effective costs",
+    "taxableIncome": "Taxable income (estimate)",
+    "noValueHint": "No market value recorded — administrator can enter it under WEG settings.",
+    "mortgage": "Mortgage",
+    "mortgageAmount": "Mortgage amount",
+    "mortgageRate": "Mortgage interest p.a.",
+    "effectiveDeductions": "Effective deductions",
+    "totalDeductions": "Total deductions",
+    "disclaimer": "Estimates based on market value × ownership share. Mortgage interest must be declared separately in the tax return. This summary does not replace tax advice."
   }
 }

@@ -647,5 +647,31 @@
       "t3Name": "Andreas P.",
       "t3Role": "Amministrazione immobiliare GmbH · Basilea"
     }
+  },
+  "ownerTax": {
+    "title": "Dossier fiscale",
+    "subtitle": "Anno fiscale {year} · Quota proprietario",
+    "noProperties": "Nessun immobile trovato.",
+    "unit": "Unità",
+    "floor": "Piano",
+    "propertyValue": "Valore immobile",
+    "totalValue": "Valore totale (venale/fiscale)",
+    "notSet": "Non registrato",
+    "wertquote": "Quota di valore",
+    "yourShare": "La sua quota ({percent} di {total})",
+    "taxCalculation": "Calcolo fiscale",
+    "eigenmietwert": "Valore locativo",
+    "estimated": "(stima 3.5%)",
+    "mortgageInterest": "− Interessi ipotecari p.a.",
+    "maintenanceFlat": "− Deduzione forfettaria manutenzione {rate}%",
+    "maintenanceEffective": "− Costi di manutenzione effettivi",
+    "taxableIncome": "Reddito imponibile (stima)",
+    "noValueHint": "Nessun valore venale registrato — l'amministratore può inserirlo nelle impostazioni PPP.",
+    "mortgage": "Ipoteca",
+    "mortgageAmount": "Importo ipotecario",
+    "mortgageRate": "Interessi ipotecari p.a.",
+    "effectiveDeductions": "Deduzioni effettive",
+    "totalDeductions": "Totale deduzioni",
+    "disclaimer": "Stime basate su valore venale × quota. Gli interessi ipotecari vanno dichiarati separatamente. Questo riepilogo non sostituisce una consulenza fiscale."
   }
 }

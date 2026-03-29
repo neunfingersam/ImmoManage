@@ -550,7 +550,11 @@
     "metaDesc": "Transparente Preise für Schweizer Immobilienverwaltung. Kein Abo-Falle, keine versteckten Kosten. 3 Monate gratis testen."
   },
   "landing": {
-    "nav": { "bookDemo": "Gratis testen", "login": "Anmelden", "pricing": "Preise" },
+    "nav": {
+      "bookDemo": "Gratis testen",
+      "login": "Anmelden",
+      "pricing": "Preise"
+    },
     "hero": {
       "headline": "Schluss mit Zettelwirtschaft.",
       "headlineAccent": "Automatisch verwaltet.",
@@ -572,25 +576,45 @@
     },
     "features": {
       "title": "Alles was Sie brauchen — in einer Lösung",
-      "f1Title": "Objekte & Einheiten", "f1Desc": "Alle Liegenschaften auf einen Blick. Status, Leerstand, Fotos.",
-      "f2Title": "Mieter & Verträge", "f2Desc": "Stammdaten, Mietverträge, Kaution, Mieterwechsel-Assistent.",
-      "f3Title": "Zahlungsabgleich & CAMT", "f3Desc": "CAMT.053 Kontoauszug hochladen — Eingänge werden automatisch den Sollstellungen zugeordnet.",
-      "f4Title": "Mieter-Portal", "f4Desc": "Tickets, Dokumente, Nachrichten — Ihre Mieter erledigen alles digital.",
-      "f5Title": "KI-Assistent", "f5Desc": "Automatisierte Unterstützung im Verwaltungsalltag.",
-      "f6Title": "Dokumente & Vorlagen", "f6Desc": "CH-Vorlagen (DE + FR), digitale Ablage, alles auf Knopfdruck."
+      "f1Title": "Objekte & Einheiten",
+      "f1Desc": "Alle Liegenschaften auf einen Blick. Status, Leerstand, Fotos.",
+      "f2Title": "Mieter & Verträge",
+      "f2Desc": "Stammdaten, Mietverträge, Kaution, Mieterwechsel-Assistent.",
+      "f3Title": "Zahlungsabgleich & CAMT",
+      "f3Desc": "CAMT.053 Kontoauszug hochladen — Eingänge werden automatisch den Sollstellungen zugeordnet.",
+      "f4Title": "Mieter-Portal",
+      "f4Desc": "Tickets, Dokumente, Nachrichten — Ihre Mieter erledigen alles digital.",
+      "f5Title": "KI-Assistent",
+      "f5Desc": "Automatisierte Unterstützung im Verwaltungsalltag.",
+      "f6Title": "Dokumente & Vorlagen",
+      "f6Desc": "CH-Vorlagen (DE + FR), digitale Ablage, alles auf Knopfdruck."
     },
     "forWhom": {
       "title": "Für wen ist ImmoManage?",
-      "segment1Title": "Kleine Hausverwaltungen", "segment1Subtitle": "1–10 Mitarbeitende",
-      "segment1Points": ["Mehrere Objekte zentral verwalten", "Team-Zugang mit Rollen", "Professionelle Abrechnung"],
-      "segment2Title": "Private Eigentümer", "segment2Subtitle": "3–15 Einheiten",
-      "segment2Points": ["Du hast 1–10 Wohnungen und machst das nebenbei — ImmoManage übernimmt die Verwaltung.", "Kein IT-Wissen nötig. In 15 Minuten startklar.", "Günstig ab CHF 19/Mt. — monatlich kündbar."]
+      "segment1Title": "Kleine Hausverwaltungen",
+      "segment1Subtitle": "1–10 Mitarbeitende",
+      "segment1Points": [
+        "Mehrere Objekte zentral verwalten",
+        "Team-Zugang mit Rollen",
+        "Professionelle Abrechnung"
+      ],
+      "segment2Title": "Private Eigentümer",
+      "segment2Subtitle": "3–15 Einheiten",
+      "segment2Points": [
+        "Du hast 1–10 Wohnungen und machst das nebenbei — ImmoManage übernimmt die Verwaltung.",
+        "Kein IT-Wissen nötig. In 15 Minuten startklar.",
+        "Günstig ab CHF 19/Mt. — monatlich kündbar."
+      ]
     },
     "demo": {
       "title": "Überzeugen Sie sich selbst",
       "subtitle": "Wir zeigen Ihnen ImmoManage in einem kurzen Demo-Gespräch — kostenlos und unverbindlich.",
-      "namePlaceholder": "Ihr Name", "emailPlaceholder": "Ihre E-Mail", "messagePlaceholder": "Was möchten Sie verwalten? (optional)",
-      "submit": "Demo anfragen", "success": "Danke! Wir melden uns innerhalb von 24 Stunden.", "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "namePlaceholder": "Ihr Name",
+      "emailPlaceholder": "Ihre E-Mail",
+      "messagePlaceholder": "Was möchten Sie verwalten? (optional)",
+      "submit": "Demo anfragen",
+      "success": "Danke! Wir melden uns innerhalb von 24 Stunden.",
+      "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "consent": "Ich habe die <privacy>Datenschutzerklärung</privacy> gelesen und bin damit einverstanden, dass meine Daten zur Bearbeitung meiner Anfrage verwendet werden."
     },
     "testimonials": {
@@ -623,5 +647,31 @@
       "copyright": "© 2026 ImmoManage · Alle Rechte vorbehalten",
       "madeIn": "Made in Switzerland"
     }
+  },
+  "ownerTax": {
+    "title": "Steuermappe",
+    "subtitle": "Steuerjahr {year} · Eigentümeranteil",
+    "noProperties": "Keine Liegenschaften gefunden.",
+    "unit": "Einheit",
+    "floor": "Etage",
+    "propertyValue": "Liegenschaftswert",
+    "totalValue": "Gesamtwert (Verkehrs-/Steuerwert)",
+    "notSet": "Nicht erfasst",
+    "wertquote": "Wertquote",
+    "yourShare": "Ihr Anteil ({percent} von {total})",
+    "taxCalculation": "Steuerberechnung",
+    "eigenmietwert": "Eigenmietwert",
+    "estimated": "(Schätzung 3.5%)",
+    "mortgageInterest": "− Hypothekarzins p.a.",
+    "maintenanceFlat": "− Unterhaltsabzug Pauschal {rate}%",
+    "maintenanceEffective": "− Unterhaltsabzug Effektiv",
+    "taxableIncome": "Steuerbares Einkommen (Schätzung)",
+    "noValueHint": "Kein Verkehrswert erfasst — Administrator kann diesen unter WEG-Einstellungen hinterlegen.",
+    "mortgage": "Hypothek",
+    "mortgageAmount": "Hypothekarbetrag",
+    "mortgageRate": "Hypothekarzins p.a.",
+    "effectiveDeductions": "Effektive Abzüge",
+    "totalDeductions": "Total Abzüge",
+    "disclaimer": "Schätzwerte basieren auf Verkehrswert × Wertquote. Hypothekarzinsen separat in der Steuererklärung einzutragen. Diese Aufstellung ersetzt keine Steuerberatung."
   }
 }

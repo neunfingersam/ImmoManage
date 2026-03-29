@@ -647,5 +647,31 @@
       "t3Name": "Andreas P.",
       "t3Role": "Gérance immobilière GmbH · Bâle"
     }
+  },
+  "ownerTax": {
+    "title": "Dossier fiscal",
+    "subtitle": "Année fiscale {year} · Quote-part propriétaire",
+    "noProperties": "Aucun bien immobilier trouvé.",
+    "unit": "Unité",
+    "floor": "Étage",
+    "propertyValue": "Valeur du bien",
+    "totalValue": "Valeur totale (vénale/fiscale)",
+    "notSet": "Non renseigné",
+    "wertquote": "Quote-part",
+    "yourShare": "Votre part ({percent} de {total})",
+    "taxCalculation": "Calcul fiscal",
+    "eigenmietwert": "Valeur locative",
+    "estimated": "(estimation 3.5%)",
+    "mortgageInterest": "− Intérêts hypothécaires p.a.",
+    "maintenanceFlat": "− Déduction forfaitaire entretien {rate}%",
+    "maintenanceEffective": "− Frais d'entretien effectifs",
+    "taxableIncome": "Revenu imposable (estimation)",
+    "noValueHint": "Aucune valeur vénale enregistrée — l'administrateur peut la saisir dans les paramètres PPE.",
+    "mortgage": "Hypothèque",
+    "mortgageAmount": "Montant hypothécaire",
+    "mortgageRate": "Intérêts hypothécaires p.a.",
+    "effectiveDeductions": "Déductions effectives",
+    "totalDeductions": "Total déductions",
+    "disclaimer": "Estimations basées sur la valeur vénale × quote-part. Les intérêts hypothécaires doivent être déclarés séparément. Ce récapitulatif ne remplace pas un conseil fiscal."
   }
 }

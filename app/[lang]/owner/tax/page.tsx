@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getTranslations } from 'next-intl/server'
 import { Card } from '@/components/ui/card'
 import { Calculator, Building2, Info } from 'lucide-react'
 
@@ -22,14 +23,16 @@ export default async function OwnerTaxPage({
   searchParams: Promise<{ year?: string }>
 }) {
   await params
-  const session = await getServerSession(authOptions)
+  const [session, t] = await Promise.all([
+    getServerSession(authOptions),
+    getTranslations('ownerTax'),
+  ])
   if (!session?.user?.id) return null
 
   const { year: yearParam } = await searchParams
   const year = parseInt(yearParam ?? String(new Date().getFullYear() - 1))
   const availableYears = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i)
 
-  // Separate queries to avoid Prisma 7 deep-include type issues
   const ownerships = await prisma.propertyOwner.findMany({
     where: { userId: session.user.id },
     include: {
@@ -38,7 +41,6 @@ export default async function OwnerTaxPage({
     },
   })
 
-  // Load wegConfig and taxEntries separately
   const propertyIds = ownerships.map(o => o.propertyId)
   const ownerIds = ownerships.map(o => o.id)
 
@@ -60,9 +62,9 @@ export default async function OwnerTaxPage({
     <div className="space-y-6 max-w-2xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl text-foreground">Steuermappe</h1>
+          <h1 className="font-serif text-2xl text-foreground">{t('title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Steuerjahr {year} · Eigentümeranteil
+            {t('subtitle', { year })}
           </p>
         </div>
         <select
@@ -77,7 +79,7 @@ export default async function OwnerTaxPage({
 
       {ownerships.length === 0 && (
         <Card className="p-6 text-center text-muted-foreground text-sm">
-          Keine Liegenschaften gefunden.
+          {t('noProperties')}
         </Card>
       )}
 
@@ -88,11 +90,8 @@ export default async function OwnerTaxPage({
 
         const verkehrswert = config?.verkehrswert ?? null
         const anteilWert = verkehrswert != null ? (verkehrswert * o.wertquote) / 100 : null
-
-        // Eigenmietwert: stored or estimated at 3.5% of owner's share
         const eigenmietwert = taxEntry?.eigenmietwert ?? (anteilWert != null ? anteilWert * 0.035 : null)
 
-        // Pauschal rate: 10% if ≤10 years old, 20% otherwise
         const buildingAge = o.property.year ? new Date().getFullYear() - o.property.year : null
         const pauschalRate = buildingAge != null && buildingAge <= 10 ? 0.10 : 0.20
         const pauschalAbzug = eigenmietwert != null ? eigenmietwert * pauschalRate : null
@@ -107,7 +106,6 @@ export default async function OwnerTaxPage({
 
         return (
           <Card key={o.id} className="p-5 space-y-5">
-            {/* Header */}
             <div className="flex items-start gap-3">
               <Building2 className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div>
@@ -115,33 +113,32 @@ export default async function OwnerTaxPage({
                 <p className="text-sm text-muted-foreground">{o.property.address}</p>
                 {o.unit && (
                   <p className="text-xs text-muted-foreground">
-                    Einheit {o.unit.unitNumber}
-                    {o.unit.floor != null ? ` · Etage ${o.unit.floor}` : ''}
+                    {t('unit')} {o.unit.unitNumber}
+                    {o.unit.floor != null ? ` · ${t('floor')} ${o.unit.floor}` : ''}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Property value & ownership share */}
             <div>
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Liegenschaftswert</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">{t('propertyValue')}</p>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Gesamtwert (Verkehrs-/Steuerwert)</p>
+                  <p className="text-xs text-muted-foreground">{t('totalValue')}</p>
                   <p className="font-medium text-foreground">
                     {verkehrswert != null
                       ? chf(verkehrswert)
-                      : <span className="text-muted-foreground italic text-xs">Nicht erfasst</span>}
+                      : <span className="text-muted-foreground italic text-xs">{t('notSet')}</span>}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Wertquote</p>
+                  <p className="text-xs text-muted-foreground">{t('wertquote')}</p>
                   <p className="font-medium text-foreground">{pct(o.wertquote)}</p>
                 </div>
                 {anteilWert != null && (
                   <div className="col-span-2 space-y-1 bg-muted/30 rounded-lg px-3 py-2">
                     <p className="text-xs text-muted-foreground">
-                      Ihr Anteil ({pct(o.wertquote)} von {chf(verkehrswert!)})
+                      {t('yourShare', { percent: pct(o.wertquote), total: chf(verkehrswert!) })}
                     </p>
                     <p className="font-semibold text-foreground text-base">{chf(anteilWert)}</p>
                   </div>
@@ -151,15 +148,14 @@ export default async function OwnerTaxPage({
 
             <div className="border-t border-border" />
 
-            {/* Tax calculation */}
             <div>
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Steuerberechnung</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">{t('taxCalculation')}</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
-                    Eigenmietwert
+                    {t('eigenmietwert')}
                     {!taxEntry?.eigenmietwert && eigenmietwert != null && (
-                      <span className="text-xs ml-1 opacity-60">(Schätzung 3.5%)</span>
+                      <span className="text-xs ml-1 opacity-60">{t('estimated')}</span>
                     )}
                   </span>
                   <span className="font-medium tabular-nums">
@@ -169,7 +165,7 @@ export default async function OwnerTaxPage({
 
                 {hypothekarzins > 0 && (
                   <div className="flex justify-between text-muted-foreground">
-                    <span>− Hypothekarzins p.a.</span>
+                    <span>{t('mortgageInterest')}</span>
                     <span className="tabular-nums">{chf(hypothekarzins)}</span>
                   </div>
                 )}
@@ -177,9 +173,9 @@ export default async function OwnerTaxPage({
                 {eigenmietwert != null && (
                   <div className="flex justify-between text-muted-foreground">
                     <span>
-                      − Unterhaltsabzug {abzugsmethode === 'PAUSCHAL'
-                        ? `Pauschal ${Math.round(pauschalRate * 100)}%`
-                        : 'Effektiv'}
+                      {abzugsmethode === 'PAUSCHAL'
+                        ? t('maintenanceFlat', { rate: Math.round(pauschalRate * 100) })
+                        : t('maintenanceEffective')}
                     </span>
                     <span className="tabular-nums">
                       {unterhaltsabzug != null ? chf(unterhaltsabzug) : '—'}
@@ -189,7 +185,7 @@ export default async function OwnerTaxPage({
 
                 {steuerbaresEinkommen != null && (
                   <div className="flex justify-between font-semibold border-t border-border pt-2 mt-1">
-                    <span>Steuerbares Einkommen (Schätzung)</span>
+                    <span>{t('taxableIncome')}</span>
                     <span className="tabular-nums text-primary">{chf(steuerbaresEinkommen)}</span>
                   </div>
                 )}
@@ -197,28 +193,27 @@ export default async function OwnerTaxPage({
                 {eigenmietwert == null && (
                   <p className="text-xs text-muted-foreground italic flex items-center gap-1">
                     <Info className="h-3.5 w-3.5 flex-shrink-0" />
-                    Kein Verkehrswert erfasst — Administrator kann diesen unter WEG-Einstellungen hinterlegen.
+                    {t('noValueHint')}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Hypothek details */}
             {(o.hypothekarbetrag != null || o.hypothekarzins != null) && (
               <>
                 <div className="border-t border-border" />
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Hypothek</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">{t('mortgage')}</p>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {o.hypothekarbetrag != null && (
                       <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Hypothekarbetrag</p>
+                        <p className="text-xs text-muted-foreground">{t('mortgageAmount')}</p>
                         <p className="font-medium text-foreground">{chf(o.hypothekarbetrag)}</p>
                       </div>
                     )}
                     {o.hypothekarzins != null && (
                       <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Hypothekarzins p.a.</p>
+                        <p className="text-xs text-muted-foreground">{t('mortgageRate')}</p>
                         <p className="font-medium text-foreground">{chf(o.hypothekarzins)}</p>
                       </div>
                     )}
@@ -227,12 +222,11 @@ export default async function OwnerTaxPage({
               </>
             )}
 
-            {/* Effective deductions if applicable */}
             {taxEntry && taxEntry.deductions.length > 0 && abzugsmethode !== 'PAUSCHAL' && (
               <>
                 <div className="border-t border-border" />
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Effektive Abzüge</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">{t('effectiveDeductions')}</p>
                   <div className="space-y-1">
                     {taxEntry.deductions.map((d: { id: string; beschreibung: string; betrag: number }) => (
                       <div key={d.id} className="flex justify-between text-sm">
@@ -241,7 +235,7 @@ export default async function OwnerTaxPage({
                       </div>
                     ))}
                     <div className="flex justify-between text-sm font-semibold border-t border-border pt-1 mt-1">
-                      <span>Total Abzüge</span>
+                      <span>{t('totalDeductions')}</span>
                       <span className="tabular-nums">{chf(totalDeductions)}</span>
                     </div>
                   </div>
@@ -254,8 +248,7 @@ export default async function OwnerTaxPage({
 
       <p className="text-xs text-muted-foreground flex items-start gap-1.5">
         <Calculator className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
-        Schätzwerte basieren auf Verkehrswert × Wertquote. Hypothekarzinsen separat in der Steuererklärung einzutragen.
-        Diese Aufstellung ersetzt keine Steuerberatung.
+        {t('disclaimer')}
       </p>
     </div>
   )
