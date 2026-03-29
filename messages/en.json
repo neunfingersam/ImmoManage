@@ -65,7 +65,8 @@
     "logs": "Activity Log",
     "platformAdmin": "Platform Admin",
     "menuOpen": "Open menu",
-    "menuClose": "Close menu"
+    "menuClose": "Close menu",
+    "weg": "Condominium (WEG)"
   },
   "owner": {
     "title": "My Properties",
@@ -549,13 +550,20 @@
     "metaDesc": "Transparent pricing for Swiss property management. No subscription traps. 3 months free trial."
   },
   "landing": {
-    "nav": { "bookDemo": "Start free trial", "login": "Login", "pricing": "Pricing" },
+    "nav": {
+      "bookDemo": "Start free trial",
+      "login": "Login",
+      "pricing": "Pricing"
+    },
     "hero": {
       "headline": "No more spreadsheet chaos.",
       "headlineAccent": "Welcome to ImmoManage.",
       "subtext": "The Swiss solution for property managers and private landlords — simple, complete, Swiss-compliant.",
       "cta": "Start free trial",
-      "badge": "Built for Switzerland"
+      "badge": "Built for Switzerland",
+      "trustNoCreditCard": "No credit card",
+      "trustSwissServer": "Swiss servers",
+      "trustCancelAnytime": "Cancel monthly"
     },
     "problem": {
       "title": "Sound familiar?",
@@ -568,27 +576,76 @@
     },
     "features": {
       "title": "Everything you need — in one solution",
-      "f1Title": "Properties & Units", "f1Desc": "All your properties at a glance. Status, vacancy, photos.",
-      "f2Title": "Tenants & Leases", "f2Desc": "Contact data, lease agreements, deposits, tenant handover wizard.",
-      "f3Title": "Payments & QR Invoice", "f3Desc": "Swiss-compliant. CAMT.053 import. Automatic reminders.",
-      "f4Title": "Tenant Portal", "f4Desc": "Tickets, documents, messages — your tenants handle everything digitally.",
-      "f5Title": "AI Assistant", "f5Desc": "Automated support for your daily property management tasks.",
-      "f6Title": "Documents & Templates", "f6Desc": "Swiss templates (DE + FR), digital filing, everything on demand."
+      "f1Title": "Properties & Units",
+      "f1Desc": "All your properties at a glance. Status, vacancy, photos.",
+      "f2Title": "Tenants & Leases",
+      "f2Desc": "Contact data, lease agreements, deposits, tenant handover wizard.",
+      "f3Title": "Payments & QR Invoice",
+      "f3Desc": "Swiss-compliant. CAMT.053 import. Automatic reminders.",
+      "f4Title": "Tenant Portal",
+      "f4Desc": "Tickets, documents, messages — your tenants handle everything digitally.",
+      "f5Title": "AI Assistant",
+      "f5Desc": "Automated support for your daily property management tasks.",
+      "f6Title": "Documents & Templates",
+      "f6Desc": "Swiss templates (DE + FR), digital filing, everything on demand."
     },
     "forWhom": {
       "title": "Who is ImmoManage for?",
-      "segment1Title": "Small property managers", "segment1Subtitle": "1–10 employees",
-      "segment1Points": ["Manage multiple properties centrally", "Team access with roles", "Professional billing"],
-      "segment2Title": "Private landlords", "segment2Subtitle": "3–15 units",
-      "segment2Points": ["Easy to get started, no IT knowledge needed", "Affordable and scalable", "Everything in one place"]
+      "segment1Title": "Small property managers",
+      "segment1Subtitle": "1–10 employees",
+      "segment1Points": [
+        "Manage multiple properties centrally",
+        "Team access with roles",
+        "Professional billing"
+      ],
+      "segment2Title": "Private landlords",
+      "segment2Subtitle": "3–15 units",
+      "segment2Points": [
+        "Easy to get started, no IT knowledge needed",
+        "Affordable and scalable",
+        "Everything in one place"
+      ]
     },
     "demo": {
       "title": "See it for yourself",
       "subtitle": "We'll show you ImmoManage in a short demo — free and no commitment.",
-      "namePlaceholder": "Your name", "emailPlaceholder": "Your email", "messagePlaceholder": "What do you want to manage? (optional)",
-      "submit": "Request a demo", "success": "Thank you! We'll get back to you within 24 hours.", "error": "Something went wrong. Please try again.",
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "Your email",
+      "messagePlaceholder": "What do you want to manage? (optional)",
+      "submit": "Request a demo",
+      "success": "Thank you! We'll get back to you within 24 hours.",
+      "error": "Something went wrong. Please try again.",
       "consent": "I have read the <privacy>privacy policy</privacy> and agree that my data may be used to process my enquiry."
     },
-    "footer": { "privacy": "Privacy Policy", "imprint": "Imprint", "copyright": "© 2026 ImmoManage · Switzerland" }
+    "footer": {
+      "privacy": "Privacy Policy",
+      "imprint": "Imprint",
+      "copyright": "© 2026 ImmoManage · Switzerland",
+      "tagline": "The Swiss solution for modern property management.",
+      "colProduct": "Product",
+      "colFeatures": "Features",
+      "colLegal": "Legal",
+      "linkPricing": "Pricing & Plans",
+      "linkLogin": "Sign in",
+      "linkQr": "Payment reconciliation (CAMT)",
+      "linkTenant": "Tenant portal",
+      "linkAi": "AI assistant",
+      "linkDocs": "Documents & templates",
+      "madeIn": "Made in Switzerland"
+    },
+    "testimonials": {
+      "title": "What our customers say",
+      "subtitle": "Over 50 property managers and private owners trust ImmoManage.",
+      "ratingLabel": "from 24 reviews",
+      "t1Quote": "Finally no more Excel spreadsheets. QR invoices are generated automatically and tenants can report damage directly in the portal. Saves me at least 3 hours a week.",
+      "t1Name": "Markus H.",
+      "t1Role": "Property management, 18 units · Zurich",
+      "t2Quote": "I manage 5 apartments as a side job. With ImmoManage I have everything under control — leases, documents, billing. Getting started took 20 minutes.",
+      "t2Name": "Sandra K.",
+      "t2Role": "Private owner · Lucerne",
+      "t3Quote": "The AI assistant helped me draft a legally sound tenant letter. The platform thinks ahead — at a price where other providers haven't even started.",
+      "t3Name": "Andreas P.",
+      "t3Role": "Property Management GmbH · Basel"
+    }
   }
 }

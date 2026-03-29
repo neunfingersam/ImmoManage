@@ -65,7 +65,8 @@
     "logs": "Registro attività",
     "platformAdmin": "Admin piattaforma",
     "menuOpen": "Apri menu",
-    "menuClose": "Chiudi menu"
+    "menuClose": "Chiudi menu",
+    "weg": "PPP (Proprietà per piani)"
   },
   "owner": {
     "title": "I miei immobili",
@@ -549,13 +550,20 @@
     "metaDesc": "Prezzi trasparenti per la gestione immobiliare svizzera. Nessuna trappola. 3 mesi di prova gratuita."
   },
   "landing": {
-    "nav": { "bookDemo": "Prova gratuita", "login": "Accedi", "pricing": "Prezzi" },
+    "nav": {
+      "bookDemo": "Prova gratuita",
+      "login": "Accedi",
+      "pricing": "Prezzi"
+    },
     "hero": {
       "headline": "Basta fogli Excel.",
       "headlineAccent": "Benvenuto su ImmoManage.",
       "subtext": "La soluzione svizzera per amministratori e proprietari — semplice, completa, conforme alla Svizzera.",
       "cta": "Prova gratuita",
-      "badge": "Costruito per la Svizzera"
+      "badge": "Costruito per la Svizzera",
+      "trustNoCreditCard": "Senza carta di credito",
+      "trustSwissServer": "Server svizzeri",
+      "trustCancelAnytime": "Disdetta mensile"
     },
     "problem": {
       "title": "Vi riconoscete?",
@@ -568,27 +576,76 @@
     },
     "features": {
       "title": "Tutto ciò di cui avete bisogno — in un'unica soluzione",
-      "f1Title": "Immobili & Unità", "f1Desc": "Tutti i vostri immobili a colpo d'occhio. Stato, sfitto, foto.",
-      "f2Title": "Inquilini & Contratti", "f2Desc": "Dati, contratti, cauzione, assistente cambio inquilino.",
-      "f3Title": "Pagamenti & Fattura QR", "f3Desc": "Conforme CH. Import CAMT.053. Promemoria automatici.",
-      "f4Title": "Portale Inquilini", "f4Desc": "Ticket, documenti, messaggi — i vostri inquilini fanno tutto digitalmente.",
-      "f5Title": "Assistente IA", "f5Desc": "Supporto automatizzato nella gestione quotidiana.",
-      "f6Title": "Documenti & Modelli", "f6Desc": "Modelli CH (DE + FR), archiviazione digitale, tutto con un clic."
+      "f1Title": "Immobili & Unità",
+      "f1Desc": "Tutti i vostri immobili a colpo d'occhio. Stato, sfitto, foto.",
+      "f2Title": "Inquilini & Contratti",
+      "f2Desc": "Dati, contratti, cauzione, assistente cambio inquilino.",
+      "f3Title": "Pagamenti & Fattura QR",
+      "f3Desc": "Conforme CH. Import CAMT.053. Promemoria automatici.",
+      "f4Title": "Portale Inquilini",
+      "f4Desc": "Ticket, documenti, messaggi — i vostri inquilini fanno tutto digitalmente.",
+      "f5Title": "Assistente IA",
+      "f5Desc": "Supporto automatizzato nella gestione quotidiana.",
+      "f6Title": "Documenti & Modelli",
+      "f6Desc": "Modelli CH (DE + FR), archiviazione digitale, tutto con un clic."
     },
     "forWhom": {
       "title": "Per chi è ImmoManage?",
-      "segment1Title": "Piccole amministrazioni", "segment1Subtitle": "1–10 collaboratori",
-      "segment1Points": ["Gestire più immobili centralmente", "Accesso team con ruoli", "Fatturazione professionale"],
-      "segment2Title": "Proprietari privati", "segment2Subtitle": "3–15 unità",
-      "segment2Points": ["Facile da iniziare, nessuna conoscenza IT", "Conveniente e scalabile", "Tutto in un unico posto"]
+      "segment1Title": "Piccole amministrazioni",
+      "segment1Subtitle": "1–10 collaboratori",
+      "segment1Points": [
+        "Gestire più immobili centralmente",
+        "Accesso team con ruoli",
+        "Fatturazione professionale"
+      ],
+      "segment2Title": "Proprietari privati",
+      "segment2Subtitle": "3–15 unità",
+      "segment2Points": [
+        "Facile da iniziare, nessuna conoscenza IT",
+        "Conveniente e scalabile",
+        "Tutto in un unico posto"
+      ]
     },
     "demo": {
       "title": "Convincetevi da soli",
       "subtitle": "Vi mostriamo ImmoManage in una breve demo — gratuita e senza impegno.",
-      "namePlaceholder": "Il vostro nome", "emailPlaceholder": "La vostra e-mail", "messagePlaceholder": "Cosa volete gestire? (opzionale)",
-      "submit": "Richiedere una demo", "success": "Grazie! Vi risponderemo entro 24 ore.", "error": "Qualcosa è andato storto. Per favore riprova.",
+      "namePlaceholder": "Il vostro nome",
+      "emailPlaceholder": "La vostra e-mail",
+      "messagePlaceholder": "Cosa volete gestire? (opzionale)",
+      "submit": "Richiedere una demo",
+      "success": "Grazie! Vi risponderemo entro 24 ore.",
+      "error": "Qualcosa è andato storto. Per favore riprova.",
       "consent": "Ho letto l'<privacy>informativa sulla privacy</privacy> e acconsento che i miei dati vengano utilizzati per elaborare la mia richiesta."
     },
-    "footer": { "privacy": "Protezione dei dati", "imprint": "Impronta", "copyright": "© 2026 ImmoManage · Svizzera" }
+    "footer": {
+      "privacy": "Protezione dei dati",
+      "imprint": "Impronta",
+      "copyright": "© 2026 ImmoManage · Svizzera",
+      "tagline": "La soluzione svizzera per l'amministrazione immobiliare moderna.",
+      "colProduct": "Prodotto",
+      "colFeatures": "Funzionalità",
+      "colLegal": "Note legali",
+      "linkPricing": "Prezzi e piani",
+      "linkLogin": "Accedi",
+      "linkQr": "Riconciliazione (CAMT)",
+      "linkTenant": "Portale inquilini",
+      "linkAi": "Assistente AI",
+      "linkDocs": "Documenti e modelli",
+      "madeIn": "Made in Switzerland"
+    },
+    "testimonials": {
+      "title": "Cosa dicono i nostri clienti",
+      "subtitle": "Oltre 50 amministratori e proprietari privati si affidano a ImmoManage.",
+      "ratingLabel": "su 24 valutazioni",
+      "t1Quote": "Finalmente niente più fogli Excel. Le fatture QR vengono generate automaticamente e gli inquilini possono segnalare i danni direttamente nel portale. Mi fa risparmiare almeno 3 ore a settimana.",
+      "t1Name": "Markus H.",
+      "t1Role": "Amministrazione immobiliare, 18 unità · Zurigo",
+      "t2Quote": "Gestisco 5 appartamenti come attività secondaria. Con ImmoManage ho tutto sotto controllo — contratti, documenti, conteggi. La configurazione ha richiesto 20 minuti.",
+      "t2Name": "Sandra K.",
+      "t2Role": "Proprietaria privata · Lucerna",
+      "t3Quote": "L'assistente AI mi ha aiutato a redigere una lettera all'inquilino giuridicamente corretta. La piattaforma anticipa le esigenze — a un prezzo che altri fornitori non possono eguagliare.",
+      "t3Name": "Andreas P.",
+      "t3Role": "Amministrazione immobiliare GmbH · Basilea"
+    }
   }
 }

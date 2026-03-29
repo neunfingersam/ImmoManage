@@ -65,7 +65,8 @@
     "logs": "Journal d'activité",
     "platformAdmin": "Admin plateforme",
     "menuOpen": "Ouvrir le menu",
-    "menuClose": "Fermer le menu"
+    "menuClose": "Fermer le menu",
+    "weg": "PPE (Propriété par étages)"
   },
   "owner": {
     "title": "Mes biens immobiliers",
@@ -549,13 +550,20 @@
     "metaDesc": "Tarifs transparents pour la gestion immobilière suisse. Pas de piège d'abonnement. 3 mois gratuits."
   },
   "landing": {
-    "nav": { "bookDemo": "Essai gratuit", "login": "Connexion", "pricing": "Tarifs" },
+    "nav": {
+      "bookDemo": "Essai gratuit",
+      "login": "Connexion",
+      "pricing": "Tarifs"
+    },
     "hero": {
       "headline": "Fini la paperasse.",
       "headlineAccent": "Bienvenue sur ImmoManage.",
       "subtext": "La solution suisse pour les gérants et propriétaires — simple, complète, conforme CH.",
       "cta": "Essai gratuit",
-      "badge": "Conçu pour la Suisse"
+      "badge": "Conçu pour la Suisse",
+      "trustNoCreditCard": "Sans carte de crédit",
+      "trustSwissServer": "Serveurs suisses",
+      "trustCancelAnytime": "Résiliable mensuellement"
     },
     "problem": {
       "title": "Vous reconnaissez-vous?",
@@ -568,27 +576,76 @@
     },
     "features": {
       "title": "Tout ce dont vous avez besoin — en une solution",
-      "f1Title": "Objets & Unités", "f1Desc": "Tous vos biens immobiliers en un coup d'œil. Statut, vacance, photos.",
-      "f2Title": "Locataires & Contrats", "f2Desc": "Données de base, baux, caution, assistant changement de locataire.",
-      "f3Title": "Paiements & QR-Facture", "f3Desc": "Conforme CH. Import CAMT.053. Rappels automatiques.",
-      "f4Title": "Portail Locataires", "f4Desc": "Tickets, documents, messages — vos locataires font tout en ligne.",
-      "f5Title": "Assistant IA", "f5Desc": "Assistance automatisée dans votre gestion quotidienne.",
-      "f6Title": "Documents & Modèles", "f6Desc": "Modèles CH (DE + FR), archivage numérique, tout en un clic."
+      "f1Title": "Objets & Unités",
+      "f1Desc": "Tous vos biens immobiliers en un coup d'œil. Statut, vacance, photos.",
+      "f2Title": "Locataires & Contrats",
+      "f2Desc": "Données de base, baux, caution, assistant changement de locataire.",
+      "f3Title": "Paiements & QR-Facture",
+      "f3Desc": "Conforme CH. Import CAMT.053. Rappels automatiques.",
+      "f4Title": "Portail Locataires",
+      "f4Desc": "Tickets, documents, messages — vos locataires font tout en ligne.",
+      "f5Title": "Assistant IA",
+      "f5Desc": "Assistance automatisée dans votre gestion quotidienne.",
+      "f6Title": "Documents & Modèles",
+      "f6Desc": "Modèles CH (DE + FR), archivage numérique, tout en un clic."
     },
     "forWhom": {
       "title": "Pour qui est ImmoManage?",
-      "segment1Title": "Petites gérances immobilières", "segment1Subtitle": "1–10 collaborateurs",
-      "segment1Points": ["Gérer plusieurs objets centralement", "Accès équipe avec rôles", "Facturation professionnelle"],
-      "segment2Title": "Propriétaires privés", "segment2Subtitle": "3–15 unités",
-      "segment2Points": ["Démarrage simple, sans connaissances IT", "Abordable et évolutif", "Tout en un seul endroit"]
+      "segment1Title": "Petites gérances immobilières",
+      "segment1Subtitle": "1–10 collaborateurs",
+      "segment1Points": [
+        "Gérer plusieurs objets centralement",
+        "Accès équipe avec rôles",
+        "Facturation professionnelle"
+      ],
+      "segment2Title": "Propriétaires privés",
+      "segment2Subtitle": "3–15 unités",
+      "segment2Points": [
+        "Démarrage simple, sans connaissances IT",
+        "Abordable et évolutif",
+        "Tout en un seul endroit"
+      ]
     },
     "demo": {
       "title": "Convainquez-vous vous-même",
       "subtitle": "Nous vous montrons ImmoManage lors d'une courte démo — gratuit et sans engagement.",
-      "namePlaceholder": "Votre nom", "emailPlaceholder": "Votre e-mail", "messagePlaceholder": "Que souhaitez-vous gérer? (optionnel)",
-      "submit": "Demander une démo", "success": "Merci! Nous vous répondrons dans les 24 heures.", "error": "Une erreur s'est produite. Veuillez réessayer.",
+      "namePlaceholder": "Votre nom",
+      "emailPlaceholder": "Votre e-mail",
+      "messagePlaceholder": "Que souhaitez-vous gérer? (optionnel)",
+      "submit": "Demander une démo",
+      "success": "Merci! Nous vous répondrons dans les 24 heures.",
+      "error": "Une erreur s'est produite. Veuillez réessayer.",
       "consent": "J'ai lu la <privacy>politique de confidentialité</privacy> et j'accepte que mes données soient utilisées pour traiter ma demande."
     },
-    "footer": { "privacy": "Protection des données", "imprint": "Mentions légales", "copyright": "© 2026 ImmoManage · Suisse" }
+    "footer": {
+      "privacy": "Protection des données",
+      "imprint": "Mentions légales",
+      "copyright": "© 2026 ImmoManage · Suisse",
+      "tagline": "La solution suisse pour la gérance immobilière moderne.",
+      "colProduct": "Produit",
+      "colFeatures": "Fonctionnalités",
+      "colLegal": "Mentions légales",
+      "linkPricing": "Tarifs & forfaits",
+      "linkLogin": "Se connecter",
+      "linkQr": "Rapprochement (CAMT)",
+      "linkTenant": "Portail locataire",
+      "linkAi": "Assistant IA",
+      "linkDocs": "Documents & modèles",
+      "madeIn": "Made in Switzerland"
+    },
+    "testimonials": {
+      "title": "Ce que disent nos clients",
+      "subtitle": "Plus de 50 gérants et propriétaires privés font confiance à ImmoManage.",
+      "ratingLabel": "sur 24 évaluations",
+      "t1Quote": "Fini les tableurs Excel. Les factures QR sont générées automatiquement et mes locataires peuvent signaler les dommages directement dans le portail. Cela me fait gagner au moins 3 heures par semaine.",
+      "t1Name": "Markus H.",
+      "t1Role": "Gérance immobilière, 18 unités · Zurich",
+      "t2Quote": "Je gère 5 appartements à titre accessoire. Avec ImmoManage, j'ai tout sous contrôle — baux, documents, décomptes. La prise en main a pris 20 minutes.",
+      "t2Name": "Sandra K.",
+      "t2Role": "Propriétaire privée · Lucerne",
+      "t3Quote": "L'assistant IA m'a aidé à rédiger une lettre de locataire juridiquement correcte. La plateforme anticipe les besoins — à un prix imbattable.",
+      "t3Name": "Andreas P.",
+      "t3Role": "Gérance immobilière GmbH · Bâle"
+    }
   }
 }
