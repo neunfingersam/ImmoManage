@@ -24,6 +24,10 @@ export async function POST(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const locale = searchParams.get('locale') ?? 'de'
 
+  if (!stripe) {
+    return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
+  }
+
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: company.stripeCustomerId,
     return_url: `${baseUrl}/${locale}/dashboard`,

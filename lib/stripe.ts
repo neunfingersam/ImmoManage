@@ -1,9 +1,14 @@
 // lib/stripe.ts — Stripe client + helpers
 import Stripe from 'stripe'
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-03-25.dahlia',
-})
+function createStripeClient() {
+  if (!process.env.STRIPE_SECRET_KEY) return null
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-03-25.dahlia',
+  })
+}
+
+export const stripe = createStripeClient()
 
 // Price IDs — set these in Vercel env vars after creating products in Stripe dashboard
 export const STRIPE_PRICE_IDS: Record<string, string | undefined> = {
@@ -32,7 +37,7 @@ export async function createStripeCheckout(opts: {
   cancelUrl: string
 }): Promise<{ customerId: string; checkoutUrl: string } | null> {
   const priceId = STRIPE_PRICE_IDS[opts.plan]
-  if (!process.env.STRIPE_SECRET_KEY) { console.error('[Stripe] STRIPE_SECRET_KEY not set'); return null }
+  if (!stripe) { console.error('[Stripe] STRIPE_SECRET_KEY not set'); return null }
   if (!priceId) { console.error('[Stripe] Price ID not set for plan:', opts.plan); return null }
 
   const customer = await stripe.customers.create({

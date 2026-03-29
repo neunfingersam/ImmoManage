@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
   const priceId = STRIPE_PRICE_IDS[company.plan]
 
   if (!priceId) return NextResponse.json({ error: 'Kein Preis konfiguriert' }, { status: 400 })
+  if (!stripe) return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
 
   const checkoutSession = await stripe.checkout.sessions.create({
     customer: company.stripeCustomerId ?? undefined,

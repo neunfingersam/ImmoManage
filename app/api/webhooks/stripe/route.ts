@@ -16,6 +16,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Not configured' }, { status: 400 })
   }
 
+  if (!stripe) {
+    return NextResponse.json({ error: 'Stripe not configured' }, { status: 400 })
+  }
+
   let event: Stripe.Event
   try {
     const body = await req.text()

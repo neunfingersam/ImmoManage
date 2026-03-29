@@ -40,7 +40,7 @@ const sections: { items: NavItem[] }[] = [
     items: [
       { key: 'dashboard', path: '/dashboard', icon: LayoutDashboard },
       { key: 'properties', path: '/dashboard/properties', icon: Building2 },
-      { key: 'weg', path: '/dashboard/weg', icon: Home },
+      { key: 'weg', path: '/dashboard/weg', icon: Building2 },
       { key: 'tenants', path: '/dashboard/tenants', icon: Users },
       { key: 'owners', path: '/dashboard/owners', icon: Home },
       { key: 'leases', path: '/dashboard/leases', icon: FileText },
