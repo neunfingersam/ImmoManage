@@ -23,8 +23,8 @@ export async function sendTenantInviteEmail(opts: {
   const expires = opts.expiresHours ?? 72
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0;">
-        <h1 style="color: #fff; margin: 0; font-size: 20px;">Willkommen bei ImmoManage</h1>
+      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 48px; width: auto;" />
       </div>
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.tenantName},</p>
@@ -76,8 +76,8 @@ export async function sendDeletionRequestEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0;">
-        <h1 style="color: #fff; margin: 0; font-size: 18px;">Kontolöschungsantrag</h1>
+      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
       </div>
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.adminName},</p>
@@ -101,8 +101,8 @@ export async function sendDeletionApprovedEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0;">
-        <h1 style="color: #fff; margin: 0; font-size: 18px;">Ihr Konto wurde gelöscht</h1>
+      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
       </div>
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.userName},</p>
@@ -123,8 +123,8 @@ export async function sendDeletionRejectedEmail(opts: {
 }) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0;">
-        <h1 style="color: #fff; margin: 0; font-size: 18px;">Löschantrag abgelehnt</h1>
+      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
       </div>
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.userName},</p>
@@ -149,8 +149,8 @@ export async function sendEventNotificationEmail(opts: {
   const dateStr = opts.eventDate.toLocaleDateString('de-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0;">
-        <h1 style="color: #fff; margin: 0; font-size: 18px;">Neuer Termin</h1>
+      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
       </div>
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.tenantName},</p>

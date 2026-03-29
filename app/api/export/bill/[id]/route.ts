@@ -163,8 +163,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1A1A2E; background: #fff; padding: 48px; font-size: 14px; line-height: 1.6; }
   .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; border-bottom: 2px solid #E8734A; padding-bottom: 24px; }
-  .logo { font-size: 22px; font-weight: 700; color: #E8734A; letter-spacing: -0.5px; }
-  .logo span { color: #1A1A2E; }
+  .logo img { height: 40px; width: auto; }
   .meta { text-align: right; font-size: 12px; color: #666; }
   h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
   .subtitle { color: #666; font-size: 13px; margin-bottom: 32px; }
@@ -189,7 +188,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 <body>
 <div class="header">
   <div>
-    <div class="logo">Immo<span>Manage</span></div>
+    <div class="logo"><img src="https://immo-manage.ch/logo.png" alt="ImmoManage" /></div>
     <div style="font-size: 12px; color: #888; margin-top: 4px;">${bill.property.name}</div>
     <div style="font-size: 12px; color: #888;">${bill.property.address}</div>
   </div>

@@ -28,15 +28,19 @@ export async function POST(req: NextRequest) {
         'Passwort zurücksetzen — ImmoManage',
         `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #E8734A;">Passwort zurücksetzen</h2>
-          <p>Hallo ${user.name},</p>
-          <p>du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.</p>
-          <p style="margin: 24px 0;">
-            <a href="${resetUrl}" style="background: #E8734A; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
-              Passwort zurücksetzen
-            </a>
-          </p>
-          <p style="color: #888; font-size: 13px;">Dieser Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.</p>
+          <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+            <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
+          </div>
+          <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
+            <p>Hallo ${user.name},</p>
+            <p>du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.</p>
+            <p style="margin: 24px 0;">
+              <a href="${resetUrl}" style="background: #E8734A; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+                Passwort zurücksetzen
+              </a>
+            </p>
+            <p style="color: #888; font-size: 13px;">Dieser Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.</p>
+          </div>
         </div>
         `
       ).catch(() => {})

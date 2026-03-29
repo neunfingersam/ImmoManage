@@ -28,6 +28,11 @@ export const metadata: Metadata = {
     description: 'Die Schweizer Software für Hausverwaltungen und private Vermieter.',
     images: ['/og-image.png'],
   },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/manifest.json',
   robots: { index: true, follow: true },
   alternates: {
     canonical: 'https://immo-manage.ch/de',

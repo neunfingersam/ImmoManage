@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Building2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -51,10 +51,9 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo + Titel */}
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-card bg-primary text-primary-foreground">
-            <Building2 className="h-7 w-7" />
+          <div className="mb-4 flex justify-center">
+            <img src="/logo.png" alt="ImmoManage" className="h-16 w-auto" />
           </div>
-          <h1 className="font-serif text-3xl text-foreground">ImmoManage</h1>
           <p className="mt-2 text-muted-foreground">
             {t('loginSubtitle')}
           </p>

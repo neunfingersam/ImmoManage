@@ -37,7 +37,10 @@ export async function sendPasswordResetLink(userId: string): Promise<{ success: 
     'Passwort setzen — ImmoManage',
     `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #E8734A;">Passwort setzen</h2>
+      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <img src="https://immo-manage.ch/logo.png" alt="ImmoManage" style="height: 40px; width: auto;" />
+      </div>
+      <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
       <p>Hallo ${user.name ?? user.email},</p>
       <p>Ihr Administrator hat einen Link zum Setzen Ihres Passworts generiert.</p>
       <p style="margin: 24px 0;">
@@ -46,6 +49,7 @@ export async function sendPasswordResetLink(userId: string): Promise<{ success: 
         </a>
       </p>
       <p style="color: #888; font-size: 13px;">Dieser Link ist 1 Stunde gültig.</p>
+      </div>
     </div>
     `
   )
