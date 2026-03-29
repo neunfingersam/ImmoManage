@@ -262,6 +262,79 @@ export async function removeWegOwner(ownerId: string, propertyId: string) {
   return { success: true, data: null }
 }
 
+// ─── Renewal Plan Items ────────────────────────────────────────────────────────
+const renewalItemSchema = z.object({
+  bauteil: z.string().min(1, 'Bauteil erforderlich'),
+  restlebensdauer: z.number().int().min(1).max(100).optional(),
+  erneuerungskosten: z.number().positive().optional(),
+  letzteErneuerung: z.number().int().min(1900).max(2100).optional(),
+})
+
+export async function addRenewalItem(propertyId: string, data: unknown) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const parsed = renewalItemSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  const config = await prisma.wegConfig.findUnique({ where: { propertyId } })
+  if (!config) return { success: false, error: 'WEG-Konfiguration nicht gefunden' }
+
+  await prisma.renewalPlanItem.create({
+    data: { wegConfigId: config.id, ...parsed.data },
+  })
+
+  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  return { success: true, data: null }
+}
+
+export async function updateRenewalItem(id: string, propertyId: string, data: unknown) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const parsed = renewalItemSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  await prisma.renewalPlanItem.update({ where: { id }, data: parsed.data })
+
+  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  return { success: true, data: null }
+}
+
+export async function deleteRenewalItem(id: string, propertyId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  await prisma.renewalPlanItem.delete({ where: { id } })
+
+  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  return { success: true, data: null }
+}
+
+// ─── Fonds-Einstellungen aktualisieren ────────────────────────────────────────
+const fondsConfigSchema = z.object({
+  fondsStand: z.number().min(0, 'Fondsstand muss >= 0 sein'),
+  fondsBeitragssatz: z.number().min(0).max(10),
+  fondsObergrenze: z.number().min(0).max(50),
+})
+
+export async function updateFondsConfig(propertyId: string, data: unknown) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const parsed = fondsConfigSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  await prisma.wegConfig.upsert({
+    where: { propertyId },
+    update: { ...parsed.data, fondsLetzteEinzahlung: new Date() },
+    create: { propertyId, ...parsed.data },
+  })
+
+  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  return { success: true, data: null }
+}
+
 // ─── Get owner WEG data (for owner dashboard) ────────────────────────────────
 export async function getMyWegData() {
   const session = await getServerSession(authOptions)
