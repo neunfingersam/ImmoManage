@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import { getWegProperty } from '../../../../_actions'
 import { OwnerForm } from '@/components/weg/OwnerForm'
+import { ResetPasswordButton } from '@/components/shared/ResetPasswordButton'
+import { Card } from '@/components/ui/card'
 
 export default async function EditOwnerPage({ params }: { params: Promise<{ propertyId: string; ownerId: string }> }) {
   const { propertyId, ownerId } = await params
@@ -33,6 +35,14 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ prop
         <h1 className="font-serif text-2xl text-foreground">Eigentümer bearbeiten</h1>
         <p className="text-sm text-muted-foreground mt-0.5">{owner.user.name} · {property.name}</p>
       </div>
+      <Card className="p-4">
+        <p className="text-sm font-medium text-foreground mb-1">Zugang</p>
+        <p className="text-xs text-muted-foreground mb-3">
+          Passwort-Link per E-Mail an <strong>{owner.user.email}</strong> senden. Gültig für 1 Stunde.
+        </p>
+        <ResetPasswordButton userId={owner.user.id} />
+      </Card>
+
       <OwnerForm
         propertyId={propertyId}
         units={availableUnits}

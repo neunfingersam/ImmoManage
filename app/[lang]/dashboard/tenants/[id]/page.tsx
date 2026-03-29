@@ -10,6 +10,7 @@ import { authOptions } from '@/lib/auth'
 import { TenantEditForm } from './TenantEditForm'
 import { MoveUnitDialog } from './MoveUnitDialog'
 import { ResendInviteButton } from './ResendInviteButton'
+import { ResetPasswordButton } from '@/components/shared/ResetPasswordButton'
 
 export default async function TenantDetailPage({
   params,
@@ -75,7 +76,10 @@ export default async function TenantDetailPage({
         <p className="text-sm text-muted-foreground">
           Eine neue Einladungsmail mit einem Link zum Passwort setzen an <strong>{tenant.email}</strong> senden. Gültig für 72 Stunden.
         </p>
-        <ResendInviteButton tenantId={tenant.id} />
+        <div className="flex flex-wrap gap-2">
+          <ResendInviteButton tenantId={tenant.id} />
+          <ResetPasswordButton userId={tenant.id} />
+        </div>
       </section>
 
       {activeLease && unitsForMove.length > 0 && (
