@@ -13,6 +13,7 @@ type WegSettingsFormProps = {
   initial: {
     kanton?: string | null
     gebVersicherungswert?: number | null
+    verkehrswert?: number | null
     fondsBeitragssatz?: number | null
     fondsObergrenze?: number | null
     fondsStand?: number | null
@@ -29,6 +30,7 @@ export function WegSettingsForm({ propertyId, initial }: WegSettingsFormProps) {
   const [form, setFormState] = useState({
     kanton: initial.kanton ?? '',
     gebVersicherungswert: initial.gebVersicherungswert?.toString() ?? '',
+    verkehrswert: initial.verkehrswert?.toString() ?? '',
     fondsBeitragssatz: initial.fondsBeitragssatz?.toString() ?? '0.4',
     fondsObergrenze: initial.fondsObergrenze?.toString() ?? '5.0',
     fondsStand: initial.fondsStand?.toString() ?? '',
@@ -45,6 +47,7 @@ export function WegSettingsForm({ propertyId, initial }: WegSettingsFormProps) {
       const result = await updateWegConfig(propertyId, {
         kanton: form.kanton || undefined,
         gebVersicherungswert: form.gebVersicherungswert ? parseFloat(form.gebVersicherungswert) : undefined,
+        verkehrswert: form.verkehrswert ? parseFloat(form.verkehrswert) : undefined,
         fondsBeitragssatz: form.fondsBeitragssatz ? parseFloat(form.fondsBeitragssatz) : undefined,
         fondsObergrenze: form.fondsObergrenze ? parseFloat(form.fondsObergrenze) : undefined,
         fondsStand: form.fondsStand ? parseFloat(form.fondsStand) : undefined,
@@ -73,6 +76,23 @@ export function WegSettingsForm({ propertyId, initial }: WegSettingsFormProps) {
               <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
             ))}
           </select>
+        </div>
+        <div>
+          <label className={labelClass}>
+            Verkehrswert / Steuerwert (CHF)
+            <span title="Amtlicher Steuerwert oder Verkehrswert der Liegenschaft. Basis für die Eigenmietwert-Berechnung in der Steuermappe." className="ml-1 cursor-help inline-flex">
+              <Info className="h-3 w-3 text-muted-foreground" />
+            </span>
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="10000"
+            value={form.verkehrswert}
+            onChange={e => set('verkehrswert', e.target.value)}
+            placeholder="z.B. 1200000"
+            className={inputClass}
+          />
         </div>
         <div>
           <label className={labelClass}>

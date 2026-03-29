@@ -103,6 +103,7 @@ export async function createWegProperty(data: unknown) {
 const wegConfigSchema = z.object({
   kanton: z.string().optional(),
   gebVersicherungswert: z.number().positive('Gebäudeversicherungswert muss positiv sein').optional(),
+  verkehrswert: z.number().positive('Verkehrswert muss positiv sein').optional(),
   fondsBeitragssatz: z.number().min(0).max(10).optional(),
   fondsObergrenze: z.number().min(0).max(50).optional(),
   fondsStand: z.number().min(0).optional(),

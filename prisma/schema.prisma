@@ -599,6 +599,7 @@ model WegConfig {
   propertyId            String    @unique
   kanton                String?
   gebVersicherungswert  Float?
+  verkehrswert          Float?
   fondsBeitragssatz     Float     @default(0.4)
   fondsObergrenze       Float     @default(5.0)
   fondsStand            Float?

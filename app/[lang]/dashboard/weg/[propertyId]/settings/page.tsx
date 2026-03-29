@@ -30,6 +30,7 @@ export default async function WegSettingsPage({ params }: { params: Promise<{ pr
           initial={{
             kanton: property.wegConfig?.kanton,
             gebVersicherungswert: property.wegConfig?.gebVersicherungswert,
+            verkehrswert: property.wegConfig?.verkehrswert,
             fondsBeitragssatz: property.wegConfig?.fondsBeitragssatz,
             fondsObergrenze: property.wegConfig?.fondsObergrenze,
             fondsStand: property.wegConfig?.fondsStand,
