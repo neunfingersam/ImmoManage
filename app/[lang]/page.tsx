@@ -27,6 +27,8 @@ export default async function LocaleRootPage({
         redirect(`/${lang}/dashboard`)
       case 'MIETER':
         redirect(`/${lang}/tenant`)
+      case 'EIGENTUEMER':
+        redirect(`/${lang}/owner`)
       default:
         redirect(`/${lang}/auth/login`)
     }
