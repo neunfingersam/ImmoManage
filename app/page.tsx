@@ -23,6 +23,8 @@ export default async function RootPage() {
       redirect(`/${DEFAULT}/dashboard`)
     case 'MIETER':
       redirect(`/${DEFAULT}/tenant`)
+    case 'EIGENTUEMER':
+      redirect(`/${DEFAULT}/owner`)
     default:
       redirect(`/${DEFAULT}/auth/login`)
   }
