@@ -140,6 +140,7 @@ const ownerSchema = z.object({
   hypothekarzins: z.number().min(0).max(20).optional(),
   bankverbindung: z.string().optional(),
   zahlungsIban: z.string().optional(),
+  mea: z.number().int().min(0).max(10000).default(0),
 })
 
 export async function addWegOwner(propertyId: string, data: unknown) {
@@ -194,6 +195,7 @@ export async function addWegOwner(propertyId: string, data: unknown) {
       hypothekarzins: parsed.data.hypothekarzins,
       bankverbindung: parsed.data.bankverbindung,
       zahlungsIban: parsed.data.zahlungsIban,
+      mea: parsed.data.mea,
     },
   })
 
@@ -245,6 +247,7 @@ export async function updateWegOwner(ownerId: string, propertyId: string, data: 
       hypothekarzins: parsed.data.hypothekarzins,
       bankverbindung: parsed.data.bankverbindung,
       zahlungsIban: parsed.data.zahlungsIban,
+      mea: parsed.data.mea,
     },
   })
 
@@ -370,6 +373,68 @@ export async function createAssembly(propertyId: string, data: unknown) {
 
   revalidatePath(`/dashboard/weg/${propertyId}`)
   return { success: true, data: { id: assembly.id } }
+}
+
+// ─── Cast Assembly Vote (with MEA snapshot) ───────────────────────────────────
+const castVoteSchema = z.object({
+  agendaItemId: z.string().min(1),
+  ownerId: z.string().min(1),
+  stimme: z.enum(['JA', 'NEIN', 'ENTHALTUNG']),
+})
+
+export async function castAssemblyVote(propertyId: string, data: unknown) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const parsed = castVoteSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  // Snapshot MEA at time of vote
+  const ownerRecord = await prisma.propertyOwner.findFirst({
+    where: { id: parsed.data.ownerId },
+    select: { mea: true },
+  })
+
+  await prisma.assemblyVote.upsert({
+    where: {
+      agendaItemId_ownerId: {
+        agendaItemId: parsed.data.agendaItemId,
+        ownerId: parsed.data.ownerId,
+      },
+    },
+    update: {
+      stimme: parsed.data.stimme,
+      meaGewicht: ownerRecord?.mea ?? 0,
+    },
+    create: {
+      agendaItemId: parsed.data.agendaItemId,
+      ownerId: parsed.data.ownerId,
+      stimme: parsed.data.stimme,
+      meaGewicht: ownerRecord?.mea ?? 0,
+    },
+  })
+
+  revalidatePath(`/dashboard/weg/${propertyId}`)
+  return { success: true, data: null }
+}
+
+// ─── Get Assembly Votes with weighted results ─────────────────────────────────
+export async function getAgendaItemVotes(agendaItemId: string) {
+  const votes = await prisma.assemblyVote.findMany({
+    where: { agendaItemId },
+    include: { owner: { include: { user: { select: { name: true } } } } },
+  })
+
+  const headCount = { JA: 0, NEIN: 0, ENTHALTUNG: 0 }
+  const meaWeight = { JA: 0, NEIN: 0, ENTHALTUNG: 0 }
+
+  for (const v of votes) {
+    const s = v.stimme as 'JA' | 'NEIN' | 'ENTHALTUNG'
+    headCount[s]++
+    meaWeight[s] += v.meaGewicht
+  }
+
+  return { votes, headCount, meaWeight }
 }
 
 // ─── Get owner WEG data (for owner dashboard) ────────────────────────────────

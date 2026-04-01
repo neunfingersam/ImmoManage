@@ -25,6 +25,7 @@ type OwnerFormProps = {
     hypothekarzins?: number
     bankverbindung?: string
     zahlungsIban?: string
+    mea?: number
   }
 }
 
@@ -44,6 +45,7 @@ export function OwnerForm({ propertyId, units, currentTotalWertquote, mode = 'cr
     hypothekarzins: initial?.hypothekarzins?.toString() ?? '',
     bankverbindung: initial?.bankverbindung ?? '',
     zahlungsIban: initial?.zahlungsIban ?? '',
+    mea: initial?.mea?.toString() ?? '0',
   })
 
   function set(field: keyof typeof form, value: string) {
@@ -67,6 +69,7 @@ export function OwnerForm({ propertyId, units, currentTotalWertquote, mode = 'cr
         hypothekarzins: form.hypothekarzins ? parseFloat(form.hypothekarzins) : undefined,
         bankverbindung: form.bankverbindung || undefined,
         zahlungsIban: form.zahlungsIban || undefined,
+        mea: parseInt(form.mea, 10) || 0,
       }
       const result = mode === 'create'
         ? await addWegOwner(propertyId, data)
@@ -158,6 +161,33 @@ export function OwnerForm({ propertyId, units, currentTotalWertquote, mode = 'cr
                 <span>{newTotal.toFixed(3)}%</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="border-t border-border" />
+
+      {/* MEA */}
+      <section className="space-y-3">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          MEA
+          <span title="Miteigentumsanteil in Tausendsteln. Die Summe aller Eigentümer sollte 1000 ergeben." className="cursor-help">
+            <Info className="h-3.5 w-3.5 text-muted-foreground" />
+          </span>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>MEA (Miteigentumsanteil)</label>
+            <input
+              type="number"
+              min={0}
+              max={10000}
+              value={form.mea}
+              onChange={e => set('mea', e.target.value)}
+              placeholder="z.B. 150"
+              className={inputClass}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">Anteil in Tausendsteln (z.B. 150 von 1000)</p>
           </div>
         </div>
       </section>

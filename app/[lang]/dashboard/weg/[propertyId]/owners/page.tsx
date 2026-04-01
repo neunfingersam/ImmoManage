@@ -15,9 +15,10 @@ export default async function WegOwnersPage({ params }: { params: Promise<{ prop
   const property = await getWegProperty(propertyId)
   if (!property) notFound()
 
-  type OwnerRow = { id: string; wertquote: number; unitId: string | null; hypothekarbetrag: number | null; user: { name: string; email: string }; unit: { unitNumber: string } | null }
+  type OwnerRow = { id: string; wertquote: number; unitId: string | null; hypothekarbetrag: number | null; mea: number; user: { name: string; email: string }; unit: { unitNumber: string } | null }
   const owners = property.owners as OwnerRow[]
   const totalWertquote = owners.reduce((s: number, o: { wertquote: number }) => s + o.wertquote, 0)
+  const totalMea = owners.reduce((s: number, o: { mea: number }) => s + (o.mea ?? 0), 0)
   const wertquoteOk = Math.abs(totalWertquote - 100) < 0.01
 
   return (
@@ -102,6 +103,11 @@ export default async function WegOwnersPage({ params }: { params: Promise<{ prop
           ))}
         </div>
       )}
+
+      <p className="mt-3 text-sm text-muted-foreground">
+        Total MEA: {totalMea} / 1000
+        {totalMea !== 1000 && <span className="ml-2 text-orange-600">⚠ Total sollte 1000 ergeben</span>}
+      </p>
     </div>
   )
 }

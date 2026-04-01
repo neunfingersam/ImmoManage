@@ -13,6 +13,7 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ prop
     id: string; wertquote: number; unitId: string | null
     hypothekarbetrag: number | null; hypothekarzins: number | null
     bankverbindung: string | null; zahlungsIban: string | null
+    mea: number
     user: { id: string; name: string; email: string; phone: string | null }
   }
   type UnitEntry = { id: string; unitNumber: string; floor: number | null; owners: { id: string }[] }
@@ -59,6 +60,7 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ prop
           hypothekarzins: owner.hypothekarzins ?? undefined,
           bankverbindung: owner.bankverbindung ?? undefined,
           zahlungsIban: owner.zahlungsIban ?? undefined,
+          mea: owner.mea,
         }}
       />
     </div>

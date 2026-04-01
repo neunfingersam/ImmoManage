@@ -168,6 +168,18 @@ enum TicketScope {
   BUILDING
 }
 
+enum StegBudgetStatus {
+  ENTWURF
+  VERABSCHIEDET
+  ABGESCHLOSSEN
+}
+
+enum JahresabrechnungStatus {
+  ENTWURF
+  VERSANDT
+  GENEHMIGT
+}
+
 model Company {
   id                   String          @id @default(cuid())
   name                 String
@@ -199,6 +211,8 @@ model Company {
   accountDeletionRequests AccountDeletionRequest[]
   folders                DocumentFolder[]         @relation("CompanyFolders")
   hauswartEntries        HauswartEntry[]          @relation("CompanyHauswartEntries")
+  budgets                StegBudget[]             @relation("CompanyBudgets")
+  jahresabrechnungen     StegJahresabrechnung[]   @relation("CompanyJahresabrechnungen")
 }
 
 model User {
@@ -254,6 +268,7 @@ model PropertyOwner {
   hypothekarzins   Float?
   bankverbindung   String?
   zahlungsIban     String?
+  mea              Int       @default(0)
   user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   property           Property             @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   unit               Unit?                @relation(fields: [unitId], references: [id])
@@ -261,6 +276,8 @@ model PropertyOwner {
   expensePayments    OwnerExpensePayment[]
   assemblyVotes      AssemblyVote[]
   assemblyAttendance AssemblyAttendance[]
+  statements         StegOwnerStatement[] @relation("OwnerStatements")
+  vertreterFuer      AssemblyAttendance[] @relation("VertretenDurch")
 }
 
 model Property {
@@ -286,6 +303,8 @@ model Property {
   wegConfig      WegConfig?
   folders        DocumentFolder[]     @relation("PropertyFolders")
   hauswartEntries HauswartEntry[]     @relation("PropertyHauswartEntries")
+  budgets        StegBudget[]         @relation("PropertyBudgets")
+  jahresabrechnungen StegJahresabrechnung[] @relation("PropertyJahresabrechnungen")
 }
 
 model Unit {
@@ -383,7 +402,8 @@ model Document {
   property   Property?       @relation(fields: [propertyId], references: [id])
   uploadedBy User            @relation("UploadedDocuments", fields: [uploadedById], references: [id])
   folder     DocumentFolder? @relation(fields: [folderId], references: [id])
-  hauswartBeleg HauswartEntry[] @relation("HauswartBeleg")
+  hauswartBeleg HauswartEntry[]      @relation("HauswartBeleg")
+  vollmachtFuer AssemblyAttendance[] @relation("VollmachtDok")
 }
 
 model Message {
@@ -701,14 +721,16 @@ model WegTaxDeduction {
 }
 
 model Assembly {
-  id              String   @id @default(cuid())
-  wegConfigId     String
-  datum           DateTime
-  ort             String?
-  einladungsFrist Int      @default(10)
-  status          String   @default("GEPLANT")
-  protokoll       String?
-  createdAt       DateTime @default(now())
+  id                   String    @id @default(cuid())
+  wegConfigId          String
+  datum                DateTime
+  ort                  String?
+  einladungsFrist      Int       @default(10)
+  status               String    @default("GEPLANT")
+  protokoll            String?
+  einladungVersandtAt  DateTime?
+  vollmachtFrist       DateTime?
+  createdAt            DateTime  @default(now())
   wegConfig  WegConfig            @relation(fields: [wegConfigId], references: [id], onDelete: Cascade)
   agenda     AgendaItem[]
   attendance AssemblyAttendance[]
@@ -722,9 +744,11 @@ model AgendaItem {
   titel         String
   beschreibung  String?
   antragsteller String?
+  budgetId      String?
   createdAt     DateTime @default(now())
   assembly Assembly      @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
   votes    AssemblyVote[]
+  budget   StegBudget?   @relation(fields: [budgetId], references: [id])
 }
 
 model AssemblyVote {
@@ -732,18 +756,23 @@ model AssemblyVote {
   agendaItemId String
   ownerId      String
   stimme       String
+  meaGewicht   Int    @default(0)
   agendaItem AgendaItem    @relation(fields: [agendaItemId], references: [id], onDelete: Cascade)
   owner      PropertyOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   @@unique([agendaItemId, ownerId])
 }
 
 model AssemblyAttendance {
-  id         String  @id @default(cuid())
-  assemblyId String
-  ownerId    String
-  anwesend   Boolean @default(false)
-  assembly Assembly      @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
-  owner    PropertyOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id              String  @id @default(cuid())
+  assemblyId      String
+  ownerId         String
+  anwesend        Boolean @default(false)
+  vertretenDurch  String?
+  vollmachtDokId  String?
+  assembly    Assembly       @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
+  owner       PropertyOwner  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  vertreter   PropertyOwner? @relation("VertretenDurch", fields: [vertretenDurch], references: [id])
+  vollmachtDok Document?     @relation("VollmachtDok", fields: [vollmachtDokId], references: [id])
   @@unique([assemblyId, ownerId])
 }
 
@@ -786,4 +815,70 @@ model HauswartEntry {
   property  Property  @relation("PropertyHauswartEntries", fields: [propertyId], references: [id], onDelete: Cascade)
   beleg     Document? @relation("HauswartBeleg", fields: [belegId], references: [id])
   createdBy User      @relation("HauswartEntryCreator", fields: [createdById], references: [id])
+}
+
+// ─── STEG Models ──────────────────────────────────────────────────────────────
+
+model StegBudget {
+  id         String           @id @default(cuid())
+  propertyId String
+  companyId  String
+  jahr       Int
+  status     StegBudgetStatus @default(ENTWURF)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  property    Property             @relation("PropertyBudgets", fields: [propertyId], references: [id], onDelete: Cascade)
+  company     Company              @relation("CompanyBudgets", fields: [companyId], references: [id], onDelete: Cascade)
+  positionen  StegBudgetPosition[]
+  agendaItems AgendaItem[]
+
+  @@unique([propertyId, jahr])
+}
+
+model StegBudgetPosition {
+  id           String          @id @default(cuid())
+  budgetId     String
+  kategorie    ExpenseCategory
+  beschreibung String
+  budgetBetrag Float
+  istBetrag    Float           @default(0)
+  notizen      String?
+
+  budget StegBudget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+}
+
+model StegJahresabrechnung {
+  id            String                 @id @default(cuid())
+  propertyId    String
+  companyId     String
+  jahr          Int
+  status        JahresabrechnungStatus @default(ENTWURF)
+  totalAusgaben Float                  @default(0)
+  fondsBeitrag  Float                  @default(0)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  property        Property             @relation("PropertyJahresabrechnungen", fields: [propertyId], references: [id], onDelete: Cascade)
+  company         Company              @relation("CompanyJahresabrechnungen", fields: [companyId], references: [id], onDelete: Cascade)
+  ownerStatements StegOwnerStatement[]
+
+  @@unique([propertyId, jahr])
+}
+
+model StegOwnerStatement {
+  id                 String               @id @default(cuid())
+  jahresabrechnungId String
+  ownerId            String
+  kostenanteil       Float
+  fondsanteil        Float
+  vorauszahlungen    Float
+  saldo              Float
+  pdfUrl             String?
+  createdAt          DateTime             @default(now())
+
+  jahresabrechnung StegJahresabrechnung @relation(fields: [jahresabrechnungId], references: [id], onDelete: Cascade)
+  owner            PropertyOwner        @relation("OwnerStatements", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@unique([jahresabrechnungId, ownerId])
 }
