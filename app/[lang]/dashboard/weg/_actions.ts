@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { ensureSystemFolders, ensureAssemblyFolder } from '@/lib/document-folders'
 
 // ─── Get all WEG properties for this company ─────────────────────────────────
 export async function getWegProperties() {
@@ -83,6 +84,8 @@ export async function createWegProperty(data: unknown) {
     status: 'LEER' as const,
   }))
   await prisma.unit.createMany({ data: units })
+
+  await ensureSystemFolders(property.id, session.user.companyId)
 
   await prisma.activityLog.create({
     data: {
@@ -334,6 +337,39 @@ export async function updateFondsConfig(propertyId: string, data: unknown) {
 
   revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
   return { success: true, data: null }
+}
+
+// ─── Create Assembly ──────────────────────────────────────────────────────────
+const createAssemblySchema = z.object({
+  datum: z.string().min(1, 'Datum erforderlich'),
+  ort: z.string().optional(),
+  einladungsFrist: z.number().int().min(1).max(90).optional(),
+})
+
+export async function createAssembly(propertyId: string, data: unknown) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const parsed = createAssemblySchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  const wegConfig = await prisma.wegConfig.findUnique({ where: { propertyId } })
+  if (!wegConfig) return { success: false, error: 'WEG-Konfiguration nicht gefunden' }
+
+  const assembly = await prisma.assembly.create({
+    data: {
+      wegConfigId: wegConfig.id,
+      datum: new Date(parsed.data.datum),
+      ort: parsed.data.ort,
+      einladungsFrist: parsed.data.einladungsFrist ?? 10,
+    },
+  })
+
+  const year = new Date(parsed.data.datum).getFullYear()
+  await ensureAssemblyFolder(assembly.id, propertyId, session.user.companyId, `GV ${year}`)
+
+  revalidatePath(`/dashboard/weg/${propertyId}`)
+  return { success: true, data: { id: assembly.id } }
 }
 
 // ─── Get owner WEG data (for owner dashboard) ────────────────────────────────
