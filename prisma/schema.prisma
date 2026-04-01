@@ -198,6 +198,7 @@ model Company {
   activityLogs           ActivityLog[]
   accountDeletionRequests AccountDeletionRequest[]
   folders                DocumentFolder[]         @relation("CompanyFolders")
+  hauswartEntries        HauswartEntry[]          @relation("CompanyHauswartEntries")
 }
 
 model User {
@@ -230,6 +231,7 @@ model User {
   activityLogs        ActivityLog[]
   deletionRequest     AccountDeletionRequest?
   personalFolders     DocumentFolder[]     @relation("PersonalFolders")
+  hauswartEntries     HauswartEntry[]      @relation("HauswartEntryCreator")
 }
 
 model PropertyAssignment {
@@ -283,6 +285,7 @@ model Property {
   tasks          Task[]
   wegConfig      WegConfig?
   folders        DocumentFolder[]     @relation("PropertyFolders")
+  hauswartEntries HauswartEntry[]     @relation("PropertyHauswartEntries")
 }
 
 model Unit {
@@ -380,6 +383,7 @@ model Document {
   property   Property?       @relation(fields: [propertyId], references: [id])
   uploadedBy User            @relation("UploadedDocuments", fields: [uploadedById], references: [id])
   folder     DocumentFolder? @relation(fields: [folderId], references: [id])
+  hauswartBeleg HauswartEntry[] @relation("HauswartBeleg")
 }
 
 model Message {
@@ -584,6 +588,13 @@ model AccountDeletionRequest {
 
 // ─── WEG Enums ────────────────────────────────────────────────────────────────
 
+enum HauswartKategorie {
+  STUNDEN
+  SPESEN
+  MATERIAL
+  FREMDLEISTUNG
+}
+
 enum ExpenseCategory {
   VERSICHERUNG
   HAUSWART
@@ -621,6 +632,7 @@ model WegConfig {
   fondsObergrenze       Float     @default(5.0)
   fondsStand            Float?
   fondsLetzteEinzahlung DateTime?
+  hauswartStundenansatz Float     @default(45.0)
   createdAt             DateTime  @default(now())
   property     Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   renewalItems RenewalPlanItem[]
@@ -754,4 +766,24 @@ model DocumentFolder {
   parent    DocumentFolder?  @relation("SubFolders", fields: [parentId], references: [id])
   children  DocumentFolder[] @relation("SubFolders")
   documents Document[]
+}
+
+model HauswartEntry {
+  id            String            @id @default(cuid())
+  companyId     String
+  propertyId    String
+  datum         DateTime
+  kategorie     HauswartKategorie
+  beschreibung  String
+  stunden       Float?
+  betrag        Float?
+  belegId       String?
+  createdById   String
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  company   Company   @relation("CompanyHauswartEntries", fields: [companyId], references: [id], onDelete: Cascade)
+  property  Property  @relation("PropertyHauswartEntries", fields: [propertyId], references: [id], onDelete: Cascade)
+  beleg     Document? @relation("HauswartBeleg", fields: [belegId], references: [id])
+  createdBy User      @relation("HauswartEntryCreator", fields: [createdById], references: [id])
 }
