@@ -5,7 +5,8 @@ import { prisma } from '@/lib/prisma'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { DocumentCard } from '@/components/documents/DocumentCard'
 import { DocumentUploadForm } from '@/components/documents/DocumentUploadForm'
-import { getDocuments } from './_actions'
+import { getDocuments, getFoldersForProperty } from './_actions'
+import { FolderTree } from '@/components/documents/folder-tree'
 import type { Document, User, Property } from '@/lib/generated/prisma'
 
 type DocumentWithRels = Document & {
@@ -14,9 +15,20 @@ type DocumentWithRels = Document & {
   property: Pick<Property, 'id' | 'name'> | null
 }
 
-export default async function DocumentsPage() {
+export default async function DocumentsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const { lang } = await params
+  const { propertyId } = await searchParams
+
   const session = await getServerSession(authOptions)
-  const [docs, tenants, properties] = await Promise.all([
+  const propertyIdStr = typeof propertyId === 'string' ? propertyId : undefined
+
+  const [docs, tenants, properties, folders] = await Promise.all([
     getDocuments(),
     prisma.user.findMany({
       where: { companyId: session?.user?.companyId ?? '', role: 'MIETER', active: true },
@@ -28,6 +40,7 @@ export default async function DocumentsPage() {
       select: { id: true, name: true },
       orderBy: { name: 'asc' },
     }),
+    propertyIdStr ? getFoldersForProperty(propertyIdStr) : Promise.resolve([]),
   ])
 
   return (
@@ -44,13 +57,23 @@ export default async function DocumentsPage() {
 
       <section className="space-y-3">
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Alle Dokumente</h2>
-        {docs.length === 0 ? (
-          <EmptyState icon={<FileText className="h-7 w-7" />} titel="Keine Dokumente" beschreibung="Noch keine Dokumente hochgeladen." />
-        ) : (
-          <div className="space-y-2">
-            {docs.map(d => <DocumentCard key={d.id} doc={d as DocumentWithRels} />)}
+        <div className="flex gap-6">
+          {folders.length > 0 && (
+            <aside className="w-56 shrink-0">
+              <p className="mb-2 px-2 text-xs font-semibold uppercase text-muted-foreground">Ordner</p>
+              <FolderTree folders={folders} lang={lang} />
+            </aside>
+          )}
+          <div className="flex-1">
+            {docs.length === 0 ? (
+              <EmptyState icon={<FileText className="h-7 w-7" />} titel="Keine Dokumente" beschreibung="Noch keine Dokumente hochgeladen." />
+            ) : (
+              <div className="space-y-2">
+                {docs.map(d => <DocumentCard key={d.id} doc={d as DocumentWithRels} />)}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </section>
     </div>
   )
