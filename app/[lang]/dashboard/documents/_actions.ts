@@ -11,6 +11,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { documentUploadSchema } from '@/lib/schemas/document'
 import { indexDocument } from '@/lib/agent/indexDocument'
+import { getFolderTreeForProperty, getFolderWithAccess } from '@/lib/document-folders'
 
 const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png']
 const MAX_SIZE = 20 * 1024 * 1024 // 20MB
@@ -87,6 +88,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
         tenantId: parsed.data.tenantId ?? null,
         propertyId: parsed.data.propertyId ?? null,
         uploadedById: session.user.id,
+        folderId: (formData.get('folderId') as string) || null,
       },
     })
   } catch (e) {
@@ -120,4 +122,93 @@ export async function deleteDocument(documentId: string): Promise<ActionResult<v
 
   revalidatePath('/dashboard/documents')
   return { success: true, data: undefined }
+}
+
+export async function getFoldersForProperty(propertyId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return []
+  return getFolderTreeForProperty(propertyId, session as any)
+}
+
+export async function createSubFolder(data: { parentId: string; name: string }): Promise<ActionResult<{ id: string }>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const parent = await prisma.documentFolder.findFirst({
+    where: { id: data.parentId, companyId: session.user.companyId },
+  })
+  if (!parent) return { success: false, error: 'Übergeordneter Ordner nicht gefunden' }
+  if (parent.type === 'PERSONAL' && parent.ownerId !== (session.user as any).id) {
+    const isAdmin = ['ADMIN', 'VERMIETER', 'SUPER_ADMIN'].includes((session.user as any).role)
+    if (!isAdmin) return { success: false, error: 'Kein Zugriff' }
+  }
+
+  const folder = await prisma.documentFolder.create({
+    data: {
+      companyId: session.user.companyId,
+      propertyId: parent.propertyId,
+      type: parent.type,
+      name: data.name.trim(),
+      parentId: data.parentId,
+      isSystem: false,
+    },
+  })
+  revalidatePath('/dashboard/documents')
+  return { success: true, data: { id: folder.id } }
+}
+
+export async function deleteFolder(folderId: string): Promise<ActionResult<null>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const folder = await prisma.documentFolder.findFirst({
+    where: { id: folderId, companyId: session.user.companyId },
+    include: { _count: { select: { documents: true, children: true } } },
+  })
+  if (!folder) return { success: false, error: 'Ordner nicht gefunden' }
+  if (folder.isSystem) return { success: false, error: 'Systemordner können nicht gelöscht werden' }
+  if (folder._count.documents > 0 || folder._count.children > 0) {
+    return { success: false, error: 'Ordner muss leer sein' }
+  }
+
+  await prisma.documentFolder.delete({ where: { id: folderId } })
+  revalidatePath('/dashboard/documents')
+  return { success: true, data: null }
+}
+
+export async function getFolderContents(folderId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { folder: null, documents: [], subfolders: [] }
+
+  let folder
+  try { folder = await getFolderWithAccess(folderId, session as any) }
+  catch { return { folder: null, documents: [], subfolders: [] } }
+
+  const [documents, subfolders] = await Promise.all([
+    prisma.document.findMany({
+      where: { folderId, companyId: session.user.companyId },
+      include: { uploadedBy: { select: { id: true, name: true } } },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.documentFolder.findMany({
+      where: { parentId: folderId },
+      orderBy: { name: 'asc' },
+    }),
+  ])
+
+  return { folder, documents, subfolders }
+}
+
+export async function moveDocumentToFolder(documentId: string, folderId: string | null): Promise<ActionResult<null>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const doc = await prisma.document.findFirst({
+    where: { id: documentId, companyId: session.user.companyId },
+  })
+  if (!doc) return { success: false, error: 'Dokument nicht gefunden' }
+
+  await prisma.document.update({ where: { id: documentId }, data: { folderId } })
+  revalidatePath('/dashboard/documents')
+  return { success: true, data: null }
 }
