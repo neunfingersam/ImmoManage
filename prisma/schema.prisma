@@ -49,12 +49,24 @@ enum DocumentCategory {
   NEBENKOSTENABRECHNUNG
   UEBERGABEPROTOKOLL
   SONSTIGES
+  EINLADUNG
+  VERSAMMLUNGSPROTOKOLL
+  VOLLMACHT
+  JAHRESRECHNUNG
+  BUDGET
+  HAUSWART_BELEG
 }
 
 enum DocumentScope {
   TENANT
   PROPERTY
   GLOBAL
+}
+
+enum DocumentFolderType {
+  PERSONAL
+  GENERAL
+  ASSEMBLY
 }
 
 enum MessageSource {
@@ -185,6 +197,7 @@ model Company {
   tasks                  Task[]
   activityLogs           ActivityLog[]
   accountDeletionRequests AccountDeletionRequest[]
+  folders                DocumentFolder[]         @relation("CompanyFolders")
 }
 
 model User {
@@ -216,6 +229,7 @@ model User {
   meterReadings       MeterReading[]       @relation("TenantMeterReadings")
   activityLogs        ActivityLog[]
   deletionRequest     AccountDeletionRequest?
+  personalFolders     DocumentFolder[]     @relation("PersonalFolders")
 }
 
 model PropertyAssignment {
@@ -268,6 +282,7 @@ model Property {
   calendarEvents CalendarEvent[]
   tasks          Task[]
   wegConfig      WegConfig?
+  folders        DocumentFolder[]     @relation("PropertyFolders")
 }
 
 model Unit {
@@ -359,10 +374,12 @@ model Document {
   extractedText String?
   indexed       Boolean          @default(false)
   createdAt     DateTime         @default(now())
-  company    Company   @relation(fields: [companyId], references: [id])
-  tenant     User?     @relation("TenantDocuments", fields: [tenantId], references: [id])
-  property   Property? @relation(fields: [propertyId], references: [id])
-  uploadedBy User      @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  folderId      String?
+  company    Company         @relation(fields: [companyId], references: [id])
+  tenant     User?           @relation("TenantDocuments", fields: [tenantId], references: [id])
+  property   Property?       @relation(fields: [propertyId], references: [id])
+  uploadedBy User            @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  folder     DocumentFolder? @relation(fields: [folderId], references: [id])
 }
 
 model Message {
@@ -683,6 +700,7 @@ model Assembly {
   wegConfig  WegConfig            @relation(fields: [wegConfigId], references: [id], onDelete: Cascade)
   agenda     AgendaItem[]
   attendance AssemblyAttendance[]
+  folders    DocumentFolder[]     @relation("AssemblyFolders")
 }
 
 model AgendaItem {
@@ -715,4 +733,25 @@ model AssemblyAttendance {
   assembly Assembly      @relation(fields: [assemblyId], references: [id], onDelete: Cascade)
   owner    PropertyOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   @@unique([assemblyId, ownerId])
+}
+
+model DocumentFolder {
+  id          String             @id @default(cuid())
+  companyId   String
+  propertyId  String?
+  ownerId     String?
+  assemblyId  String?
+  type        DocumentFolderType
+  name        String
+  isSystem    Boolean            @default(false)
+  parentId    String?
+  createdAt   DateTime           @default(now())
+
+  company   Company          @relation("CompanyFolders", fields: [companyId], references: [id], onDelete: Cascade)
+  property  Property?        @relation("PropertyFolders", fields: [propertyId], references: [id], onDelete: Cascade)
+  owner     User?            @relation("PersonalFolders", fields: [ownerId], references: [id], onDelete: Cascade)
+  assembly  Assembly?        @relation("AssemblyFolders", fields: [assemblyId], references: [id], onDelete: Cascade)
+  parent    DocumentFolder?  @relation("SubFolders", fields: [parentId], references: [id])
+  children  DocumentFolder[] @relation("SubFolders")
+  documents Document[]
 }
