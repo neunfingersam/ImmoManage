@@ -1,4 +1,10 @@
 {
+  "push": {
+    "title": "Activer les notifications push ?",
+    "body": "Nous vous informerons des nouveaux messages, rendez-vous et signalements.",
+    "accept": "Activer maintenant",
+    "decline": "Non merci"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",

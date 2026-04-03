@@ -1,4 +1,10 @@
 {
+  "push": {
+    "title": "Enable push notifications?",
+    "body": "We'll notify you about new messages, appointments and reports.",
+    "accept": "Enable now",
+    "decline": "No thanks"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

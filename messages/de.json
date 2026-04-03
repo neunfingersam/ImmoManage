@@ -1,4 +1,10 @@
 {
+  "push": {
+    "title": "Push-Mitteilungen aktivieren?",
+    "body": "Wir benachrichtigen dich bei neuen Nachrichten, Terminen und Meldungen.",
+    "accept": "Jetzt aktivieren",
+    "decline": "Nein danke"
+  },
   "common": {
     "save": "Speichern",
     "cancel": "Abbrechen",
