@@ -69,11 +69,9 @@ export function PushBanner() {
   if (!visible) return null
 
   async function handleAccept() {
-    const ok = await subscribe()
-    if (ok || Notification.permission === 'denied') {
-      localStorage.setItem(DISMISSED_KEY, '1')
-      setVisible(false)
-    }
+    await subscribe()
+    localStorage.setItem(DISMISSED_KEY, '1')
+    setVisible(false)
   }
 
   function dismiss() {
