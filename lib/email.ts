@@ -1,7 +1,31 @@
 // lib/email.ts
 import { Resend } from 'resend'
 
-const FROM = 'ImmoManage <noreply@immo-manage.ch>'
+const FROM    = 'ImmoManage <hello@immo-manage.ch>'  // 'noreply@' scores worse with spam filters
+const REPLY_TO = 'ImmoManage Support <info@immo-manage.ch>'
+const ADDRESS  = 'ImmoManage · Küntwilerstrasse 23 · 6343 Rotkreuz · Schweiz'
+
+/** Strip HTML tags to produce a plain-text fallback (prevents HTML-only spam penalty) */
+function htmlToText(html: string): string {
+  return html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/tr>/gi, '\n')
+    .replace(/<\/td>/gi, ' ')
+    .replace(/<a[^>]+href="([^"]+)"[^>]*>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&mdash;/g, '—')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
 
 /**
  * Cross-client email button — works in Outlook, Gmail, Apple Mail, etc.
@@ -47,7 +71,31 @@ function getResend() {
 }
 
 export async function sendEmail(to: string, subject: string, html: string) {
-  await getResend().emails.send({ from: FROM, to, subject, html })
+  await getResend().emails.send({
+    from: FROM,
+    reply_to: REPLY_TO,
+    to,
+    subject,
+    html: html + emailFooter(),
+    text: htmlToText(html) + `\n\n${ADDRESS}`,
+    headers: {
+      // Unique ID per message — helps spam filters identify legitimate senders
+      'X-Entity-Ref-ID': `immomanage-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    },
+  })
+}
+
+/** Standard footer added to every email — physical address required by CAN-SPAM / Swiss DSG */
+function emailFooter(): string {
+  return `
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="margin-top:32px;">
+      <tr>
+        <td style="border-top:1px solid #e5e7eb; padding-top:16px; text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:11px; color:#9ca3af; line-height:1.6;">
+          ${ADDRESS}<br>
+          <a href="mailto:info@immo-manage.ch" style="color:#9ca3af; text-decoration:underline;">info@immo-manage.ch</a>
+        </td>
+      </tr>
+    </table>`
 }
 
 export async function sendTenantInviteEmail(opts: {
