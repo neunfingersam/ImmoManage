@@ -241,6 +241,7 @@ export function CamtImport({ openDemands }: { openDemands: OpenDemand[] }) {
 
       {matches.length > 0 && (
         <div className="rounded-lg border overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
@@ -287,6 +288,7 @@ export function CamtImport({ openDemands }: { openDemands: OpenDemand[] }) {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

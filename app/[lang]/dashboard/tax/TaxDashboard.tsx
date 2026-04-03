@@ -161,6 +161,7 @@ export function TaxDashboard({ summary, availableYears }: { summary: TaxSummary;
           {/* Units table */}
           {prop.units.length > 0 && (
             <div className="border rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead className="bg-muted">
                   <tr>
@@ -185,6 +186,7 @@ export function TaxDashboard({ summary, availableYears }: { summary: TaxSummary;
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 

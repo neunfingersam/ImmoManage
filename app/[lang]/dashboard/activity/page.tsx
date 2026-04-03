@@ -25,6 +25,7 @@ export default async function ActivityPage() {
         <p className="text-muted-foreground">Noch keine Aktivitäten aufgezeichnet.</p>
       ) : (
         <div className="border rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
@@ -47,6 +48,7 @@ export default async function ActivityPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

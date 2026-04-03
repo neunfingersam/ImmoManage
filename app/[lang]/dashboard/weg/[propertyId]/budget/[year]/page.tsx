@@ -30,6 +30,7 @@ export default async function BudgetDetailPage({ params }: { params: Promise<{ l
         </form>
       )}
 
+      <div className="overflow-x-auto">
       <table className="w-full text-sm border-collapse mb-6">
         <thead>
           <tr className="border-b text-left text-muted-foreground">
@@ -60,6 +61,7 @@ export default async function BudgetDetailPage({ params }: { params: Promise<{ l
           </tr>
         </tfoot>
       </table>
+      </div>
     </div>
   )
 }

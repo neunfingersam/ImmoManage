@@ -42,6 +42,7 @@ export default async function BillingDetailPage({
         <div>
           <h2 className="font-semibold mb-2">Kostenpositionen</h2>
           <div className="rounded-lg border overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
@@ -62,6 +63,7 @@ export default async function BillingDetailPage({
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       )}
@@ -71,6 +73,7 @@ export default async function BillingDetailPage({
         <div>
           <h2 className="font-semibold mb-2">Mieteranteile</h2>
           <div className="rounded-lg border overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
@@ -99,6 +102,7 @@ export default async function BillingDetailPage({
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Positiver Saldo = Nachzahlung · Negativer Saldo = Rückerstattung

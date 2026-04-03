@@ -78,6 +78,7 @@ export default async function HauswartPage({ params, searchParams }: {
       {entries.length === 0 ? (
         <p className="text-sm text-muted-foreground">Keine Einträge für diesen Monat.</p>
       ) : (
+        <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b text-left text-muted-foreground">
@@ -104,6 +105,7 @@ export default async function HauswartPage({ params, searchParams }: {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   )

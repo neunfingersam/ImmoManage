@@ -24,6 +24,7 @@ export default function AttendanceForm({ owners, attendanceMap, assemblyId }: {
   }
 
   return (
+    <div className="overflow-x-auto">
     <table className="w-full text-sm border-collapse">
       <thead>
         <tr className="border-b text-left text-muted-foreground">
@@ -58,5 +59,6 @@ export default function AttendanceForm({ owners, attendanceMap, assemblyId }: {
         })}
       </tbody>
     </table>
+    </div>
   )
 }

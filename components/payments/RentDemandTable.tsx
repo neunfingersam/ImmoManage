@@ -22,6 +22,7 @@ export function RentDemandTable({ demands }: { demands: RentDemandRow[] }) {
 
   return (
     <div className="rounded-lg border overflow-hidden">
+      <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead className="bg-muted/50">
           <tr>
@@ -73,6 +74,7 @@ export function RentDemandTable({ demands }: { demands: RentDemandRow[] }) {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

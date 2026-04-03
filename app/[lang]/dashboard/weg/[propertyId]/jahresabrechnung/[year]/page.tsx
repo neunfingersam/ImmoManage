@@ -26,6 +26,7 @@ export default async function JahresabrechnungDetailPage({ params }: { params: P
       )}
 
       <h2 className="mb-3 font-medium">Eigentümer-Abrechnungen</h2>
+      <div className="overflow-x-auto">
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="border-b text-left text-muted-foreground">
@@ -54,6 +55,7 @@ export default async function JahresabrechnungDetailPage({ params }: { params: P
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
