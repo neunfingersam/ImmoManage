@@ -3,7 +3,10 @@
     "title": "Attivare le notifiche push?",
     "body": "Ti informeremo di nuovi messaggi, appuntamenti e segnalazioni.",
     "accept": "Attiva ora",
-    "decline": "No grazie"
+    "decline": "No grazie",
+    "enable": "Attiva notifiche",
+    "disable": "Disattiva notifiche",
+    "iosHint": "Aggiungi questa app alla schermata Home per ricevere notifiche push."
   },
   "common": {
     "save": "Salva",

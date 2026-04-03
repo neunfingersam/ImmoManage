@@ -53,6 +53,7 @@ export default async function DashboardLayout({
           userName={session.user.name}
           userEmail={session.user.email}
           userRole={session.user.role}
+          profilePath="/dashboard/profile"
           mobileNav={<DashboardMobileNav role={session.user.role} companyName={companyName} planFeatures={planFeatures} />}
         />
         <TrialBanner trialEndsAt={trialEndsAt} planStatus={planStatus} />

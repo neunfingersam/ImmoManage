@@ -3,7 +3,10 @@
     "title": "Enable push notifications?",
     "body": "We'll notify you about new messages, appointments and reports.",
     "accept": "Enable now",
-    "decline": "No thanks"
+    "decline": "No thanks",
+    "enable": "Enable notifications",
+    "disable": "Disable notifications",
+    "iosHint": "Add this app to your home screen to receive push notifications."
   },
   "common": {
     "save": "Save",

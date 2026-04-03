@@ -31,6 +31,7 @@ export default async function OwnerLayout({
           userName={session.user.name}
           userEmail={session.user.email}
           userRole={session.user.role}
+          profilePath="/owner/profile"
           mobileNav={<OwnerMobileNav />}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
