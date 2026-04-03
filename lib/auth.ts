@@ -43,6 +43,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Dein Konto wurde deaktiviert.')
         }
 
+        if (!user.emailVerified) {
+          throw new Error('Bitte bestätige zuerst deine E-Mail-Adresse. Schau in deinem Posteingang nach der Bestätigungs-E-Mail.')
+        }
+
         const passwordKorrekt = await compare(credentials.password, user.passwordHash)
         if (!passwordKorrekt) {
           throw new Error('E-Mail oder Passwort ist falsch.')
@@ -65,10 +69,32 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.role = user.role
         token.companyId = user.companyId
+        token.lastChecked = Date.now()
       }
+
+      // Re-validate against DB every 5 minutes — picks up deactivations and role changes
+      const RECHECK_MS = 5 * 60 * 1000
+      if (token.id && Date.now() - ((token.lastChecked as number) ?? 0) > RECHECK_MS) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { active: true, role: true, companyId: true },
+        })
+        if (!dbUser || !dbUser.active) {
+          // Return deactivated marker — session callback will produce an expired session
+          return { ...token, deactivated: true }
+        }
+        token.role = dbUser.role as string
+        token.companyId = dbUser.companyId
+        token.lastChecked = Date.now()
+      }
+
       return token
     },
     async session({ session, token }) {
+      if ((token as any).deactivated) {
+        // Force expiry so getServerSession returns null → protected pages redirect to login
+        return { ...session, expires: new Date(0).toISOString() }
+      }
       if (token) {
         session.user.id = token.id
         session.user.role = token.role

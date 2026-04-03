@@ -224,7 +224,8 @@ model User {
   phone        String?
   whatsapp     String?
   iban         String?
-  active       Boolean  @default(true)
+  active          Boolean  @default(true)
+  emailVerified   Boolean  @default(true)
   companyId    String?
   createdAt    DateTime @default(now())
   company             Company?             @relation(fields: [companyId], references: [id])
@@ -240,8 +241,9 @@ model User {
   notifications       Notification[]
   calendarEvents      CalendarEvent[]
   agentChats          AgentChat[]          @relation("AgentChatTenant")
-  passwordResetTokens PasswordResetToken[]
-  meterReadings       MeterReading[]       @relation("TenantMeterReadings")
+  passwordResetTokens      PasswordResetToken[]
+  emailVerificationTokens  EmailVerificationToken[]
+  meterReadings            MeterReading[]       @relation("TenantMeterReadings")
   activityLogs        ActivityLog[]
   deletionRequest     AccountDeletionRequest?
   personalFolders     DocumentFolder[]     @relation("PersonalFolders")
@@ -495,6 +497,15 @@ model PasswordResetToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MeterReading {

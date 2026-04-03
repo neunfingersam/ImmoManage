@@ -3,10 +3,10 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
+import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -16,8 +16,12 @@ import { loginSchema, type LoginInput } from '@/lib/schemas/auth'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations('auth')
   const [fehler, setFehler] = useState<string | null>(null)
+
+  const verified = searchParams.get('verified') === '1'
+  const verifyError = searchParams.get('verifyError')
 
   const {
     register,
@@ -58,6 +62,26 @@ export default function LoginPage() {
             {t('loginSubtitle')}
           </p>
         </div>
+
+        {/* Verification banners */}
+        {verified && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            E-Mail erfolgreich bestätigt! Du kannst dich jetzt anmelden.
+          </div>
+        )}
+        {verifyError === 'expired' && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            Der Bestätigungs-Link ist abgelaufen. Bitte registriere dich erneut.
+          </div>
+        )}
+        {verifyError === 'invalid' && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            Ungültiger Bestätigungs-Link.
+          </div>
+        )}
 
         {/* Login-Formular */}
         <div className="rounded-card bg-card p-8 shadow-card">
