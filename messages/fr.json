@@ -95,7 +95,18 @@
     "open": "Ouvrir",
     "myProfile": "Mon profil",
     "name": "Nom",
-    "email": "E-mail"
+    "email": "E-mail",
+    "catMIETVERTRAG": "Bail",
+    "catHAUSORDNUNG": "Règlement intérieur",
+    "catNEBENKOSTENABRECHNUNG": "Décompte charges",
+    "catUEBERGABEPROTOKOLL": "Procès-verbal remise",
+    "catSONSTIGES": "Autre",
+    "catEINLADUNG": "Invitation",
+    "catVERSAMMLUNGSPROTOKOLL": "PV assemblée",
+    "catVOLLMACHT": "Procuration",
+    "catJAHRESRECHNUNG": "Compte annuel",
+    "catBUDGET": "Budget",
+    "catHAUSWART_BELEG": "Justificatif concierge"
   },
   "owners": {
     "title": "Propriétaires",

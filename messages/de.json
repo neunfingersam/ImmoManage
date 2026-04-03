@@ -95,7 +95,18 @@
     "open": "Öffnen",
     "myProfile": "Mein Profil",
     "name": "Name",
-    "email": "E-Mail"
+    "email": "E-Mail",
+    "catMIETVERTRAG": "Mietvertrag",
+    "catHAUSORDNUNG": "Hausordnung",
+    "catNEBENKOSTENABRECHNUNG": "Nebenkostenabr.",
+    "catUEBERGABEPROTOKOLL": "Übergabeprotokoll",
+    "catSONSTIGES": "Sonstiges",
+    "catEINLADUNG": "Einladung",
+    "catVERSAMMLUNGSPROTOKOLL": "Versammlungsprotokoll",
+    "catVOLLMACHT": "Vollmacht",
+    "catJAHRESRECHNUNG": "Jahresrechnung",
+    "catBUDGET": "Budget",
+    "catHAUSWART_BELEG": "Hauswart-Beleg"
   },
   "owners": {
     "title": "Eigentümer",

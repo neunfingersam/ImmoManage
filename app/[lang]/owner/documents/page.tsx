@@ -19,6 +19,14 @@ export default async function OwnerDocumentsPage({
 
   const t = await getTranslations('owner')
 
+  const catKeyMap: Record<string, string> = {
+    MIETVERTRAG: 'catMIETVERTRAG', HAUSORDNUNG: 'catHAUSORDNUNG',
+    NEBENKOSTENABRECHNUNG: 'catNEBENKOSTENABRECHNUNG', UEBERGABEPROTOKOLL: 'catUEBERGABEPROTOKOLL',
+    SONSTIGES: 'catSONSTIGES', EINLADUNG: 'catEINLADUNG',
+    VERSAMMLUNGSPROTOKOLL: 'catVERSAMMLUNGSPROTOKOLL', VOLLMACHT: 'catVOLLMACHT',
+    JAHRESRECHNUNG: 'catJAHRESRECHNUNG', BUDGET: 'catBUDGET', HAUSWART_BELEG: 'catHAUSWART_BELEG',
+  }
+
   // Owner sees: own documents + property documents for their properties + global
   const ownerships = await prisma.propertyOwner.findMany({
     where: { userId: session.user.id },
@@ -69,7 +77,7 @@ export default async function OwnerDocumentsPage({
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-foreground truncate">{d.name}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {d.category} · {new Date(d.createdAt).toLocaleDateString('de-CH')}
+                  {catKeyMap[d.category] ? t(catKeyMap[d.category] as Parameters<typeof t>[0]) : d.category} · {new Date(d.createdAt).toLocaleDateString(lang)}
                 </p>
               </div>
               <a href={d.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline shrink-0">

@@ -95,7 +95,18 @@
     "open": "Open",
     "myProfile": "My Profile",
     "name": "Name",
-    "email": "Email"
+    "email": "Email",
+    "catMIETVERTRAG": "Lease agreement",
+    "catHAUSORDNUNG": "House rules",
+    "catNEBENKOSTENABRECHNUNG": "Utility billing",
+    "catUEBERGABEPROTOKOLL": "Handover protocol",
+    "catSONSTIGES": "Other",
+    "catEINLADUNG": "Invitation",
+    "catVERSAMMLUNGSPROTOKOLL": "Meeting minutes",
+    "catVOLLMACHT": "Power of attorney",
+    "catJAHRESRECHNUNG": "Annual statement",
+    "catBUDGET": "Budget",
+    "catHAUSWART_BELEG": "Maintenance receipt"
   },
   "owners": {
     "title": "Owners",

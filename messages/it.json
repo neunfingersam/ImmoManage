@@ -95,7 +95,18 @@
     "open": "Apri",
     "myProfile": "Il mio profilo",
     "name": "Nome",
-    "email": "E-mail"
+    "email": "E-mail",
+    "catMIETVERTRAG": "Contratto affitto",
+    "catHAUSORDNUNG": "Regolamento interno",
+    "catNEBENKOSTENABRECHNUNG": "Conteggio spese",
+    "catUEBERGABEPROTOKOLL": "Verbale consegna",
+    "catSONSTIGES": "Altro",
+    "catEINLADUNG": "Invito",
+    "catVERSAMMLUNGSPROTOKOLL": "Verbale assemblea",
+    "catVOLLMACHT": "Procura",
+    "catJAHRESRECHNUNG": "Rendiconto annuale",
+    "catBUDGET": "Budget",
+    "catHAUSWART_BELEG": "Ricevuta custode"
   },
   "owners": {
     "title": "Proprietari",
