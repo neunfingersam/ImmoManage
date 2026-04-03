@@ -483,8 +483,8 @@
   },
   "pricing": {
     "heroBadge": "Tarifs transparents",
-    "heroTitle": "Pas de surprises. Pas de pièges d'abonnement.",
-    "heroSubtitle": "Tous les prix en CHF, TVA incluse. Résiliable chaque mois.",
+    "heroTitle": "Simple. Juste. Qualité suisse.",
+    "heroSubtitle": "Logiciel de gestion immobilière en Suisse — professionnel, numérique, conforme CH. Tous les prix en CHF TVA incluse. Résiliable chaque mois.",
     "heroComparison": "Comparaison avec la concurrence : ImmoManage est jusqu'à 60 % moins cher.",
     "trialBadge": "3 mois gratuits",
     "trialNote": "puis CHF {price}/mois",
@@ -546,8 +546,8 @@
     "submitBtnEnterprise": "Envoyer la demande",
     "alreadyRegistered": "Déjà inscrit ?",
     "signIn": "Se connecter",
-    "metaTitle": "Tarifs – ImmoManage",
-    "metaDesc": "Tarifs transparents pour la gestion immobilière suisse. Pas de piège d'abonnement. 3 mois gratuits."
+    "metaTitle": "Tarifs – Logiciel gestion immobilière Suisse | ImmoManage",
+    "metaDesc": "ImmoManage: Logiciel de gérance immobilière suisse dès CHF 19/mois. Baux, QR-facture, portail locataires, décompte de charges. Pour propriétaires privés et gérants. 3 mois gratuits."
   },
   "landing": {
     "nav": {

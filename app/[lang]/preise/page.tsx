@@ -9,6 +9,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('metaTitle'),
     description: t('metaDesc'),
+    keywords: [
+      'Immobilienverwaltung Schweiz', 'Hausverwaltung Software', 'Mietverwaltung Software',
+      'Vermieter Software Schweiz', 'QR Rechnung Miete', 'Mieterportal Schweiz',
+      'Liegenschaftsverwaltung', 'Nebenkostenabrechnung Software', 'Mietvertrag digital',
+      'Verwaltungssoftware Schweiz', 'gestion immobilière Suisse', 'logiciel gérance',
+      'gestione immobiliare Svizzera', 'property management Switzerland', 'ImmoManage Preise',
+    ],
+    openGraph: {
+      title: t('metaTitle'),
+      description: t('metaDesc'),
+    },
   }
 }
 
@@ -120,6 +131,21 @@ export default async function PreisePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* SEO text block */}
+      <section className="pb-16 px-6 border-t border-[#E8734A10]">
+        <div className="mx-auto max-w-3xl pt-14 text-center">
+          <h2 className="text-xl font-bold text-[#1A1A2E] mb-4">
+            Immobilienverwaltung Software Schweiz — digital & CH-konform
+          </h2>
+          <p className="text-sm text-[#1A1A2E]/55 leading-relaxed max-w-2xl mx-auto">
+            ImmoManage ist die günstige Hausverwaltung Software für private Vermieter und kleine Hausverwaltungen in der Schweiz.
+            Verwalten Sie Mietverträge, Mieter, QR-Rechnungen (ISO 20022), Nebenkostenabrechnung, Übergabeprotokolle und Dokumente
+            vollständig digital — inkl. Mieterportal, KI-Assistent und CAMT.053-Zahlungsabgleich. Günstig ab CHF 19/Monat,
+            monatlich kündbar. Liegenschaftsverwaltung leicht gemacht.
+          </p>
         </div>
       </section>
 
