@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
           // Return deactivated marker — session callback will produce an expired session
           return { ...token, deactivated: true }
         }
-        token.role = dbUser.role as string
+        token.role = dbUser.role
         token.companyId = dbUser.companyId
         token.lastChecked = Date.now()
       }
