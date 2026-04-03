@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { ticketSchema, type TicketFormValues } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
 import type { Ticket, TicketComment } from '@/lib/generated/prisma'
+import { sendPushToUser } from '@/lib/push'
 
 export async function getMyTickets() {
   const session = await getServerSession(authOptions)
@@ -68,6 +69,14 @@ export async function createTicket(data: TicketFormValues): Promise<ActionResult
       },
     })
     revalidatePath('/tenant/tickets')
+    prisma.user.findMany({
+      where: { companyId: session.user.companyId, role: { in: ['ADMIN', 'VERMIETER'] }, active: true },
+      select: { id: true },
+    }).then((staff) => {
+      staff.forEach((s) =>
+        sendPushToUser(s.id, 'Neue Schadensmeldung', `${session.user.name ?? 'Ein Mieter'}: ${parsed.data.title}`, `/dashboard/tickets`).catch(() => {}),
+      )
+    }).catch(() => {})
     return { success: true, data: ticket }
   } catch (e) {
     return { success: false, error: 'Fehler beim Erstellen der Meldung' }

@@ -8,6 +8,7 @@ import { messageSchema } from '@/lib/schemas/message'
 import type { ActionResult } from '@/lib/action-result'
 import type { Message } from '@/lib/generated/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
+import { sendPushToUser } from '@/lib/push'
 
 export async function getThreads() {
   const session = await getServerSession(authOptions)
@@ -98,6 +99,12 @@ export async function sendMessage(data: { toId: string; text: string }): Promise
   })
   revalidatePath('/dashboard/messages')
   revalidatePath(`/dashboard/messages/${parsed.data.toId}`)
+  sendPushToUser(
+    parsed.data.toId,
+    'Neue Nachricht',
+    `${session.user.name ?? 'Jemand'} hat dir eine Nachricht geschickt.`,
+    `/dashboard/messages/${session.user.id}`,
+  ).catch(() => {})
   return { success: true, data: message }
 }
 

@@ -7,6 +7,7 @@ import { getTicketWhere } from '@/lib/access-control'
 import { commentSchema, updateStatusSchema } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
 import type { Ticket, TicketComment } from '@/lib/generated/prisma'
+import { sendPushToUser } from '@/lib/push'
 
 const DONE_PAGE_SIZE = 20
 
@@ -72,6 +73,14 @@ export async function updateTicketStatus(ticketId: string, data: { status: strin
     })
     revalidatePath('/dashboard/tickets')
     revalidatePath(`/dashboard/tickets/${ticketId}`)
+    if (ticket.tenantId) {
+      sendPushToUser(
+        ticket.tenantId,
+        'Meldung aktualisiert',
+        `Status deiner Meldung "${ticket.title}" wurde geändert.`,
+        `/tenant/tickets/${ticket.id}`,
+      ).catch(() => {})
+    }
     return { success: true, data: ticket }
   })
 }

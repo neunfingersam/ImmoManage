@@ -8,6 +8,7 @@ import { queryChunks } from '@/lib/agent/vectra'
 import { shouldEscalate } from '@/lib/agent/escalation'
 import { buildTenantContext, searchTenantDocuments } from '@/lib/agent/chat-context'
 import { logger } from '@/lib/logger'
+import { sendPushToUser } from '@/lib/push'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -117,6 +118,12 @@ ${hasContext
                 source: 'AI_ESCALATION',
               },
             })
+            sendPushToUser(
+              vermieter.id,
+              'Mieterfrage weitergeleitet',
+              `Ein Mieter hat eine Frage gestellt, die beantwortet werden muss.`,
+              `/dashboard/messages`,
+            ).catch(() => {})
             try {
               const { sendEscalationEmail } = await import('@/lib/email')
               const tenantUser = await prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true } })

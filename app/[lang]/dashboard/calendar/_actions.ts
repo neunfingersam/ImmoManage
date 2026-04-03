@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { requireCompanyAccess } from '@/lib/auth-guard'
+import { sendPushToUser } from '@/lib/push'
 import type { ActionResult } from '@/lib/action-result'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CalendarEvent = any
@@ -99,6 +100,14 @@ async function notifyAffectedTenants(event: CalendarEvent, companyId: string) {
         link: '/tenant/calendar',
       },
     })
+
+    // Push-Benachrichtigung (fire-and-forget)
+    sendPushToUser(
+      tenantId,
+      'Neuer Termin',
+      `${event.title} — ${dateStr}`,
+      `/tenant/calendar`,
+    ).catch(() => {})
 
     // E-Mail-Benachrichtigung (fire-and-forget)
     ;(async () => {

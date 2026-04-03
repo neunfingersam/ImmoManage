@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
+import { sendPushToUser } from '@/lib/push'
 import type { ActionResult } from '@/lib/action-result'
 import type { Document } from '@/lib/generated/prisma'
 import { writeFile, mkdir } from 'fs/promises'
@@ -100,6 +101,14 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
   indexDocument(doc.id).catch(() => {})
 
   revalidatePath('/dashboard/documents')
+  if (parsed.data.scope === 'TENANT' && parsed.data.tenantId) {
+    sendPushToUser(
+      parsed.data.tenantId,
+      'Neues Dokument',
+      `Ein neues Dokument wurde für Sie bereitgestellt: ${parsed.data.name}`,
+      `/tenant/documents`,
+    ).catch(() => {})
+  }
   return { success: true, data: doc }
 }
 
