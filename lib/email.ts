@@ -73,7 +73,7 @@ function getResend() {
 export async function sendEmail(to: string, subject: string, html: string) {
   await getResend().emails.send({
     from: FROM,
-    reply_to: REPLY_TO,
+    replyTo: REPLY_TO,
     to,
     subject,
     html: html + emailFooter(),
