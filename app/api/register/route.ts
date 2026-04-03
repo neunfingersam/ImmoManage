@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, emailButton } from '@/lib/email'
 import { createStripeCheckout, TRIAL_DAYS } from '@/lib/stripe'
 import { checkRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
@@ -182,14 +182,15 @@ export async function POST(req: NextRequest) {
         ${months ? `<p style="font-size: 13px; color: #6b7280; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px;">
           ℹ️ Während der Testphase wird keine Zahlung fällig. Nach Ablauf der ${months} ${months === 1 ? 'Monats' : 'Monate'} wird automatisch ${planPrices[planKey]} abgebucht, sofern du nicht vorher kündigst.
         </p>` : ''}
-        <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 16px 20px; margin: 20px 0;">
-          <p style="margin: 0 0 12px; font-weight: 600; color: #1A1A2E;">Schritt 1: E-Mail-Adresse bestätigen</p>
-          <p style="margin: 0 0 16px; font-size: 14px; color: #374151;">Bitte bestätige zuerst deine E-Mail-Adresse, bevor du dich anmelden kannst. Der Link ist 24 Stunden gültig.</p>
-          <a href="https://immo-manage.ch/api/auth/verify-email?token=${verificationToken}"
-             style="background: #E8734A; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
-            E-Mail bestätigen →
-          </a>
-        </div>
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="margin:20px 0;">
+          <tr>
+            <td bgcolor="#fff7ed" style="background-color:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:16px 20px;">
+              <p style="margin:0 0 8px; font-weight:700; font-family:Arial,Helvetica,sans-serif; color:#1A1A2E;">Schritt 1: E-Mail-Adresse bestätigen</p>
+              <p style="margin:0 0 4px; font-size:14px; font-family:Arial,Helvetica,sans-serif; color:#374151;">Bitte bestätige zuerst deine E-Mail-Adresse, bevor du dich anmelden kannst. Der Link ist 24 Stunden gültig.</p>
+              ${emailButton('E-Mail bestätigen →', `https://immo-manage.ch/api/auth/verify-email?token=${verificationToken}`)}
+            </td>
+          </tr>
+        </table>
         <p style="font-size: 13px; color: #9ca3af;">
           Bei Fragen stehen wir Ihnen unter <a href="mailto:flaviopeter@immo-manage.ch" style="color: #E8734A;">flaviopeter@immo-manage.ch</a> zur Verfügung.
         </p>

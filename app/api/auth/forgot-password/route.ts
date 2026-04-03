@@ -1,7 +1,7 @@
 // app/api/auth/forgot-password/route.ts
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, emailButton } from '@/lib/email'
 import { checkRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
 import { redirect } from 'next/navigation'
@@ -35,21 +35,17 @@ export async function POST(req: NextRequest) {
         user.email,
         'Passwort zurücksetzen — ImmoManage',
         `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-            <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #E8734A;">Immo</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">Manage</span>
-          </div>
-          <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-            <p>Hallo ${user.name},</p>
-            <p>du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.</p>
-            <p style="margin: 24px 0;">
-              <a href="${resetUrl}" style="background: #E8734A; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
-                Passwort zurücksetzen
-              </a>
-            </p>
-            <p style="color: #888; font-size: 13px;">Dieser Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.</p>
-          </div>
-        </div>
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="font-family: Arial, Helvetica, sans-serif; max-width: 600px; margin: 0 auto;">
+          <tr><td bgcolor="#1e3a5f" align="center" style="background-color:#1e3a5f; padding:20px 24px; border-radius:8px 8px 0 0;">
+            <span style="font-size:24px;font-weight:700;color:#E8734A;font-family:Arial,Helvetica,sans-serif;">Immo</span><span style="font-size:24px;font-weight:700;color:#ffffff;font-family:Arial,Helvetica,sans-serif;">Manage</span>
+          </td></tr>
+          <tr><td bgcolor="#f9fafb" style="background-color:#f9fafb; padding:24px; border-radius:0 0 8px 8px; border:1px solid #e5e7eb; border-top:none;">
+            <p style="font-family:Arial,Helvetica,sans-serif; color:#1a1a1a;">Hallo ${user.name},</p>
+            <p style="font-family:Arial,Helvetica,sans-serif; color:#374151;">du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.</p>
+            ${emailButton('Passwort zurücksetzen', resetUrl)}
+            <p style="color:#888; font-size:13px; font-family:Arial,Helvetica,sans-serif;">Dieser Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.</p>
+          </td></tr>
+        </table>
         `
       ).catch(() => {})
     }

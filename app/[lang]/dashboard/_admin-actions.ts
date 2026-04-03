@@ -4,7 +4,7 @@ import crypto from 'crypto'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, emailButton } from '@/lib/email'
 
 export async function sendPasswordResetLink(userId: string): Promise<{ success: boolean; error?: string }> {
   const session = await getServerSession(authOptions)
@@ -36,21 +36,17 @@ export async function sendPasswordResetLink(userId: string): Promise<{ success: 
     user.email,
     'Passwort setzen — ImmoManage',
     `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #E8734A;">Immo</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">Manage</span>
-      </div>
-      <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-      <p>Hallo ${user.name ?? user.email},</p>
-      <p>Ihr Administrator hat einen Link zum Setzen Ihres Passworts generiert.</p>
-      <p style="margin: 24px 0;">
-        <a href="${resetUrl}" style="background: #E8734A; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
-          Passwort jetzt setzen
-        </a>
-      </p>
-      <p style="color: #888; font-size: 13px;">Dieser Link ist 1 Stunde gültig.</p>
-      </div>
-    </div>
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width:600px; margin:0 auto;">
+      <tr><td bgcolor="#1e3a5f" align="center" style="background-color:#1e3a5f; padding:20px 24px; border-radius:8px 8px 0 0;">
+        <span style="font-size:24px;font-weight:700;color:#E8734A;font-family:Arial,Helvetica,sans-serif;">Immo</span><span style="font-size:24px;font-weight:700;color:#ffffff;font-family:Arial,Helvetica,sans-serif;">Manage</span>
+      </td></tr>
+      <tr><td bgcolor="#f9fafb" style="background-color:#f9fafb; padding:24px; border-radius:0 0 8px 8px; border:1px solid #e5e7eb; border-top:none;">
+        <p style="font-family:Arial,Helvetica,sans-serif; color:#1a1a1a;">Hallo ${user.name ?? user.email},</p>
+        <p style="font-family:Arial,Helvetica,sans-serif; color:#374151;">Ihr Administrator hat einen Link zum Setzen Ihres Passworts generiert.</p>
+        ${emailButton('Passwort jetzt setzen', resetUrl)}
+        <p style="color:#888; font-size:13px; font-family:Arial,Helvetica,sans-serif;">Dieser Link ist 1 Stunde gültig.</p>
+      </td></tr>
+    </table>
     `
   )
 

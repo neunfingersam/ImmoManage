@@ -3,10 +3,42 @@ import { Resend } from 'resend'
 
 const FROM = 'ImmoManage <noreply@immo-manage.ch>'
 
+/**
+ * Cross-client email button — works in Outlook, Gmail, Apple Mail, etc.
+ * Uses nested tables + bgcolor attribute (Outlook ignores CSS background-color).
+ */
+export function emailButton(text: string, url: string, color = '#E8734A'): string {
+  return `
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
+      <tr>
+        <td align="left" style="padding: 20px 0;">
+          <table cellspacing="0" cellpadding="0" border="0" role="presentation">
+            <tr>
+              <td bgcolor="${color}" style="border-radius: 8px; background-color: ${color};">
+                <a href="${url}"
+                   target="_blank"
+                   style="display: inline-block; padding: 14px 28px; color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 8px; -webkit-text-size-adjust: none; mso-padding-alt: 0; line-height: 1.4;">
+                  <!--[if mso]><i style="letter-spacing: 0px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i><![endif]-->
+                  ${text}
+                  <!--[if mso]><i style="letter-spacing: 0px; mso-font-width: -100%;">&nbsp;</i><![endif]-->
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>`
+}
+
+// Table-based header for better Outlook compatibility
 const EMAIL_HEADER = `
-  <div style="background: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0; text-align: center;">
-    <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #E8734A;">Immo</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #ffffff;">Manage</span>
-  </div>`
+  <table width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
+    <tr>
+      <td bgcolor="#1e3a5f" align="center" style="background-color: #1e3a5f; padding: 20px 24px; border-radius: 8px 8px 0 0;">
+        <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #E8734A; font-family: Arial, Helvetica, sans-serif;">Immo</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #ffffff; font-family: Arial, Helvetica, sans-serif;">Manage</span>
+      </td>
+    </tr>
+  </table>`
 
 function getResend() {
   const key = process.env.RESEND_API_KEY
@@ -32,11 +64,7 @@ export async function sendTenantInviteEmail(opts: {
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
         <p>Hallo ${opts.tenantName},</p>
         <p><strong>${opts.companyName}</strong> hat ein Mieter-Konto für Sie eingerichtet. Mit ImmoManage können Sie Ihre Mietunterlagen einsehen, Schadensmeldungen erstellen und mit Ihrer Hausverwaltung kommunizieren.</p>
-        <p style="margin: 28px 0;">
-          <a href="${opts.inviteUrl}" style="background: #1e3a5f; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">
-            Passwort festlegen &amp; einloggen
-          </a>
-        </p>
+        ${emailButton('Passwort festlegen &amp; einloggen', opts.inviteUrl, '#1e3a5f')}
         <p style="color: #6b7280; font-size: 13px;">Dieser Link ist <strong>${expires} Stunden</strong> gültig. Falls Sie diese Einladung nicht erwartet haben, können Sie diese E-Mail ignorieren.</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
         <p style="font-size: 12px; color: #9ca3af;">ImmoManage · Verwaltet durch ${opts.companyName}</p>
