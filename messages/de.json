@@ -6,6 +6,10 @@
     "decline": "Nein danke",
     "enable": "Benachrichtigungen aktivieren",
     "disable": "Benachrichtigungen deaktivieren",
+    "notifications": "Benachrichtigungen",
+    "title2": "Push-Mitteilungen",
+    "activeOnDevice": "Aktiv auf diesem Gerät",
+    "inactiveOnDevice": "Deaktiviert auf diesem Gerät",
     "iosHint": "Füge diese App zum Homescreen hinzu, um Push-Mitteilungen zu erhalten."
   },
   "common": {

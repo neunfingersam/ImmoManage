@@ -4,8 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
 import { useLocale, useTranslations } from 'next-intl'
-import { LogOut, UserCircle, Bell, BellOff, ChevronDown } from 'lucide-react'
-import { usePushSubscription } from '@/hooks/usePushSubscription'
+import { LogOut, UserCircle, Bell, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface UserMenuProps {
@@ -21,7 +20,6 @@ export function UserMenu({ userName, userEmail, roleLabel, profilePath }: UserMe
   const tp = useTranslations('push')
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const { supported, subscribed, subscribe, unsubscribe } = usePushSubscription()
 
   const initials = userName
     .split(' ')
@@ -37,14 +35,6 @@ export function UserMenu({ userName, userEmail, roleLabel, profilePath }: UserMe
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
-
-  async function handlePushToggle() {
-    if (subscribed) {
-      await unsubscribe()
-    } else {
-      await subscribe()
-    }
-  }
 
   return (
     <div ref={ref} className="relative">
@@ -81,19 +71,15 @@ export function UserMenu({ userName, userEmail, roleLabel, profilePath }: UserMe
               {t('myProfile')}
             </Link>
 
-            {/* Push toggle */}
-            {supported && (
-              <button
-                onClick={handlePushToggle}
-                className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
-              >
-                {subscribed
-                  ? <BellOff className="h-4 w-4 text-muted-foreground" />
-                  : <Bell className="h-4 w-4 text-muted-foreground" />
-                }
-                <span>{subscribed ? tp('disable') : tp('enable')}</span>
-              </button>
-            )}
+            {/* Notifications link */}
+            <Link
+              href={`/${locale}${profilePath}#notifications`}
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              <Bell className="h-4 w-4 text-muted-foreground" />
+              {tp('notifications')}
+            </Link>
           </div>
 
           <div className="border-t border-border py-1">

@@ -6,6 +6,10 @@
     "decline": "No thanks",
     "enable": "Enable notifications",
     "disable": "Disable notifications",
+    "notifications": "Notifications",
+    "title2": "Push notifications",
+    "activeOnDevice": "Active on this device",
+    "inactiveOnDevice": "Disabled on this device",
     "iosHint": "Add this app to your home screen to receive push notifications."
   },
   "common": {
