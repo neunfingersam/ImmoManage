@@ -1,5 +1,8 @@
+'use client'
+
 import { useTranslations } from 'next-intl'
 import { Star } from 'lucide-react'
+import AnimateIn from '@/components/ui/AnimateIn'
 
 const testimonials = [
   { key: 't1', initials: 'MH', color: '#E8734A' },
@@ -25,71 +28,76 @@ export default function TestimonialsSection() {
       <div className="mx-auto max-w-6xl px-6">
 
         {/* Header */}
-        <div className="mb-16 text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-widest" style={{ color: '#E8734A' }}>
-            Kundenstimmen
-          </p>
-          <h2 className="font-heading text-4xl font-bold text-white md:text-5xl">
-            {t('title')}
-          </h2>
-          <p className="mt-4 text-white/45">{t('subtitle')}</p>
-        </div>
+        <AnimateIn direction="up" delay={0}>
+          <div className="mb-16 text-center">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-widest" style={{ color: '#E8734A' }}>
+              Kundenstimmen
+            </p>
+            <h2 className="font-heading text-4xl font-bold text-white md:text-5xl">
+              {t('title')}
+            </h2>
+            <p className="mt-4 text-white/45">{t('subtitle')}</p>
+          </div>
+        </AnimateIn>
 
         {/* Cards */}
         <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map(({ key, initials, color }) => (
-            <div
-              key={key}
-              className="flex flex-col rounded-2xl p-7"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >
-              {/* Stars */}
-              <Stars />
-
-              {/* Big quote mark */}
+          {testimonials.map(({ key, initials, color }, index) => (
+            <AnimateIn key={key} direction="up" delay={index * 0.12}>
               <div
-                className="mt-4 mb-2 font-serif text-6xl leading-none select-none"
-                style={{ color: '#E8734A', opacity: 0.4 }}
-                aria-hidden
+                className="flex flex-col rounded-2xl p-7"
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                }}
               >
-                &ldquo;
-              </div>
+                {/* Stars */}
+                <Stars />
 
-              {/* Quote */}
-              <p className="flex-1 text-white/75 leading-relaxed text-sm">
-                {t(`${key}Quote` as 't1Quote' | 't2Quote' | 't3Quote')}
-              </p>
-
-              {/* Author */}
-              <div className="mt-6 flex items-center gap-3">
+                {/* Big quote mark */}
                 <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                  style={{ backgroundColor: color }}
+                  className="mt-4 mb-2 font-serif text-6xl leading-none select-none"
+                  style={{ color: '#E8734A', opacity: 0.4 }}
+                  aria-hidden
                 >
-                  {initials}
+                  &ldquo;
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">
-                    {t(`${key}Name` as 't1Name' | 't2Name' | 't3Name')}
-                  </p>
-                  <p className="text-xs text-white/40">
-                    {t(`${key}Role` as 't1Role' | 't2Role' | 't3Role')}
-                  </p>
+
+                {/* Quote */}
+                <p className="flex-1 text-white/75 leading-relaxed text-sm">
+                  {t(`${key}Quote` as 't1Quote' | 't2Quote' | 't3Quote')}
+                </p>
+
+                {/* Author */}
+                <div className="mt-6 flex items-center gap-3">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                    style={{ backgroundColor: color }}
+                  >
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">
+                      {t(`${key}Name` as 't1Name' | 't2Name' | 't3Name')}
+                    </p>
+                    <p className="text-xs text-white/40">
+                      {t(`${key}Role` as 't1Role' | 't2Role' | 't3Role')}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </AnimateIn>
           ))}
         </div>
 
         {/* Aggregate */}
-        <div className="mt-12 flex items-center justify-center gap-3">
-          <Stars />
-          <span className="text-sm font-bold text-white">4.8 / 5</span>
-          <span className="text-sm text-white/35">{t('ratingLabel')}</span>
-        </div>
+        <AnimateIn direction="up" delay={0.4}>
+          <div className="mt-12 flex items-center justify-center gap-3">
+            <Stars />
+            <span className="text-sm font-bold text-white">4.8 / 5</span>
+            <span className="text-sm text-white/35">{t('ratingLabel')}</span>
+          </div>
+        </AnimateIn>
       </div>
     </section>
   )

@@ -1,6 +1,9 @@
+'use client'
+
 import { useTranslations, useLocale } from 'next-intl'
 import Link from 'next/link'
 import { Shield, CreditCard, X } from 'lucide-react'
+import { motion } from 'motion/react'
 
 function DashboardPreview() {
   return (
@@ -35,21 +38,32 @@ export default function HeroSection() {
   const t = useTranslations('landing.hero')
   const locale = useLocale()
 
+  const textEase: [number, number, number, number] = [0.22, 1, 0.36, 1]
+
   return (
     <section className="relative overflow-hidden bg-[#FAFAF8] py-16 md:py-32">
       {/* Background decoration */}
-      <div
+      <motion.div
         className="pointer-events-none absolute -right-32 -top-32 h-[600px] w-[600px] rounded-full opacity-10"
         style={{ background: 'radial-gradient(circle, #E8734A 0%, transparent 70%)' }}
+        animate={{ scale: [1, 1.15, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
-      <div
+      <motion.div
         className="pointer-events-none absolute -bottom-20 -left-20 h-[400px] w-[400px] rounded-full opacity-5"
         style={{ background: 'radial-gradient(circle, #E8734A 0%, transparent 70%)' }}
+        animate={{ scale: [1, 1.2, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
       />
 
       <div className="relative mx-auto max-w-6xl px-6">
         {/* Badge */}
-        <div className="mb-6 flex justify-center md:justify-start">
+        <motion.div
+          className="mb-6 flex justify-center md:justify-start"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0, ease: textEase }}
+        >
           <span
             className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium"
             style={{ borderColor: '#E8734A40', color: '#E8734A', backgroundColor: '#E8734A10' }}
@@ -57,21 +71,44 @@ export default function HeroSection() {
             <span className="h-1.5 w-1.5 rounded-full bg-current" />
             {t('badge')}
           </span>
-        </div>
+        </motion.div>
 
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
           {/* Text */}
           <div className="text-center md:text-left">
             <h1 className="mb-6 font-heading text-4xl font-bold leading-[1.1] tracking-tight text-[#1A1A2E] sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="block">{t('headline')}</span>
-              <span className="block" style={{ color: '#E8734A' }}>
+              <motion.span
+                className="block"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: textEase }}
+              >
+                {t('headline')}
+              </motion.span>
+              <motion.span
+                className="block"
+                style={{ color: '#E8734A' }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: textEase }}
+              >
                 {t('headlineAccent')}
-              </span>
+              </motion.span>
             </h1>
-            <p className="mb-8 text-base leading-relaxed text-[#1A1A2E]/60 sm:text-lg md:mb-10 md:max-w-lg">
+            <motion.p
+              className="mb-8 text-base leading-relaxed text-[#1A1A2E]/60 sm:text-lg md:mb-10 md:max-w-lg"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: textEase }}
+            >
               {t('subtext')}
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start">
+            </motion.p>
+            <motion.div
+              className="flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: textEase }}
+            >
               <Link
                 href={`/${locale}/preise`}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-base font-semibold text-white shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0"
@@ -82,9 +119,14 @@ export default function HeroSection() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </Link>
-            </div>
+            </motion.div>
             {/* Trust bar */}
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start">
+            <motion.div
+              className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5, ease: textEase }}
+            >
               {[
                 { icon: <X className="h-3 w-3" />, text: t('trustNoCreditCard') },
                 { icon: <Shield className="h-3 w-3" />, text: t('trustSwissServer') },
@@ -95,12 +137,26 @@ export default function HeroSection() {
                   {item.text}
                 </span>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Dashboard Preview */}
           <div className="hidden justify-center sm:flex md:justify-end">
-            <DashboardPreview />
+            {/* Outer: entrance animation */}
+            <motion.div
+              className="w-full"
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.35, ease: textEase }}
+            >
+              {/* Inner: continuous floating animation, delayed to start after entrance */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
+              >
+                <DashboardPreview />
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
