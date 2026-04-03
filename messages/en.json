@@ -10,7 +10,8 @@
     "title2": "Push notifications",
     "activeOnDevice": "Active on this device",
     "inactiveOnDevice": "Disabled on this device",
-    "iosHint": "Add this app to your home screen to receive push notifications."
+    "iosHint": "Add this app to your home screen to receive push notifications.",
+    "permissionDenied": "Notifications are blocked. Allow them in your browser settings (lock icon in the address bar)."
   },
   "common": {
     "save": "Save",
