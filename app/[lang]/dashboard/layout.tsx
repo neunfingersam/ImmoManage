@@ -24,7 +24,7 @@ export default async function DashboardLayout({
     redirect(`/${locale}/auth/login`)
   }
 
-  if (session.user.role === 'MIETER') {
+  if (!['ADMIN', 'VERMIETER'].includes(session.user.role)) {
     redirect(`/${locale}/403`)
   }
 
