@@ -243,6 +243,7 @@ model User {
   agentChats          AgentChat[]          @relation("AgentChatTenant")
   passwordResetTokens      PasswordResetToken[]
   emailVerificationTokens  EmailVerificationToken[]
+  pushSubscriptions        PushSubscription[]
   meterReadings            MeterReading[]       @relation("TenantMeterReadings")
   activityLogs        ActivityLog[]
   deletionRequest     AccountDeletionRequest?
@@ -892,4 +893,14 @@ model StegOwnerStatement {
   owner            PropertyOwner        @relation("OwnerStatements", fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@unique([jahresabrechnungId, ownerId])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
