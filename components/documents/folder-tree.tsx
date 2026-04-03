@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { DocumentFolder } from '@/lib/generated/prisma'
 
@@ -26,24 +26,65 @@ function FolderItem({ folder, lang, depth = 0 }: { folder: FolderNode; lang: str
 
   return (
     <li>
-      <Link href={href} className={cn('flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-muted', isActive && 'bg-muted font-medium', depth > 0 && 'ml-4')}>
+      <Link
+        href={href}
+        className={cn(
+          'flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-muted',
+          isActive && 'bg-muted font-medium',
+          depth > 0 && 'ml-4',
+        )}
+      >
         <span>{icon}</span>
         <span className="truncate">{folder.name}</span>
       </Link>
       {folder.children && folder.children.length > 0 && (
-        <ul>{folder.children.map((child: FolderNode) => <FolderItem key={child.id} folder={child} lang={lang} depth={depth + 1} />)}</ul>
+        <ul>
+          {folder.children.map((child: FolderNode) => (
+            <FolderItem key={child.id} folder={child} lang={lang} depth={depth + 1} />
+          ))}
+        </ul>
       )}
     </li>
   )
 }
 
-export function FolderTree({ folders, lang }: { folders: DocumentFolder[]; lang: string }) {
+export function FolderTree({
+  folders,
+  lang,
+  propertyId,
+}: {
+  folders: DocumentFolder[]
+  lang: string
+  propertyId?: string
+}) {
   const tree = buildTree(folders)
-  if (tree.length === 0) return <p className="text-sm text-muted-foreground px-2">Keine Ordner</p>
+  const searchParams = useSearchParams()
+  const isPersonalActive = searchParams.get('section') === 'personal'
+
+  if (tree.length === 0 && !propertyId) {
+    return <p className="text-sm text-muted-foreground px-2">Keine Ordner</p>
+  }
+
   return (
     <nav>
       <ul className="space-y-0.5">
-        {tree.map((folder) => <FolderItem key={folder.id} folder={folder} lang={lang} />)}
+        {tree.map((folder) => (
+          <FolderItem key={folder.id} folder={folder} lang={lang} />
+        ))}
+        {propertyId && (
+          <li>
+            <Link
+              href={`/${lang}/dashboard/documents?propertyId=${propertyId}&section=personal`}
+              className={cn(
+                'flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-muted',
+                isPersonalActive && 'bg-muted font-medium',
+              )}
+            >
+              <span>👤</span>
+              <span className="truncate">Persönliche Unterlagen</span>
+            </Link>
+          </li>
+        )}
       </ul>
     </nav>
   )

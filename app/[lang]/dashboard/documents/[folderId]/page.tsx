@@ -12,18 +12,29 @@ export default async function FolderPage({
   params: Promise<{ lang: string; folderId: string }>
 }) {
   const { lang, folderId } = await params
-  const { folder, documents, subfolders } = await getFolderContents(folderId)
+  const { folder, documents, subfolders, propertyName } = await getFolderContents(folderId)
   if (!folder) notFound()
 
   const typeLabel =
     folder.type === 'PERSONAL' ? 'Persönliche Dokumente' :
     folder.type === 'ASSEMBLY' ? 'Versammlungsdokumente' : 'Allgemeine Dokumente'
 
+  const docsBase = `/${lang}/dashboard/documents`
+  const propertyLink = folder.propertyId
+    ? `${docsBase}?propertyId=${folder.propertyId}`
+    : docsBase
+
   return (
     <div>
-      <nav className="mb-4 text-sm text-muted-foreground">
-        <Link href={`/${lang}/dashboard/documents`}>Dokumente</Link>
-        {' / '}
+      <nav className="mb-4 text-sm text-muted-foreground flex items-center gap-1 flex-wrap">
+        <Link href={docsBase} className="hover:text-foreground">Dokumente</Link>
+        {propertyName && (
+          <>
+            <span>/</span>
+            <Link href={propertyLink} className="hover:text-foreground">{propertyName}</Link>
+          </>
+        )}
+        <span>/</span>
         <span className="font-medium text-foreground">{folder.name}</span>
       </nav>
 
@@ -35,8 +46,11 @@ export default async function FolderPage({
           <h2 className="mb-2 text-sm font-medium">Unterordner</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {subfolders.map((sub: SubFolder) => (
-              <Link key={sub.id} href={`/${lang}/dashboard/documents/${sub.id}`}
-                className="flex items-center gap-2 rounded border p-3 text-sm hover:bg-muted">
+              <Link
+                key={sub.id}
+                href={`/${lang}/dashboard/documents/${sub.id}`}
+                className="flex items-center gap-2 rounded border p-3 text-sm hover:bg-muted"
+              >
                 📁 {sub.name}
               </Link>
             ))}
@@ -53,8 +67,14 @@ export default async function FolderPage({
             {documents.map((doc: FolderDoc) => (
               <li key={doc.id} className="flex items-center justify-between px-4 py-3 text-sm">
                 <span>{doc.name}</span>
-                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline">Öffnen</a>
+                <a
+                  href={doc.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  Öffnen
+                </a>
               </li>
             ))}
           </ul>

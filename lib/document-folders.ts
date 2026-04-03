@@ -41,6 +41,28 @@ export async function ensureOwnerPersonalFolder(
   })
 }
 
+export async function ensurePersonalFolderForUser(
+  userId: string,
+  propertyId: string,
+  companyId: string,
+  userName: string,
+): Promise<{ id: string }> {
+  const existing = await prisma.documentFolder.findFirst({
+    where: { ownerId: userId, propertyId, type: 'PERSONAL', parentId: null },
+  })
+  if (existing) return existing
+  return prisma.documentFolder.create({
+    data: {
+      companyId,
+      propertyId,
+      ownerId: userId,
+      type: 'PERSONAL',
+      name: `Persönliche Dokumente — ${userName}`,
+      isSystem: true,
+    },
+  })
+}
+
 export async function ensureAssemblyFolder(
   assemblyId: string,
   propertyId: string,

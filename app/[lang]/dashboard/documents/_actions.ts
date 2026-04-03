@@ -11,19 +11,19 @@ import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { documentUploadSchema } from '@/lib/schemas/document'
 import { indexDocument } from '@/lib/agent/indexDocument'
-import { getFolderTreeForProperty, getFolderWithAccess } from '@/lib/document-folders'
+import { getFolderTreeForProperty, getFolderWithAccess, ensurePersonalFolderForUser } from '@/lib/document-folders'
 
 const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png']
 const MAX_SIZE = 20 * 1024 * 1024 // 20MB
 
-export async function getDocuments(scopeFilter?: string) {
+export async function getDocuments(propertyId?: string) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return []
 
   return prisma.document.findMany({
     where: {
       companyId: session.user.companyId,
-      ...(scopeFilter ? { scope: scopeFilter as Document['scope'] } : {}),
+      ...(propertyId ? { propertyId } : {}),
     },
     include: {
       uploadedBy: { select: { id: true, name: true } },
@@ -178,13 +178,13 @@ export async function deleteFolder(folderId: string): Promise<ActionResult<null>
 
 export async function getFolderContents(folderId: string) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) return { folder: null, documents: [], subfolders: [] }
+  if (!session?.user?.companyId) return { folder: null, documents: [], subfolders: [], propertyName: null }
 
   let folder
   try { folder = await getFolderWithAccess(folderId, session as any) }
-  catch { return { folder: null, documents: [], subfolders: [] } }
+  catch { return { folder: null, documents: [], subfolders: [], propertyName: null } }
 
-  const [documents, subfolders] = await Promise.all([
+  const [documents, subfolders, property] = await Promise.all([
     prisma.document.findMany({
       where: { folderId, companyId: session.user.companyId },
       include: { uploadedBy: { select: { id: true, name: true } } },
@@ -194,9 +194,12 @@ export async function getFolderContents(folderId: string) {
       where: { parentId: folderId },
       orderBy: { name: 'asc' },
     }),
+    folder.propertyId
+      ? prisma.property.findUnique({ where: { id: folder.propertyId }, select: { name: true } })
+      : Promise.resolve(null),
   ])
 
-  return { folder, documents, subfolders }
+  return { folder, documents, subfolders, propertyName: property?.name ?? null }
 }
 
 export async function moveDocumentToFolder(documentId: string, folderId: string | null): Promise<ActionResult<null>> {
@@ -211,4 +214,54 @@ export async function moveDocumentToFolder(documentId: string, folderId: string 
   await prisma.document.update({ where: { id: documentId }, data: { folderId } })
   revalidatePath('/dashboard/documents')
   return { success: true, data: null }
+}
+
+export async function getPersonsForProperty(propertyId: string): Promise<{
+  owners: { id: string; name: string }[]
+  tenants: { id: string; name: string }[]
+}> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { owners: [], tenants: [] }
+
+  const [ownerRecords, leases] = await Promise.all([
+    prisma.propertyOwner.findMany({
+      where: { propertyId },
+      include: { user: { select: { id: true, name: true } } },
+    }),
+    prisma.lease.findMany({
+      where: { unit: { propertyId }, status: 'ACTIVE' },
+      include: { tenant: { select: { id: true, name: true } } },
+    }),
+  ])
+
+  // Deduplicate tenants (one tenant may have multiple active leases)
+  const tenantMap = new Map<string, { id: string; name: string }>()
+  leases.forEach((l: { tenant: { id: string; name: string } }) => tenantMap.set(l.tenant.id, l.tenant))
+
+  return {
+    owners: ownerRecords.map((o: { user: { id: string; name: string } }) => o.user),
+    tenants: Array.from(tenantMap.values()),
+  }
+}
+
+export async function ensurePersonalFolderForUserAction(
+  userId: string,
+  propertyId: string,
+): Promise<ActionResult<{ folderId: string }>> {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true },
+  })
+  if (!user) return { success: false, error: 'Benutzer nicht gefunden' }
+
+  const folder = await ensurePersonalFolderForUser(
+    userId,
+    propertyId,
+    session.user.companyId,
+    user.name,
+  )
+  return { success: true, data: { folderId: folder.id } }
 }

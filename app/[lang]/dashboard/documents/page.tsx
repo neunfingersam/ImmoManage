@@ -1,12 +1,16 @@
 import { FileText } from 'lucide-react'
 import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { DocumentCard } from '@/components/documents/DocumentCard'
 import { DocumentUploadForm } from '@/components/documents/DocumentUploadForm'
-import { getDocuments, getFoldersForProperty } from './_actions'
+import { PropertyTabs } from '@/components/documents/PropertyTabs'
 import { FolderTree } from '@/components/documents/folder-tree'
+import { PersonList } from '@/components/documents/PersonList'
+import { getDocuments, getFoldersForProperty } from './_actions'
+import { ensureSystemFolders, ensurePersonalFolderForUser } from '@/lib/document-folders'
 import type { Document, User, Property } from '@/lib/generated/prisma'
 
 type DocumentWithRels = Document & {
@@ -23,13 +27,31 @@ export default async function DocumentsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const { lang } = await params
-  const { propertyId } = await searchParams
+  const sp = await searchParams
+  const propertyIdStr = typeof sp.propertyId === 'string' ? sp.propertyId : undefined
+  const section = typeof sp.section === 'string' ? sp.section : undefined
 
   const session = await getServerSession(authOptions)
-  const propertyIdStr = typeof propertyId === 'string' ? propertyId : undefined
+  const userId = (session?.user as any)?.id as string | undefined
+  const role = (session?.user as any)?.role as string | undefined
+  const isAdmin = ['ADMIN', 'VERMIETER', 'SUPER_ADMIN'].includes(role ?? '')
+
+  // Ensure system folders exist when a property is selected
+  if (propertyIdStr && session?.user?.companyId) {
+    await ensureSystemFolders(propertyIdStr, session.user.companyId)
+  }
+
+  // Non-admin accessing personal section → redirect directly to own folder
+  if (propertyIdStr && section === 'personal' && !isAdmin && userId && session?.user?.companyId) {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } })
+    if (user) {
+      const folder = await ensurePersonalFolderForUser(userId, propertyIdStr, session.user.companyId, user.name)
+      redirect(`/${lang}/dashboard/documents/${folder.id}`)
+    }
+  }
 
   const [docs, tenants, properties, folders] = await Promise.all([
-    getDocuments(),
+    getDocuments(propertyIdStr),
     prisma.user.findMany({
       where: { companyId: session?.user?.companyId ?? '', role: 'MIETER', active: true },
       select: { id: true, name: true },
@@ -43,33 +65,64 @@ export default async function DocumentsPage({
     propertyIdStr ? getFoldersForProperty(propertyIdStr) : Promise.resolve([]),
   ])
 
+  const selectedProperty = propertyIdStr ? properties.find(p => p.id === propertyIdStr) : undefined
+  const showPersonList = section === 'personal' && !!propertyIdStr && isAdmin
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="font-serif text-2xl text-foreground">Dokumente</h1>
-        <p className="text-sm text-muted-foreground mt-1">{docs.length} Dokument{docs.length !== 1 ? 'e' : ''}</p>
+        {!showPersonList && (
+          <p className="text-sm text-muted-foreground mt-1">
+            {docs.length} Dokument{docs.length !== 1 ? 'e' : ''}
+          </p>
+        )}
       </div>
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Hochladen</h2>
-        <DocumentUploadForm tenants={tenants} properties={properties} />
-      </section>
+      <PropertyTabs properties={properties} />
+
+      {!showPersonList && (
+        <section className="space-y-3">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Hochladen</h2>
+          <DocumentUploadForm
+            tenants={tenants}
+            properties={properties}
+            defaultPropertyId={propertyIdStr}
+          />
+        </section>
+      )}
 
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Alle Dokumente</h2>
+        {!showPersonList && (
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Alle Dokumente
+          </h2>
+        )}
         <div className="flex gap-6">
-          {folders.length > 0 && (
+          {propertyIdStr && (
             <aside className="w-56 shrink-0">
               <p className="mb-2 px-2 text-xs font-semibold uppercase text-muted-foreground">Ordner</p>
-              <FolderTree folders={folders} lang={lang} />
+              <FolderTree folders={folders} lang={lang} propertyId={propertyIdStr} />
             </aside>
           )}
           <div className="flex-1">
-            {docs.length === 0 ? (
-              <EmptyState icon={<FileText className="h-7 w-7" />} titel="Keine Dokumente" beschreibung="Noch keine Dokumente hochgeladen." />
+            {showPersonList ? (
+              <PersonList
+                propertyId={propertyIdStr!}
+                lang={lang}
+                propertyName={selectedProperty?.name ?? ''}
+              />
+            ) : docs.length === 0 ? (
+              <EmptyState
+                icon={<FileText className="h-7 w-7" />}
+                titel="Keine Dokumente"
+                beschreibung="Noch keine Dokumente hochgeladen."
+              />
             ) : (
               <div className="space-y-2">
-                {docs.map(d => <DocumentCard key={d.id} doc={d as DocumentWithRels} />)}
+                {docs.map(d => (
+                  <DocumentCard key={d.id} doc={d as DocumentWithRels} />
+                ))}
               </div>
             )}
           </div>

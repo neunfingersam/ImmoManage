@@ -12,17 +12,18 @@ type Option = { id: string; name: string }
 type Props = {
   tenants: Option[]
   properties: Option[]
+  defaultPropertyId?: string
 }
 
-export function DocumentUploadForm({ tenants, properties }: Props) {
+export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: Props) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const [category, setCategory] = useState('SONSTIGES')
-  const [scope, setScope] = useState('GLOBAL')
+  const [scope, setScope] = useState(defaultPropertyId ? 'PROPERTY' : 'GLOBAL')
   const [tenantId, setTenantId] = useState('')
-  const [propertyId, setPropertyId] = useState('')
+  const [propertyId, setPropertyId] = useState(defaultPropertyId ?? '')
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -39,9 +40,9 @@ export function DocumentUploadForm({ tenants, properties }: Props) {
         setSuccess(true)
         formRef.current?.reset()
         setCategory('SONSTIGES')
-        setScope('GLOBAL')
+        setScope(defaultPropertyId ? 'PROPERTY' : 'GLOBAL')
         setTenantId('')
-        setPropertyId('')
+        setPropertyId(defaultPropertyId ?? '')
       } else {
         setError(result.error)
       }
