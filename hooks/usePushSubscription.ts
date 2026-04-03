@@ -19,14 +19,17 @@ export function usePushSubscription() {
 
   async function subscribe(): Promise<boolean> {
     try {
-      const reg = await navigator.serviceWorker.register('/sw.js')
-      await navigator.serviceWorker.ready
-
+      // Request permission first — must be close to the user gesture
       const permission = await Notification.requestPermission()
       if (permission !== 'granted') return false
 
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
       if (!vapidPublicKey) return false
+
+      // Register SW and wait for it to be ready
+      await navigator.serviceWorker.register('/sw.js')
+      const reg = await navigator.serviceWorker.ready
+
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
