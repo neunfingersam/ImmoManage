@@ -1,13 +1,15 @@
 import { useTranslations } from 'next-intl'
-import { Building2, Users, FileCheck2, MessageSquare, Sparkles, FileText } from 'lucide-react'
+import { Building2, Users, FileCheck2, MessageSquare, Sparkles, FileText, ClipboardCheck, Calculator } from 'lucide-react'
 
 const features = [
-  { key: 'f1', Icon: Building2,     color: '#3b82f6', badge: null },
-  { key: 'f2', Icon: Users,          color: '#16a34a', badge: null },
-  { key: 'f3', Icon: FileCheck2,     color: '#E8734A', badge: 'CAMT.053' },
-  { key: 'f4', Icon: MessageSquare,  color: '#8b5cf6', badge: null },
-  { key: 'f5', Icon: Sparkles,       color: '#E8734A', badge: 'Neu' },
-  { key: 'f6', Icon: FileText,       color: '#0d9488', badge: null },
+  { key: 'f1', Icon: Building2,       color: '#3b82f6', badge: null },
+  { key: 'f2', Icon: Users,           color: '#16a34a', badge: null },
+  { key: 'f3', Icon: FileCheck2,      color: '#E8734A', badge: 'CAMT.053' },
+  { key: 'f4', Icon: MessageSquare,   color: '#8b5cf6', badge: null },
+  { key: 'f5', Icon: Sparkles,        color: '#E8734A', badge: 'Neu' },
+  { key: 'f6', Icon: FileText,        color: '#0d9488', badge: null },
+  { key: 'f7', Icon: ClipboardCheck,  color: '#0d9488', badge: null },
+  { key: 'f8', Icon: Calculator,      color: '#8b5cf6', badge: null },
 ] as const
 
 export default function FeaturesSection() {
@@ -28,7 +30,7 @@ export default function FeaturesSection() {
         </div>
 
         {/* Feature grid */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {features.map(({ key, Icon, color, badge }) => (
             <div
               key={key}
@@ -54,10 +56,10 @@ export default function FeaturesSection() {
               </div>
 
               <h3 className="mb-2 font-semibold text-[#1A1A2E]">
-                {t(`${key}Title` as `f1Title` | `f2Title` | `f3Title` | `f4Title` | `f5Title` | `f6Title`)}
+                {t(`${key}Title` as `f1Title` | `f2Title` | `f3Title` | `f4Title` | `f5Title` | `f6Title` | `f7Title` | `f8Title`)}
               </h3>
               <p className="text-sm leading-relaxed text-[#1A1A2E]/55">
-                {t(`${key}Desc` as `f1Desc` | `f2Desc` | `f3Desc` | `f4Desc` | `f5Desc` | `f6Desc`)}
+                {t(`${key}Desc` as `f1Desc` | `f2Desc` | `f3Desc` | `f4Desc` | `f5Desc` | `f6Desc` | `f7Desc` | `f8Desc`)}
               </p>
 
               {/* Bottom accent line on hover */}

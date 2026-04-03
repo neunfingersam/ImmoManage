@@ -7,6 +7,7 @@ import ProblemSection from '@/components/landing/ProblemSection'
 import FeaturesSection from '@/components/landing/FeaturesSection'
 import TestimonialsSection from '@/components/landing/TestimonialsSection'
 import ForWhomSection from '@/components/landing/ForWhomSection'
+import PricingPreviewSection from '@/components/landing/PricingPreviewSection'
 import DemoCtaSection from '@/components/landing/DemoCtaSection'
 import LandingFooter from '@/components/landing/LandingFooter'
 
@@ -41,6 +42,7 @@ export default async function LocaleRootPage({
       <ProblemSection />
       <FeaturesSection />
       <ForWhomSection />
+      <PricingPreviewSection />
       <TestimonialsSection />
       <DemoCtaSection />
       <LandingFooter />

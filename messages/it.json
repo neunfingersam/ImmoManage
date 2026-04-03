@@ -587,7 +587,11 @@
       "f5Title": "Assistente IA",
       "f5Desc": "Supporto automatizzato nella gestione quotidiana.",
       "f6Title": "Documenti & Modelli",
-      "f6Desc": "Modelli CH (DE + FR), archiviazione digitale, tutto con un clic."
+      "f6Desc": "Modelli CH (DE + FR), archiviazione digitale, tutto con un clic.",
+      "f7Title": "Verbale di consegna",
+      "f7Desc": "Documentazione stanza per stanza per ingresso/uscita con foto e firma digitale — senza carta e legalmente sicuro.",
+      "f8Title": "Conteggio spese accessorie",
+      "f8Desc": "Ripartire automaticamente le spese accessorie tra i locatari, generare conteggio PDF per locatario — modello conforme CH incluso."
     },
     "forWhom": {
       "title": "Per chi è ImmoManage?",

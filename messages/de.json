@@ -577,17 +577,21 @@
     "features": {
       "title": "Alles was Sie brauchen — in einer Lösung",
       "f1Title": "Objekte & Einheiten",
-      "f1Desc": "Alle Liegenschaften auf einen Blick. Status, Leerstand, Fotos.",
+      "f1Desc": "Alle Liegenschaften übersichtlich verwalten: Grundrisse, Fotos, Leerstandsübersicht und Zustandshistorie auf einen Blick.",
       "f2Title": "Mieter & Verträge",
-      "f2Desc": "Stammdaten, Mietverträge, Kaution, Mieterwechsel-Assistent.",
+      "f2Desc": "Mietverträge digital ablegen, Kautionen tracken, Mieterwechsel in wenigen Klicks abwickeln — inkl. CH-Vorlage.",
       "f3Title": "Zahlungsabgleich & CAMT",
-      "f3Desc": "CAMT.053 Kontoauszug hochladen — Eingänge werden automatisch den Sollstellungen zugeordnet.",
+      "f3Desc": "CAMT.053 hochladen: Zahlungseingänge werden automatisch den Sollstellungen zugeordnet. QR-Rechnungen CH-konform generieren.",
       "f4Title": "Mieter-Portal",
-      "f4Desc": "Tickets, Dokumente, Nachrichten — Ihre Mieter erledigen alles digital.",
+      "f4Desc": "Mieter melden Schäden, empfangen Dokumente und kommunizieren direkt im Portal — kein Telefonanruf mehr nötig.",
       "f5Title": "KI-Assistent",
-      "f5Desc": "Automatisierte Unterstützung im Verwaltungsalltag.",
+      "f5Desc": "Der KI-Assistent beantwortet Mieteranfragen automatisch, 24/7 — und eskaliert an Sie wenn nötig.",
       "f6Title": "Dokumente & Vorlagen",
-      "f6Desc": "CH-Vorlagen (DE + FR), digitale Ablage, alles auf Knopfdruck."
+      "f6Desc": "CH-konforme Vorlagen (DE + FR), digitale Dokumentenablage mit Zugriffssteuerung, alles per Knopfdruck abrufbar.",
+      "f7Title": "Übergabeprotokoll",
+      "f7Desc": "Raum-für-Raum Dokumentation bei Ein-/Auszug mit Fotos und digitaler Unterschrift — papierlos und rechtssicher.",
+      "f8Title": "Nebenkostenabrechnung",
+      "f8Desc": "Nebenkosten automatisch auf Mieter aufteilen, PDF-Abrechnung pro Mieter generieren — CH-konforme Vorlage inklusive."
     },
     "forWhom": {
       "title": "Für wen ist ImmoManage?",

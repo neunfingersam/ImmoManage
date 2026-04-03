@@ -587,7 +587,11 @@
       "f5Title": "AI Assistant",
       "f5Desc": "Automated support for your daily property management tasks.",
       "f6Title": "Documents & Templates",
-      "f6Desc": "Swiss templates (DE + FR), digital filing, everything on demand."
+      "f6Desc": "Swiss templates (DE + FR), digital filing, everything on demand.",
+      "f7Title": "Handover Protocol",
+      "f7Desc": "Room-by-room documentation for move-in/move-out with photos and digital signature — paperless and legally compliant.",
+      "f8Title": "Utility Billing",
+      "f8Desc": "Automatically allocate utility costs to tenants, generate PDF billing per tenant — Swiss-compliant template included."
     },
     "forWhom": {
       "title": "Who is ImmoManage for?",

@@ -587,7 +587,11 @@
       "f5Title": "Assistant IA",
       "f5Desc": "Assistance automatisée dans votre gestion quotidienne.",
       "f6Title": "Documents & Modèles",
-      "f6Desc": "Modèles CH (DE + FR), archivage numérique, tout en un clic."
+      "f6Desc": "Modèles CH (DE + FR), archivage numérique, tout en un clic.",
+      "f7Title": "Protocole de remise",
+      "f7Desc": "Documentation pièce par pièce lors de l'entrée/sortie avec photos et signature numérique — sans papier et juridiquement sécurisé.",
+      "f8Title": "Décompte des charges",
+      "f8Desc": "Répartir automatiquement les charges entre locataires, générer un décompte PDF par locataire — modèle conforme CH inclus."
     },
     "forWhom": {
       "title": "Pour qui est ImmoManage?",

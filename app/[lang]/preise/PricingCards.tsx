@@ -17,7 +17,7 @@ const plans = [
     highlight: false,
     features: {
       properties: '1 Objekt',
-      units: 'bis 4 Einheiten',
+      units: '1–4 Einheiten',
       users: '1 Benutzer',
       tenantPortal: true,
       tickets: true,
@@ -25,6 +25,8 @@ const plans = [
       qrInvoice: false,
       taxFolder: false,
       aiAssistant: false,
+      handover: false,
+      utilityBilling: false,
       support: 'Community',
     },
   },
@@ -36,15 +38,17 @@ const plans = [
     trialMonths: 2,
     highlight: false,
     features: {
-      properties: 'bis 5 Objekte',
-      units: 'bis 25 Einheiten',
-      users: '2 Benutzer',
+      properties: '2–5 Objekte',
+      units: '5–25 Einheiten',
+      users: '1–2 Benutzer',
       tenantPortal: true,
       tickets: true,
       documents: true,
       qrInvoice: true,
       taxFolder: false,
       aiAssistant: false,
+      handover: false,
+      utilityBilling: false,
       support: 'E-Mail',
     },
   },
@@ -56,15 +60,17 @@ const plans = [
     trialMonths: 1,
     highlight: true,
     features: {
-      properties: 'unbegrenzt',
-      units: 'unbegrenzt',
-      users: 'bis 5 Benutzer',
+      properties: '6–20 Objekte',
+      units: '26–100 Einheiten',
+      users: '2–5 Benutzer',
       tenantPortal: true,
       tickets: true,
       documents: true,
       qrInvoice: true,
       taxFolder: true,
       aiAssistant: true,
+      handover: true,
+      utilityBilling: true,
       support: 'Priorität',
     },
   },
@@ -75,15 +81,17 @@ const plans = [
     trial: false,
     highlight: false,
     features: {
-      properties: 'unbegrenzt',
-      units: 'unbegrenzt',
-      users: 'unbegrenzt',
+      properties: 'ab 20 Objekte',
+      units: 'ab 100 Einheiten',
+      users: 'Unbegrenzt',
       tenantPortal: true,
       tickets: true,
       documents: true,
       qrInvoice: true,
       taxFolder: true,
       aiAssistant: true,
+      handover: true,
+      utilityBilling: true,
       support: 'Dediziert',
     },
   },
@@ -107,6 +115,8 @@ export default function PricingCards() {
     qrInvoice: t('featQrInvoice'),
     taxFolder: t('featTaxFolder'),
     aiAssistant: t('featAiAssistant'),
+    handover: 'Übergabeprotokoll',
+    utilityBilling: 'Nebenkostenabrechnung',
     support: t('featSupport'),
   }
 
@@ -227,7 +237,7 @@ export default function PricingCards() {
                     className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white mb-2"
                     style={{ backgroundColor: '#E8734A' }}
                   >
-                    {plan.trialMonths} {plan.trialMonths === 1 ? 'Monat' : 'Monate'} gratis testen
+                    {plan.trialMonths} {plan.trialMonths === 1 ? 'Monat' : 'Monate'} gratis
                   </div>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-4xl font-bold text-[#1A1A2E]">CHF 0</span>
