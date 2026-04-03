@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { Bell, X } from 'lucide-react'
 import { usePushSubscription } from '@/hooks/usePushSubscription'
 
-const DISMISSED_KEY = 'push_dismissed'
+// Bump version to re-show banner for existing users
+const DISMISSED_KEY = 'push_dismissed_v2'
 
 export function PushBanner() {
   const { supported, subscribed, subscribe } = usePushSubscription()
@@ -22,12 +23,13 @@ export function PushBanner() {
   async function handleAccept() {
     const ok = await subscribe()
     if (ok || Notification.permission === 'denied') {
-      dismiss()
+      localStorage.setItem(DISMISSED_KEY, '1')
+      setVisible(false)
     }
   }
 
   function dismiss() {
-    localStorage.setItem(DISMISSED_KEY, '1')
+    // Only dismiss for this session — show again next login
     setVisible(false)
   }
 
