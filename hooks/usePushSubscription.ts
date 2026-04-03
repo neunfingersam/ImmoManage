@@ -9,7 +9,8 @@ export function usePushSubscription() {
   useEffect(() => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
       setSupported(true)
-      navigator.serviceWorker.ready.then((reg) => {
+      navigator.serviceWorker.getRegistration('/sw.js').then((reg) => {
+        if (!reg) return
         reg.pushManager.getSubscription().then((sub) => {
           setSubscribed(!!sub)
         })
@@ -51,7 +52,8 @@ export function usePushSubscription() {
 
   async function unsubscribe(): Promise<void> {
     try {
-      const reg = await navigator.serviceWorker.ready
+      const reg = await navigator.serviceWorker.getRegistration('/sw.js')
+      if (!reg) return
       const sub = await reg.pushManager.getSubscription()
       if (!sub) return
 

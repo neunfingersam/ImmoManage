@@ -55,7 +55,9 @@ export function LeaseForm({ units, tenants, action }: Props) {
         <Label>Einheit</Label>
         <Select value={unitId ?? ''} onValueChange={(v) => setValue('unitId', v ?? '')}>
           <SelectTrigger>
-            <SelectValue placeholder="Einheit wählen" />
+            <SelectValue placeholder="Einheit wählen">
+              {unitId ? (units.find(u => u.id === unitId) ? `${units.find(u => u.id === unitId)!.property.name} · ${units.find(u => u.id === unitId)!.unitNumber}` : unitId) : undefined}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {units.map((u) => (
@@ -72,7 +74,9 @@ export function LeaseForm({ units, tenants, action }: Props) {
         <Label>Mieter</Label>
         <Select value={tenantId ?? ''} onValueChange={(v) => setValue('tenantId', v ?? '')}>
           <SelectTrigger>
-            <SelectValue placeholder="Mieter wählen" />
+            <SelectValue placeholder="Mieter wählen">
+              {tenantId ? (tenants.find(t => t.id === tenantId) ? `${tenants.find(t => t.id === tenantId)!.name} (${tenants.find(t => t.id === tenantId)!.email})` : tenantId) : undefined}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {tenants.map((t) => (

@@ -97,14 +97,17 @@ export async function sendMessage(data: { toId: string; text: string }): Promise
       source: 'MANUAL',
     },
   })
-  revalidatePath('/dashboard/messages')
-  revalidatePath(`/dashboard/messages/${parsed.data.toId}`)
+  await prisma.notification.create({
+    data: { userId: parsed.data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Jemand'}`, link: `/dashboard/messages/${session.user.id}` },
+  }).catch(() => {})
   sendPushToUser(
     parsed.data.toId,
     'Neue Nachricht',
     `${session.user.name ?? 'Jemand'} hat dir eine Nachricht geschickt.`,
     `/dashboard/messages/${session.user.id}`,
   ).catch(() => {})
+  revalidatePath('/dashboard/messages')
+  revalidatePath(`/dashboard/messages/${parsed.data.toId}`)
   return { success: true, data: message }
 }
 

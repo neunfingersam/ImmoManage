@@ -80,6 +80,9 @@ export async function sendSuperAdminMessage(data: { toId: string; text: string }
     },
   })
 
+  await prisma.notification.create({
+    data: { userId: data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Platform-Admin'}`, link: '/dashboard/messages' },
+  }).catch(() => {})
   sendPushToUser(data.toId, 'Neue Nachricht', text, '/dashboard/messages').catch(() => {})
   revalidatePath('/superadmin/messages')
   return { success: true, data: message }

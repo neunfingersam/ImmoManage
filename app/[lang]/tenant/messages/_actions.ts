@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import type { ActionResult } from '@/lib/action-result'
 import type { Message } from '@/lib/generated/prisma'
+import { sendPushToUser } from '@/lib/push'
 
 export async function getMyMessages() {
   const session = await getServerSession(authOptions)
@@ -67,6 +68,10 @@ export async function sendTenantMessage(data: { toId: string; text: string }): P
       source: 'MANUAL',
     },
   })
+  await prisma.notification.create({
+    data: { userId: data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Mieter'}`, link: '/dashboard/messages' },
+  }).catch(() => {})
+  sendPushToUser(data.toId, 'Neue Nachricht', data.text.trim(), '/dashboard/messages').catch(() => {})
   revalidatePath('/tenant/messages')
   return { success: true, data: message }
 }
