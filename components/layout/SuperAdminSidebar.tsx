@@ -4,7 +4,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { LayoutDashboard, Building, UserCog, ScrollText, Trash2, MessageSquare } from 'lucide-react'
+import { LayoutDashboard, Building, UserCog, ScrollText, Trash2, MessageSquare, UserCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MobileNavTrigger } from './MobileNav'
 
@@ -13,6 +13,7 @@ const navItems = [
   { key: 'companies', path: '/superadmin/companies', icon: Building },
   { key: 'admins', path: '/superadmin/admins', icon: UserCog },
   { key: 'messages', path: '/superadmin/messages', icon: MessageSquare },
+  { key: 'myProfile', path: '/superadmin/profile', icon: UserCircle },
   { key: 'deletionRequests', path: '/superadmin/deletion-requests', icon: Trash2, badge: true },
   { key: 'logs', path: '/superadmin/logs', icon: ScrollText },
 ]

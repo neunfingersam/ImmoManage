@@ -36,7 +36,7 @@ export default async function SuperAdminLayout({
           userName={session.user.name}
           userEmail={session.user.email}
           userRole={session.user.role}
-          profilePath="/dashboard/profile"
+          profilePath="/superadmin/profile"
           mobileNav={<SuperAdminMobileNav deletionCount={deletionCount} />}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
