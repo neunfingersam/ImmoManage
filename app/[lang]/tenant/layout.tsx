@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { TenantSidebar, TenantMobileNav } from '@/components/layout/TenantSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { prisma } from '@/lib/prisma'
+import { PushBanner } from '@/components/layout/PushBanner'
 
 export default async function TenantLayout({
   children,
@@ -63,6 +64,7 @@ export default async function TenantLayout({
           {children}
         </main>
       </div>
+      <PushBanner />
     </div>
   )
 }

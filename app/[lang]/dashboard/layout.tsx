@@ -8,6 +8,7 @@ import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { TrialBanner } from '@/components/layout/TrialBanner'
 import { PaymentRequiredWall } from '@/components/layout/PaymentRequiredWall'
 import { getPlanLimits } from '@/lib/plan-limits'
+import { PushBanner } from '@/components/layout/PushBanner'
 
 export default async function DashboardLayout({
   children,
@@ -60,6 +61,7 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
+      <PushBanner />
     </div>
   )
 }
