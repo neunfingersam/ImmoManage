@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { ProfileForm } from './ProfileForm'
 import { DeleteAccountSection } from '@/components/account/DeleteAccountSection'
 import { DataExportSection } from '@/components/account/DataExportSection'
+import { PushToggle } from '@/components/layout/PushToggle'
 import { getTranslations } from 'next-intl/server'
 
 export default async function ProfilePage() {
@@ -44,6 +45,7 @@ export default async function ProfilePage() {
           whatsapp: user.whatsapp ?? '',
         }}
       />
+      <PushToggle />
       <DataExportSection />
       <DeleteAccountSection
         hasActiveLease={hasActiveLease}

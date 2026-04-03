@@ -143,7 +143,7 @@ Stand: 2026-03-29
 - Next.js 16.2, React 19, TypeScript
 - Prisma + `@prisma/adapter-libsql` (kein `prisma db push` via Vercel — nur manuell via Turso shell)
 - Turso (LibSQL) als Produktionsdatenbank
-- `lib/generated/prisma/index.ts` ist committed (force-add nötig bei Änderungen)
+- `lib/generated/prisma/index.ts` wird NICHT mehr committed — wird im Build-Script automatisch generiert
 - SCHEMA_VERSION in `lib/prisma.ts` bei Schema-Änderungen erhöhen (aktuell: 4)
 
 ### Wichtige Dateien

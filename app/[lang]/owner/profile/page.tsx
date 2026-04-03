@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { getTranslations } from 'next-intl/server'
 import { DeleteAccountSection } from '@/components/account/DeleteAccountSection'
 import { DataExportSection } from '@/components/account/DataExportSection'
+import { PushToggle } from '@/components/layout/PushToggle'
 
 export default async function OwnerProfilePage() {
   const session = await getServerSession(authOptions)
@@ -34,6 +35,7 @@ export default async function OwnerProfilePage() {
           <p className="font-medium text-foreground">{session?.user?.email}</p>
         </div>
       </Card>
+      <PushToggle />
       <DataExportSection />
       <DeleteAccountSection
         hasActiveLease={false}
