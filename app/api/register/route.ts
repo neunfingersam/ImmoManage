@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
 import { createStripeCheckout, TRIAL_DAYS } from '@/lib/stripe'
+import { checkRateLimit } from '@/lib/rate-limit'
 import type { Prisma } from '@/lib/generated/prisma/client'
 import type { Plan } from '@/lib/generated/prisma/enums'
 
@@ -27,6 +28,13 @@ async function uniqueSlug(base: string): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate-limit: max 5 registrations per IP per 15 minutes
+  const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown'
+  const rl = await checkRateLimit(`register:${ip}`)
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Zu viele Anfragen. Bitte warte 15 Minuten.' }, { status: 429 })
+  }
+
   const { name, email, password, companyName, plan } = await req.json()
 
   // Validation
@@ -36,8 +44,8 @@ export async function POST(req: NextRequest) {
   if (!VALID_PLANS.includes(plan)) {
     return NextResponse.json({ error: 'Ungültiger Plan' }, { status: 400 })
   }
-  if (password.length < 6) {
-    return NextResponse.json({ error: 'Passwort muss mindestens 6 Zeichen haben' }, { status: 400 })
+  if (password.length < 8) {
+    return NextResponse.json({ error: 'Passwort muss mindestens 8 Zeichen haben' }, { status: 400 })
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Ungültige E-Mail-Adresse' }, { status: 400 })

@@ -2,10 +2,18 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
+import { checkRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
 import { redirect } from 'next/navigation'
 
 export async function POST(req: NextRequest) {
+  // Rate-limit: max 5 reset requests per IP per 15 minutes
+  const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown'
+  const rl = await checkRateLimit(`forgot-pw:${ip}`)
+  if (!rl.allowed) {
+    redirect('/auth/forgot-password?sent=1') // same redirect — don't reveal rate limit
+  }
+
   const formData = await req.formData()
   const email = (formData.get('email') as string)?.toLowerCase().trim()
 
