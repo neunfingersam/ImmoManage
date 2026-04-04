@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
-export type SubscribeResult = 'ok' | 'denied' | 'error'
+export type SubscribeResult = 'ok' | 'denied' | `error:${string}`
 
 export function usePushSubscription() {
   const [supported, setSupported] = useState(false)
@@ -36,20 +36,32 @@ export function usePushSubscription() {
 
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
       if (!vapidPublicKey) {
-        console.error('[Push] NEXT_PUBLIC_VAPID_PUBLIC_KEY is not configured')
-        return 'error'
+        return 'error:no-vapid-key'
       }
 
-      const reg = await navigator.serviceWorker.register('/sw.js')
+      let reg: ServiceWorkerRegistration
+      try {
+        reg = await navigator.serviceWorker.register('/sw.js')
+      } catch (err: any) {
+        return `error:sw-register:${err?.message ?? err}`
+      }
 
-      // waitForActive avoids navigator.serviceWorker.ready hanging when the SW
-      // is still in the installing/waiting state
-      const activeReg = await waitForActive(reg)
+      let activeReg: ServiceWorkerRegistration
+      try {
+        activeReg = await waitForActive(reg)
+      } catch (err: any) {
+        return `error:sw-activate:${err?.message ?? err}`
+      }
 
-      const sub = await activeReg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-      })
+      let sub: PushSubscription
+      try {
+        sub = await activeReg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        })
+      } catch (err: any) {
+        return `error:subscribe:${err?.message ?? err}`
+      }
 
       const res = await fetch('/api/push/subscribe', {
         method: 'POST',
@@ -57,15 +69,13 @@ export function usePushSubscription() {
         body: JSON.stringify(sub.toJSON()),
       })
       if (!res.ok) {
-        console.error('[Push] API returned', res.status)
-        return 'error'
+        return `error:api:${res.status}`
       }
 
       setSubscribed(true)
       return 'ok'
-    } catch (err) {
-      console.error('[Push] Subscribe error:', err)
-      return 'error'
+    } catch (err: any) {
+      return `error:unknown:${err?.message ?? err}`
     }
   }
 

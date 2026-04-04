@@ -10,20 +10,20 @@ export function PushToggle() {
   const { supported, subscribed, subscribe, unsubscribe } = usePushSubscription()
   const [loading, setLoading] = useState(false)
   const [denied, setDenied] = useState(false)
-  const [error, setError] = useState(false)
+  const [errorDetail, setErrorDetail] = useState<string | null>(null)
 
   if (!supported) return null
 
   async function handleToggle() {
     setLoading(true)
     setDenied(false)
-    setError(false)
+    setErrorDetail(null)
     if (subscribed) {
       await unsubscribe()
     } else {
       const result = await subscribe()
       if (result === 'denied') setDenied(true)
-      else if (result === 'error') setError(true)
+      else if (result.startsWith('error:')) setErrorDetail(result)
     }
     setLoading(false)
   }
@@ -60,10 +60,13 @@ export function PushToggle() {
           <p className="text-xs text-destructive">{t('permissionDenied')}</p>
         </div>
       )}
-      {error && (
+      {errorDetail && (
         <div className="flex items-start gap-2 rounded-lg bg-destructive/10 px-3 py-2">
           <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-          <p className="text-xs text-destructive">{t('subscribeError')}</p>
+          <div>
+            <p className="text-xs text-destructive">{t('subscribeError')}</p>
+            <p className="text-xs text-destructive/70 font-mono mt-0.5">{errorDetail}</p>
+          </div>
         </div>
       )}
     </div>
