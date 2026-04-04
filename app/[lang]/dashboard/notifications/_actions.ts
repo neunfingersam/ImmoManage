@@ -33,6 +33,15 @@ export async function markAllRead() {
   revalidatePath('/dashboard')
 }
 
+export async function markOneRead(id: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) return
+  await prisma.notification.updateMany({
+    where: { id, userId: session.user.id },
+    data: { read: true },
+  })
+}
+
 export async function createNotification(userId: string, type: string, text: string, link?: string) {
   return prisma.notification.create({
     data: { userId, type, text, link },

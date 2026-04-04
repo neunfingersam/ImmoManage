@@ -71,7 +71,7 @@ export async function sendTenantMessage(data: { toId: string; text: string }): P
   await prisma.notification.create({
     data: { userId: data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Mieter'}`, link: '/dashboard/messages' },
   }).catch(() => {})
-  sendPushToUser(data.toId, 'Neue Nachricht', data.text.trim(), '/dashboard/messages').catch(() => {})
+  sendPushToUser(data.toId, session.user.name ?? 'Neue Nachricht', data.text.trim(), '/dashboard/messages').catch(() => {})
   revalidatePath('/tenant/messages')
   return { success: true, data: message }
 }

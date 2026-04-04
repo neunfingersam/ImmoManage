@@ -102,8 +102,8 @@ export async function sendMessage(data: { toId: string; text: string }): Promise
   }).catch(() => {})
   sendPushToUser(
     parsed.data.toId,
-    'Neue Nachricht',
-    `${session.user.name ?? 'Jemand'} hat dir eine Nachricht geschickt.`,
+    session.user.name ?? 'Neue Nachricht',
+    parsed.data.text.trim(),
     `/dashboard/messages/${session.user.id}`,
   ).catch(() => {})
   revalidatePath('/dashboard/messages')

@@ -50,7 +50,7 @@ export async function sendOwnerMessage(data: { toId: string; text: string }): Pr
   await prisma.notification.create({
     data: { userId: data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Eigentümer'}`, link: '/dashboard/messages' },
   }).catch(() => {})
-  sendPushToUser(data.toId, 'Neue Nachricht', data.text.trim(), '/dashboard/messages').catch(() => {})
+  sendPushToUser(data.toId, session.user.name ?? 'Neue Nachricht', data.text.trim(), '/dashboard/messages').catch(() => {})
   revalidatePath('/owner/messages')
   return { success: true, data: message }
 }

@@ -1,20 +1,24 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import { Bell, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { getNotifications, markAllRead } from '@/app/[lang]/dashboard/notifications/_actions'
+import { getNotifications, markAllRead, markOneRead } from '@/app/[lang]/dashboard/notifications/_actions'
 import type { Notification } from '@/lib/generated/prisma'
 
 interface Props {
   unreadCount: number
 }
 
-export function NotificationBell({ unreadCount }: Props) {
+export function NotificationBell({ unreadCount: initialUnreadCount }: Props) {
+  const router = useRouter()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loaded, setLoaded] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount)
   const [pending, startTransition] = useTransition()
 
   async function handleOpen() {
@@ -30,6 +34,24 @@ export function NotificationBell({ unreadCount }: Props) {
     startTransition(async () => {
       await markAllRead()
       setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+      setUnreadCount(0)
+    })
+  }
+
+  function handleMarkOne(n: Notification) {
+    startTransition(async () => {
+      if (!n.read) {
+        await markOneRead(n.id)
+        setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x))
+        setUnreadCount(prev => Math.max(0, prev - 1))
+      }
+      if (n.link) {
+        setOpen(false)
+        // Prepend locale segment from current pathname (e.g. /de, /en)
+        const localeMatch = pathname.match(/^\/(de|fr|en|it)/)
+        const locale = localeMatch ? localeMatch[1] : 'de'
+        router.push(`/${locale}${n.link}`)
+      }
     })
   }
 
@@ -60,9 +82,20 @@ export function NotificationBell({ unreadCount }: Props) {
                 <p className="text-sm text-muted-foreground text-center py-8">Keine Benachrichtigungen</p>
               ) : (
                 notifications.map(n => (
-                  <div key={n.id} className={`px-4 py-3 border-b border-border last:border-0 ${!n.read ? 'bg-secondary/50' : ''}`}>
-                    <p className="text-sm text-foreground">{n.text}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{new Date(n.createdAt).toLocaleDateString('de-DE')}</p>
+                  <div
+                    key={n.id}
+                    onClick={() => handleMarkOne(n)}
+                    className={`px-4 py-3 border-b border-border last:border-0 transition-colors ${
+                      !n.read ? 'bg-secondary/50' : ''
+                    } ${n.link || !n.read ? 'cursor-pointer hover:bg-muted/60 active:bg-muted' : ''}`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {!n.read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />}
+                      <div className={!n.read ? '' : 'pl-4'}>
+                        <p className="text-sm text-foreground">{n.text}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{new Date(n.createdAt).toLocaleDateString('de-DE')}</p>
+                      </div>
+                    </div>
                   </div>
                 ))
               )}
