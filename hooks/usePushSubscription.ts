@@ -10,6 +10,14 @@ export function usePushSubscription() {
 
   useEffect(() => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
+      // On iOS, Web Push only works for home screen apps (standalone PWA).
+      // Regular Safari reports PushManager as available but subscribe() throws.
+      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
+      const isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (navigator as any).standalone === true
+      if (isIos && !isStandalone) return
+
       setSupported(true)
       navigator.serviceWorker.getRegistration('/sw.js').then((reg) => {
         if (!reg) return

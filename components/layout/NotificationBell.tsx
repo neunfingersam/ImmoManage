@@ -45,7 +45,7 @@ export function NotificationBell({ unreadCount }: Props) {
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-10 z-50 w-80">
+        <div className="fixed right-4 top-16 z-50 w-80 max-w-[calc(100vw-2rem)]">
           <Card className="p-0 overflow-hidden shadow-card-hover">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <span className="text-sm font-medium text-foreground">Benachrichtigungen</span>
