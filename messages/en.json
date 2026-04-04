@@ -11,7 +11,8 @@
     "activeOnDevice": "Active on this device",
     "inactiveOnDevice": "Disabled on this device",
     "iosHint": "Add this app to your home screen to receive push notifications.",
-    "permissionDenied": "Notifications are blocked. Allow them in your browser settings (lock icon in the address bar)."
+    "permissionDenied": "Notifications are blocked. Allow them in your browser settings (lock icon in the address bar).",
+    "subscribeError": "Activation failed. Please try again or refresh the page."
   },
   "common": {
     "save": "Save",

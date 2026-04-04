@@ -11,7 +11,8 @@
     "activeOnDevice": "Aktiv auf diesem Gerät",
     "inactiveOnDevice": "Deaktiviert auf diesem Gerät",
     "iosHint": "Füge diese App zum Homescreen hinzu, um Push-Mitteilungen zu erhalten.",
-    "permissionDenied": "Benachrichtigungen wurden blockiert. Erlaube sie in den Browser-Einstellungen (Schloss-Icon in der Adressleiste)."
+    "permissionDenied": "Benachrichtigungen wurden blockiert. Erlaube sie in den Browser-Einstellungen (Schloss-Icon in der Adressleiste).",
+    "subscribeError": "Aktivierung fehlgeschlagen. Bitte versuche es erneut oder aktualisiere die Seite."
   },
   "common": {
     "save": "Speichern",

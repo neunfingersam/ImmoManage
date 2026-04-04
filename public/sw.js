@@ -1,4 +1,9 @@
 // public/sw.js
+
+// Activate immediately without waiting for other tabs to close
+self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
+
 self.addEventListener('push', (event) => {
   if (!event.data) return
 

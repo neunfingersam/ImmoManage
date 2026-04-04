@@ -69,8 +69,10 @@ export function PushBanner() {
   if (!visible) return null
 
   async function handleAccept() {
-    await subscribe()
-    localStorage.setItem(DISMISSED_KEY, '1')
+    const result = await subscribe()
+    // Always close the banner. If it failed, user can retry via the profile toggle.
+    // Only persist the dismissal if actually subscribed so the banner can reappear on error.
+    if (result === 'ok') localStorage.setItem(DISMISSED_KEY, '1')
     setVisible(false)
   }
 

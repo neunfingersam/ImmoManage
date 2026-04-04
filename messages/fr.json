@@ -11,7 +11,8 @@
     "activeOnDevice": "Actif sur cet appareil",
     "inactiveOnDevice": "Désactivé sur cet appareil",
     "iosHint": "Ajoutez cette app à votre écran d'accueil pour recevoir des notifications.",
-    "permissionDenied": "Les notifications sont bloquées. Autorisez-les dans les paramètres du navigateur (icône cadenas dans la barre d'adresse)."
+    "permissionDenied": "Les notifications sont bloquées. Autorisez-les dans les paramètres du navigateur (icône cadenas dans la barre d'adresse).",
+    "subscribeError": "L'activation a échoué. Veuillez réessayer ou actualiser la page."
   },
   "common": {
     "save": "Enregistrer",

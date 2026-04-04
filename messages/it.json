@@ -11,7 +11,8 @@
     "activeOnDevice": "Attivo su questo dispositivo",
     "inactiveOnDevice": "Disattivato su questo dispositivo",
     "iosHint": "Aggiungi questa app alla schermata Home per ricevere notifiche push.",
-    "permissionDenied": "Le notifiche sono bloccate. Consentile nelle impostazioni del browser (icona lucchetto nella barra degli indirizzi)."
+    "permissionDenied": "Le notifiche sono bloccate. Consentile nelle impostazioni del browser (icona lucchetto nella barra degli indirizzi).",
+    "subscribeError": "Attivazione fallita. Riprova o aggiorna la pagina."
   },
   "common": {
     "save": "Salva",
