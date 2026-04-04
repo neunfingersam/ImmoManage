@@ -10,10 +10,10 @@ import { sendPushToUser } from '@/lib/push'
 
 export async function getMyMessages() {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.id) return []
+  if (!session?.user?.id || !session?.user?.companyId) return []
 
   return prisma.message.findMany({
-    where: { OR: [{ fromId: session.user.id }, { toId: session.user.id }] },
+    where: { companyId: session.user.companyId, OR: [{ fromId: session.user.id }, { toId: session.user.id }] },
     include: {
       from: { select: { id: true, name: true } },
       to: { select: { id: true, name: true } },
