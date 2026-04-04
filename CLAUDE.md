@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This project uses **Next.js 16**, which has breaking changes compared to earlier versions. Before writing any Next.js-specific code, read the relevant guide in `node_modules/next/dist/docs/`. APIs, conventions, and file structure may differ from your training data.
 
+**Next.js 16 middleware is `proxy.ts` (not `middleware.ts`).** The middleware function is exported as `proxy` and the file must be named `proxy.ts`. Creating a `middleware.ts` alongside `proxy.ts` will break the build with: `Both middleware file "./middleware.ts" and proxy file "./proxy.ts" are detected.`
+
 ## Commands
 
 ```bash
