@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+**ImmoManage V2** — A multi-tenant SaaS platform for Swiss property management (Immobilienverwaltung). Single Next.js app (not a monorepo). All source code lives in this directory.
+
 ## Next.js Version Warning
 
 This project uses **Next.js 16**, which has breaking changes compared to earlier versions. Before writing any Next.js-specific code, read the relevant guide in `node_modules/next/dist/docs/`. APIs, conventions, and file structure may differ from your training data.
@@ -93,3 +97,15 @@ The 5 roles are: `SUPER_ADMIN`, `ADMIN`, `VERMIETER`, `MIETER`, `EIGENTUEMER`. T
 
 ### Testing
 Vitest with jsdom. Tests live in `__tests__/` organized by: `schemas/`, `utils/`, `agent/`. Setup file: `__tests__/setup.ts`.
+
+### Environment Variables
+Minimum required (see `.env.example` for full list):
+```
+DATABASE_URL="file:./prisma/dev.db"
+NEXTAUTH_SECRET="<32+ chars>"
+NEXTAUTH_URL="http://localhost:3000"
+SMTP_HOST="localhost"
+SMTP_PORT="1025"
+OLLAMA_BASE_URL="http://localhost:11434"
+```
+Production adds: `DATABASE_AUTH_TOKEN` (Turso), `RESEND_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.

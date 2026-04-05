@@ -13,9 +13,10 @@ describe('tenantSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects missing password', () => {
+  it('accepts input without password (tenant sets own password via invite)', () => {
     const result = tenantSchema.safeParse({ name: 'Max', email: 'max@example.com' })
-    expect(result.success).toBe(false)
+    // password is not part of tenantSchema — tenants set their own password via invite email
+    expect(result.success).toBe(true)
   })
 
   it('rejects invalid email', () => {

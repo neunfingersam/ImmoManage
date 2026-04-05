@@ -21,12 +21,13 @@ describe('tenantSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects short password', () => {
+  it('ignores unknown fields like password (tenant sets own password via invite)', () => {
     const result = tenantSchema.safeParse({
       name: 'Test',
       email: 'test@example.com',
       password: '123',
     })
-    expect(result.success).toBe(false)
+    // password is not part of tenantSchema — tenant receives an invite email and sets their own password
+    expect(result.success).toBe(true)
   })
 })
