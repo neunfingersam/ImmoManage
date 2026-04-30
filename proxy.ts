@@ -27,6 +27,11 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next()
   }
 
+  // Landing page — standalone page outside [lang] routing, pass through directly
+  if (pathname === '/landing' || pathname.startsWith('/landing/')) {
+    return NextResponse.next()
+  }
+
   // Public routes: always allow through (intl handles locale prefix)
   if (
     internalPath === '/' ||
@@ -37,7 +42,6 @@ export async function proxy(req: NextRequest) {
     internalPath.startsWith('/datenschutz') ||
     internalPath.startsWith('/impressum') ||
     internalPath.startsWith('/preise') ||
-    internalPath.startsWith('/landing') ||
     pathname.startsWith('/auth') ||
     pathname.startsWith('/403')
   ) {
