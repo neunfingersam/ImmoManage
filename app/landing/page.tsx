@@ -6,15 +6,8 @@ import { translations, type Locale } from './translations'
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Suggestion {
-  id: string
-  title: string
-  category: string
-  description: string
-  name: string
-  email: string
-  votes: number
-  votedBy: string[]
-  createdAt: string
+  id: string; title: string; category: string; description: string
+  name: string; email: string; votes: number; votedBy: string[]; createdAt: string
 }
 
 interface FeedbackT {
@@ -46,6 +39,7 @@ const FEATURES = [
   { icon: '🤖', key: 'ai',          live: false },
   { icon: '⚠️', key: 'reminders',   live: false },
   { icon: '📊', key: 'taxes',       live: false },
+  { icon: '📱', key: 'whatsapp',    live: false },
 ]
 
 const FEATURE_CONTENT: Record<string, Record<Locale, { title: string; desc: string }>> = {
@@ -93,6 +87,10 @@ const FEATURE_CONTENT: Record<string, Record<Locale, { title: string; desc: stri
                fr: { title: 'Export fiscal',         desc: 'Préparation automatique de tous les justificatifs pour la déclaration d\'impôts.' },
                it: { title: 'Export fiscale',        desc: 'Preparazione automatica di tutti i documenti per la dichiarazione fiscale.' },
                en: { title: 'Tax export',            desc: 'Automatic preparation of all relevant documents for tax returns.' } },
+  whatsapp:  { de: { title: 'WhatsApp & KI-Agent',   desc: 'Mieter schreiben per WhatsApp — der KI-Agent antwortet automatisch und leitet bei Bedarf an den Vermieter weiter.' },
+               fr: { title: 'WhatsApp & Agent IA',   desc: 'Les locataires écrivent via WhatsApp — l\'agent IA répond automatiquement et transfère au propriétaire si nécessaire.' },
+               it: { title: 'WhatsApp & Agente IA',  desc: 'Gli affittuari scrivono via WhatsApp — l\'agente IA risponde automaticamente e inoltra al proprietario se necessario.' },
+               en: { title: 'WhatsApp & AI Agent',   desc: 'Tenants message via WhatsApp — the AI agent replies automatically and escalates to the landlord when needed.' } },
 }
 
 const LOCALES: { code: Locale; label: string }[] = [
@@ -104,16 +102,6 @@ const LOCALES: { code: Locale; label: string }[] = [
 
 const CORAL = '#E8734A'
 const BG = '#FDF8F4'
-
-let _deviceId: string | null = null
-function getDeviceId() {
-  if (typeof window === 'undefined') return 'server'
-  if (!_deviceId) {
-    _deviceId = localStorage.getItem('immo_device_id') ?? Math.random().toString(36).slice(2)
-    localStorage.setItem('immo_device_id', _deviceId)
-  }
-  return _deviceId
-}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -251,11 +239,9 @@ export default function LandingPage() {
       }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', height: 64, gap: 24 }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }} onClick={() => scrollTo('hero')}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 14V7L8 2l6 5v7H10V9H6v5H2Z" fill="white"/></svg>
-            </div>
-            <span className="serif" style={{ fontSize: 18, fontWeight: 700, color: '#1a1a2e' }}>ImmoManage</span>
+          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => scrollTo('hero')}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="ImmoManage" style={{ height: 36 }} />
           </div>
 
           {/* Desktop Links */}
@@ -416,15 +402,24 @@ export default function LandingPage() {
 
       {/* ── Pain section ─────────────────────────────────────────────────────── */}
       <section style={{ background: 'white', padding: '80px 24px' }}>
-        <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto', textAlign: 'center' }}>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: CORAL, marginBottom: 12 }}>{lbl.painLabel}</div>
           <h2 className="serif" style={{ fontSize: 'clamp(32px, 4vw, 46px)', color: '#1a1a2e', marginBottom: 12 }}>{lbl.painTitle}</h2>
-          <p style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.6, marginBottom: 40 }}>{lbl.painSub}</p>
-          <div style={{ textAlign: 'left', maxWidth: 520, margin: '0 auto' }}>
+          <p style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{lbl.painSub}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, textAlign: 'left' }}>
             {lbl.pains.map((pain, i) => (
-              <div key={i} className="pain-item">
-                <div className="pain-icon">✗</div>
-                <span style={{ color: '#374151', fontSize: 15, lineHeight: 1.5 }}>{pain}</span>
+              <div key={i} style={{
+                background: 'linear-gradient(135deg, #fff7f5 0%, #fef3ef 100%)',
+                borderRadius: 16, padding: '22px 20px',
+                border: '1.5px solid #fce4da',
+                display: 'flex', alignItems: 'flex-start', gap: 14,
+              }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 10,
+                  background: `${CORAL}18`, display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: 17, flexShrink: 0, fontWeight: 700, color: CORAL,
+                }}>✕</div>
+                <span style={{ color: '#374151', fontSize: 14, lineHeight: 1.6, fontWeight: 500 }}>{pain}</span>
               </div>
             ))}
           </div>
@@ -522,35 +517,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ─────────────────────────────────────────────────────── */}
-      <section id="testimonials" style={{ padding: '80px 24px', background: '#1a1a2e' }}>
-        <div style={{ maxWidth: 1060, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 className="serif" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: 'white', marginBottom: 10 }}>{t.testimonials.title}</h2>
-            <p style={{ color: '#9ca3af', fontSize: 15 }}>{t.testimonials.subtitle}</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-            {t.testimonials.items.map((item, i) => (
-              <div key={i} className="testimonial-card hover-lift">
-                <div style={{ display: 'flex', marginBottom: 10 }}>
-                  {[1,2,3,4,5].map((s) => <span key={s} style={{ color: CORAL, fontSize: 14 }}>★</span>)}
-                </div>
-                <p style={{ color: '#d1d5db', fontSize: 14, lineHeight: 1.65, fontStyle: 'italic', marginBottom: 18 }}>"{item.text}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'white', fontSize: 14 }}>
-                    {item.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div style={{ color: 'white', fontWeight: 600, fontSize: 13 }}>{item.name}</div>
-                    <div style={{ color: '#9ca3af', fontSize: 12 }}>{item.role} · {item.location}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Final CTA ────────────────────────────────────────────────────────── */}
       <section style={{ padding: '80px 24px', background: BG, textAlign: 'center' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
@@ -569,16 +535,17 @@ export default function LandingPage() {
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <footer style={{ background: '#111827', padding: '40px 24px', borderTop: '1px solid rgba(255,255,255,.06)' }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 26, height: 26, borderRadius: 6, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 14V7L8 2l6 5v7H10V9H6v5H2Z" fill="white"/></svg>
-            </div>
-            <span className="serif" style={{ color: 'white', fontWeight: 700, fontSize: 15 }}>ImmoManage</span>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="ImmoManage" style={{ height: 28, filter: 'brightness(0) invert(1)' }} />
           </div>
           <div style={{ display: 'flex', gap: 20 }}>
-            {t.footer.links.map((link, i) => (
-              <a key={i} href="#" onClick={(e) => e.preventDefault()} style={{ color: '#6b7280', fontSize: 13, textDecoration: 'none' }}>{link}</a>
-            ))}
+            {t.footer.links.map((link, i) => {
+              const footerHrefs = [`/${locale}/datenschutz`, `/${locale}/impressum`, 'mailto:info@immo-manage.ch']
+              return (
+                <a key={i} href={footerHrefs[i] ?? '#'} style={{ color: '#6b7280', fontSize: 13, textDecoration: 'none' }}>{link}</a>
+              )
+            })}
           </div>
           <div style={{ color: '#4b5563', fontSize: 12 }}>{t.footer.copyright}</div>
         </div>
@@ -611,37 +578,19 @@ export default function LandingPage() {
 
 // ─── Feedback Modal ────────────────────────────────────────────────────────────
 
-function FeedbackModal({ locale, t, onClose }: { locale: Locale; t: FeedbackT; onClose: () => void }) {
-  const [tab, setTab] = useState<'submit' | 'all'>('submit')
+function FeedbackModal({ t, onClose }: { locale: Locale; t: FeedbackT; onClose: () => void }) {
   const [form, setForm] = useState({ title: '', category: '', description: '', name: '', email: '' })
   const [submitted, setSubmitted] = useState(false)
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-
-  useEffect(() => {
-    const saved = localStorage.getItem('immo_suggestions')
-    if (saved) setSuggestions(JSON.parse(saved))
-  }, [])
-
-  const save = (items: Suggestion[]) => {
-    setSuggestions(items)
-    localStorage.setItem('immo_suggestions', JSON.stringify(items))
-  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title || !form.category || !form.description) return
+    const suggestions: Suggestion[] = JSON.parse(localStorage.getItem('immo_suggestions') ?? '[]')
     const item: Suggestion = { id: Date.now().toString(), ...form, votes: 0, votedBy: [], createdAt: new Date().toISOString() }
-    save([item, ...suggestions])
+    localStorage.setItem('immo_suggestions', JSON.stringify([item, ...suggestions]))
     setSubmitted(true)
-    setTimeout(() => { setSubmitted(false); setForm({ title: '', category: '', description: '', name: '', email: '' }); setTab('all') }, 1800)
+    setTimeout(() => { setSubmitted(false); setForm({ title: '', category: '', description: '', name: '', email: '' }) }, 2400)
   }
-
-  const handleVote = (id: string) => {
-    const did = getDeviceId()
-    save(suggestions.map((s) => s.id !== id || s.votedBy.includes(did) ? s : { ...s, votes: s.votes + 1, votedBy: [...s.votedBy, did] }))
-  }
-
-  const sorted = [...suggestions].sort((a, b) => b.votes - a.votes)
 
   return (
     <div className="modal-bg" onClick={(e) => e.target === e.currentTarget && onClose()}>
@@ -650,87 +599,43 @@ function FeedbackModal({ locale, t, onClose }: { locale: Locale; t: FeedbackT; o
           <span style={{ fontWeight: 700, fontSize: 15, color: '#1a1a2e' }}>{t.modalTitle}</span>
           <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: '50%', background: '#f3f0ec', border: 'none', cursor: 'pointer', fontSize: 16, color: '#6b6860', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
         </div>
-        <div style={{ display: 'flex', borderBottom: '1px solid #f0ece7' }}>
-          {(['submit', 'all'] as const).map((tb) => (
-            <button key={tb} onClick={() => setTab(tb)} style={{
-              flex: 1, padding: '12px 0', fontSize: 13, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer',
-              color: tab === tb ? CORAL : '#9ca3af',
-              borderBottom: `2px solid ${tab === tb ? CORAL : 'transparent'}`,
-            }}>
-              {tb === 'submit' ? t.tab1 : `${t.tab2} (${suggestions.length})`}
-            </button>
-          ))}
-        </div>
-        <div style={{ maxHeight: 'calc(90vh - 130px)', overflowY: 'auto', padding: 20 }}>
-          {tab === 'submit' ? (
-            submitted ? (
-              <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                <div style={{ fontSize: 40, marginBottom: 10 }}>🎉</div>
-                <p style={{ color: '#16a34a', fontWeight: 600 }}>{t.successMsg}</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {[
-                  { label: `${t.titleLabel} *`, key: 'title', type: 'text', ph: t.titlePlaceholder },
-                  { label: `${t.categoryLabel} *`, key: 'category', type: 'select' },
-                  { label: `${t.descLabel} *`, key: 'description', type: 'textarea', ph: t.descPlaceholder },
-                  { label: t.nameLabel, key: 'name', type: 'text' },
-                  { label: t.emailLabel, key: 'email', type: 'email' },
-                ].map((field) => (
-                  <div key={field.key}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b6860', marginBottom: 4 }}>{field.label}</label>
-                    {field.type === 'select' ? (
-                      <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', background: 'white' }}>
-                        <option value="">—</option>
-                        {t.categories.map((c) => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    ) : field.type === 'textarea' ? (
-                      <textarea rows={3} required placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
-                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit' }} />
-                    ) : (
-                      <input type={field.type} placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
-                        required={field.label.includes('*')}
-                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none' }} />
-                    )}
-                  </div>
-                ))}
-                <button type="submit" className="btn-coral" style={{ padding: '13px 0', fontSize: 14, borderRadius: 10, minHeight: 44 }}>{t.submit}</button>
-              </form>
-            )
+        <div style={{ maxHeight: 'calc(90vh - 80px)', overflowY: 'auto', padding: 20 }}>
+          {submitted ? (
+            <div style={{ textAlign: 'center', padding: '32px 0' }}>
+              <div style={{ fontSize: 40, marginBottom: 10 }}>🎉</div>
+              <p style={{ color: '#16a34a', fontWeight: 600 }}>{t.successMsg}</p>
+            </div>
           ) : (
-            sorted.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '32px 0', color: '#9ca3af', fontSize: 13 }}>{t.noSuggestions}</div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {sorted.map((s) => {
-                  const voted = s.votedBy.includes(getDeviceId())
-                  return (
-                    <div key={s.id} style={{ padding: 14, background: '#fdf8f4', borderRadius: 12, border: '1px solid #ede8e2', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                          <span style={{ background: `${CORAL}15`, color: CORAL, fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 4 }}>{s.category}</span>
-                        </div>
-                        <div style={{ fontWeight: 600, fontSize: 13, color: '#1a1a2e', marginBottom: 2 }}>{s.title}</div>
-                        <div style={{ fontSize: 12, color: '#6b6860', lineHeight: 1.5 }}>{s.description}</div>
-                        {s.name && <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 4 }}>{s.name}</div>}
-                      </div>
-                      <button onClick={() => handleVote(s.id)} style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
-                        padding: '8px 10px', borderRadius: 8, border: `1.5px solid ${voted ? CORAL + '40' : '#e8e2db'}`,
-                        background: voted ? `${CORAL}10` : 'white', color: voted ? CORAL : '#9ca3af',
-                        cursor: voted ? 'default' : 'pointer', minWidth: 42,
-                      }}>
-                        <span style={{ fontSize: 12 }}>▲</span>
-                        <span style={{ fontSize: 12, fontWeight: 700 }}>{s.votes}</span>
-                      </button>
-                    </div>
-                  )
-                })}
-              </div>
-            )
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { label: `${t.titleLabel} *`, key: 'title', type: 'text', ph: t.titlePlaceholder },
+                { label: `${t.categoryLabel} *`, key: 'category', type: 'select' },
+                { label: `${t.descLabel} *`, key: 'description', type: 'textarea', ph: t.descPlaceholder },
+                { label: t.nameLabel, key: 'name', type: 'text' },
+                { label: t.emailLabel, key: 'email', type: 'email' },
+              ].map((field) => (
+                <div key={field.key}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b6860', marginBottom: 4 }}>{field.label}</label>
+                  {field.type === 'select' ? (
+                    <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', background: 'white' }}>
+                      <option value="">—</option>
+                      {t.categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  ) : field.type === 'textarea' ? (
+                    <textarea rows={3} required placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
+                      onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit' }} />
+                  ) : (
+                    <input type={field.type} placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
+                      required={field.label.includes('*')}
+                      onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none' }} />
+                  )}
+                </div>
+              ))}
+              <button type="submit" className="btn-coral" style={{ padding: '13px 0', fontSize: 14, borderRadius: 10, minHeight: 44 }}>{t.submit}</button>
+            </form>
           )}
         </div>
       </div>
