@@ -709,12 +709,30 @@ export default function LandingPage() {
 
       {/* ── Floating Feedback Button ─────────────────────────── */}
       <button
-        className="float-btn fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full font-semibold text-sm text-white shadow-lg hover:shadow-xl hover:scale-105 transition-transform"
-        style={{ background: 'linear-gradient(135deg, #6366F1, #FF7A59)', border: 'none', cursor: 'pointer', minHeight: '44px' }}
         onClick={() => setFeedbackOpen(true)}
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '12px 20px',
+          borderRadius: 999,
+          fontWeight: 600,
+          fontSize: 14,
+          color: 'white',
+          background: 'linear-gradient(135deg, #6366F1, #FF7A59)',
+          border: 'none',
+          cursor: 'pointer',
+          minHeight: 44,
+          boxShadow: '0 8px 30px rgba(99,102,241,0.4)',
+          animation: 'float 3s ease-in-out infinite',
+        }}
       >
-        <span>💡</span>
-        <span className="hidden sm:inline">{t.feedback.buttonTitle}</span>
+        <span style={{ fontSize: 18 }}>💡</span>
+        <span>{t.feedback.buttonTitle}</span>
       </button>
 
       {/* ── Feedback Modal ──────────────────────────────────── */}
