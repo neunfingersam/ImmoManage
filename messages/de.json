@@ -295,7 +295,10 @@
     "reminderLevel": "Mahnstufe",
     "qrRechnung": "QR-Rechnung",
     "openTotal": "Offene Posten gesamt",
-    "overdueCount": "Überfällig"
+    "overdueCount": "Überfällig",
+    "camtTitle": "Zahlungsabgleich via CAMT.053",
+    "camtDesc": "Kontoauszug aus dem E-Banking exportieren und hochladen — offene Posten werden automatisch zugeordnet.",
+    "empty": "Noch keine Sollstellungen. Klicke auf \"{btn}\"."
   },
   "billing": {
     "title": "Nebenkostenabrechnung",
@@ -322,7 +325,9 @@
     "empty": "Keine Abrechnungen",
     "emptyDesc": "Noch keine Nebenkostenabrechnung erstellt.",
     "sentAt": "Gesendet {date}",
-    "yearLabel": "Jahr {year}"
+    "yearLabel": "Jahr {year}",
+    "colTenant": "Mieter",
+    "colTotal": "Gesamt"
   },
   "documents": {
     "title": "Dokumente",
@@ -355,7 +360,9 @@
     "nebenkostenabrechnung": "Nebenkostenabrechnung",
     "mahnung1": "Mahnung 1. Stufe",
     "mahnung2": "Mahnung 2. Stufe",
-    "mahnung3": "Mahnung 3. Stufe"
+    "mahnung3": "Mahnung 3. Stufe",
+    "importVorlage": "Datenimport-Vorlage",
+    "importVorlageDesc": "Excel-Vorlage herunterladen und mit Ihren Daten befüllen, um Objekte & Mieter zu importieren."
   },
   "tasks": {
     "title": "Aufgaben",
@@ -793,5 +800,16 @@
     "newMessageTo": "Neue Nachricht an",
     "empty": "Keine Nachrichten",
     "emptyDesc": "Starten Sie ein Gespräch mit einem Mieter."
+  },
+  "weg": {
+    "title": "Stockwerkeigentum (WEG)",
+    "count": "{count, plural, one {# Gemeinschaft} other {# Gemeinschaften}}",
+    "newBtn": "Neue WEG",
+    "empty": "Noch keine WEG erfasst",
+    "emptyDesc": "Erfassen Sie Ihre erste Stockwerkeigentümergemeinschaft, um mit der Verwaltung zu beginnen.",
+    "checkQuota": "Wertquoten prüfen",
+    "owners": "{count, plural, one {# Eigentümer} other {# Eigentümer}}",
+    "units": "{count, plural, one {# Einheit} other {# Einheiten}}",
+    "renewalFund": "Erneuerungsfonds"
   }
 }

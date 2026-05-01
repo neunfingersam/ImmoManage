@@ -295,7 +295,10 @@
     "reminderLevel": "Reminder Level",
     "qrRechnung": "QR Invoice",
     "openTotal": "Total Outstanding",
-    "overdueCount": "Overdue"
+    "overdueCount": "Overdue",
+    "camtTitle": "Payment reconciliation via CAMT.053",
+    "camtDesc": "Export and upload your bank statement — open items are matched automatically.",
+    "empty": "No payment demands yet. Click \"{btn}\"."
   },
   "billing": {
     "title": "Utility Billing",
@@ -322,7 +325,9 @@
     "empty": "No bills",
     "emptyDesc": "No utility bills created yet.",
     "sentAt": "Sent {date}",
-    "yearLabel": "Year {year}"
+    "yearLabel": "Year {year}",
+    "colTenant": "Tenant",
+    "colTotal": "Total"
   },
   "documents": {
     "title": "Documents",
@@ -355,7 +360,9 @@
     "nebenkostenabrechnung": "Utility Bill",
     "mahnung1": "Reminder Level 1",
     "mahnung2": "Reminder Level 2",
-    "mahnung3": "Reminder Level 3"
+    "mahnung3": "Reminder Level 3",
+    "importVorlage": "Data Import Template",
+    "importVorlageDesc": "Download the Excel template, fill in your data, and import properties & tenants."
   },
   "tasks": {
     "title": "Tasks",
@@ -793,5 +800,16 @@
     "newMessageTo": "New message to",
     "empty": "No messages",
     "emptyDesc": "Start a conversation with a tenant."
+  },
+  "weg": {
+    "title": "Condominium (WEG)",
+    "count": "{count, plural, one {# community} other {# communities}}",
+    "newBtn": "New WEG",
+    "empty": "No WEG created yet",
+    "emptyDesc": "Create your first condominium association to start managing it.",
+    "checkQuota": "Check quotas",
+    "owners": "{count, plural, one {# owner} other {# owners}}",
+    "units": "{count, plural, one {# unit} other {# units}}",
+    "renewalFund": "Renewal fund"
   }
 }

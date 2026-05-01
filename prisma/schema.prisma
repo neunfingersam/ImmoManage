@@ -224,8 +224,9 @@ model User {
   phone        String?
   whatsapp     String?
   iban         String?
-  active          Boolean  @default(true)
-  emailVerified   Boolean  @default(true)
+  active              Boolean  @default(true)
+  emailVerified       Boolean  @default(true)
+  mustChangePassword  Boolean  @default(false)
   companyId    String?
   createdAt    DateTime @default(now())
   company             Company?             @relation(fields: [companyId], references: [id])

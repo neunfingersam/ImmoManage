@@ -37,6 +37,7 @@ export async function proxy(req: NextRequest) {
     internalPath === '/' ||
     pathname === '/sitemap.xml' ||
     pathname === '/robots.txt' ||
+    internalPath.startsWith('/auth/change-password') ||
     internalPath.startsWith('/auth') ||
     internalPath.startsWith('/403') ||
     internalPath.startsWith('/datenschutz') ||
@@ -53,6 +54,15 @@ export async function proxy(req: NextRequest) {
   // Not authenticated → redirect to locale-aware login
   if (!token) {
     return NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url))
+  }
+
+  // Force password change before accessing any protected route
+  if (
+    token.mustChangePassword &&
+    !internalPath.startsWith('/auth/change-password') &&
+    !internalPath.startsWith('/auth/login')
+  ) {
+    return NextResponse.redirect(new URL(`/${locale}/auth/change-password`, req.url))
   }
 
   const role = token.role as string

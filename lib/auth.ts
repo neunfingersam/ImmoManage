@@ -59,6 +59,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           companyId: user.companyId,
+          mustChangePassword: user.mustChangePassword,
         }
       },
     }),
@@ -69,6 +70,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.role = user.role
         token.companyId = user.companyId
+        token.mustChangePassword = user.mustChangePassword
         token.lastChecked = Date.now()
       }
 
@@ -77,7 +79,7 @@ export const authOptions: NextAuthOptions = {
       if (token.id && Date.now() - ((token.lastChecked as number) ?? 0) > RECHECK_MS) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { active: true, role: true, companyId: true },
+          select: { active: true, role: true, companyId: true, mustChangePassword: true },
         })
         if (!dbUser || !dbUser.active) {
           // Return deactivated marker — session callback will produce an expired session
@@ -85,6 +87,7 @@ export const authOptions: NextAuthOptions = {
         }
         token.role = dbUser.role
         token.companyId = dbUser.companyId
+        token.mustChangePassword = dbUser.mustChangePassword
         token.lastChecked = Date.now()
       }
 
@@ -99,6 +102,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id
         session.user.role = token.role
         session.user.companyId = token.companyId
+        session.user.mustChangePassword = token.mustChangePassword
       }
       return session
     },

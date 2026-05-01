@@ -82,19 +82,15 @@ export default async function PaymentsPage() {
       {openDemands.length > 0 && (
         <div className="rounded-xl border p-5 space-y-3">
           <div>
-            <p className="font-medium text-sm">Zahlungsabgleich via CAMT.053</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Kontoauszug aus dem E-Banking exportieren und hochladen — offene Posten werden automatisch zugeordnet.
-            </p>
+            <p className="font-medium text-sm">{t('camtTitle')}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('camtDesc')}</p>
           </div>
           <CamtImport openDemands={openDemands} />
         </div>
       )}
 
       {rows.length === 0 ? (
-        <p className="text-muted-foreground">
-          Noch keine Sollstellungen. Klicke auf &quot;{t('generateDemands')}&quot;.
-        </p>
+        <p className="text-muted-foreground">{t('empty', { btn: t('generateDemands') })}</p>
       ) : (
         <RentDemandTable demands={rows} />
       )}

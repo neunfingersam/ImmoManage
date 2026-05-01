@@ -61,6 +61,7 @@ export async function createAdmin(data: {
       role: 'ADMIN',
       companyId: parsed.data.companyId,
       active: true,
+      mustChangePassword: true,
     },
   })
 

@@ -295,7 +295,10 @@
     "reminderLevel": "Niveau de rappel",
     "qrRechnung": "Facture QR",
     "openTotal": "Total des impayés",
-    "overdueCount": "En retard"
+    "overdueCount": "En retard",
+    "camtTitle": "Réconciliation via CAMT.053",
+    "camtDesc": "Exportez et téléchargez votre relevé bancaire — les postes ouverts sont appariés automatiquement.",
+    "empty": "Aucune créance de loyer. Cliquez sur \"{btn}\"."
   },
   "billing": {
     "title": "Décompte de charges",
@@ -322,7 +325,9 @@
     "empty": "Aucun décompte",
     "emptyDesc": "Aucun décompte de charges créé pour l'instant.",
     "sentAt": "Envoyé le {date}",
-    "yearLabel": "Année {year}"
+    "yearLabel": "Année {year}",
+    "colTenant": "Locataire",
+    "colTotal": "Total"
   },
   "documents": {
     "title": "Documents",
@@ -355,7 +360,9 @@
     "nebenkostenabrechnung": "Décompte de charges",
     "mahnung1": "Rappel 1er niveau",
     "mahnung2": "Rappel 2e niveau",
-    "mahnung3": "Rappel 3e niveau"
+    "mahnung3": "Rappel 3e niveau",
+    "importVorlage": "Modèle d'importation",
+    "importVorlageDesc": "Téléchargez le modèle Excel, remplissez-le avec vos données et importez propriétés et locataires."
   },
   "tasks": {
     "title": "Tâches",
@@ -793,5 +800,16 @@
     "newMessageTo": "Nouveau message à",
     "empty": "Aucun message",
     "emptyDesc": "Commencez une conversation avec un locataire."
+  },
+  "weg": {
+    "title": "Propriété par étages (PPE)",
+    "count": "{count, plural, one {# communauté} other {# communautés}}",
+    "newBtn": "Nouvelle PPE",
+    "empty": "Aucune PPE créée",
+    "emptyDesc": "Créez votre première communauté de propriétaires pour commencer la gestion.",
+    "checkQuota": "Vérifier les quotes-parts",
+    "owners": "{count, plural, one {# propriétaire} other {# propriétaires}}",
+    "units": "{count, plural, one {# unité} other {# unités}}",
+    "renewalFund": "Fonds de rénovation"
   }
 }

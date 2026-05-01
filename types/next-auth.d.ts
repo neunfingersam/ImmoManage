@@ -10,6 +10,7 @@ declare module 'next-auth' {
       companyId: string | null
       name: string
       email: string
+      mustChangePassword?: boolean
     }
   }
 
@@ -19,6 +20,7 @@ declare module 'next-auth' {
     companyId: string | null
     name: string
     email: string
+    mustChangePassword?: boolean
   }
 }
 
@@ -27,5 +29,6 @@ declare module 'next-auth/jwt' {
     id: string
     role: Role
     companyId: string | null
+    mustChangePassword?: boolean
   }
 }

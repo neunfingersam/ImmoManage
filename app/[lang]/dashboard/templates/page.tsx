@@ -45,6 +45,22 @@ export default async function TemplatesPage() {
             </div>
           </div>
         ))}
+
+        {/* Data import template */}
+        <div className="border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">📥</span>
+            <h3 className="font-semibold">{t('importVorlage')}</h3>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">{t('importVorlageDesc')}</p>
+          <a
+            href="/templates/import-vorlage.xlsx"
+            download
+            className="inline-flex items-center gap-1.5 text-xs border rounded-lg px-2.5 py-1.5 hover:bg-muted transition-colors font-medium"
+          >
+            ↓ import-vorlage.xlsx
+          </a>
+        </div>
       </div>
     </div>
   )

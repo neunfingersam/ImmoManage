@@ -295,7 +295,10 @@
     "reminderLevel": "Livello sollecito",
     "qrRechnung": "Fattura QR",
     "openTotal": "Totale insoluti",
-    "overdueCount": "Scaduti"
+    "overdueCount": "Scaduti",
+    "camtTitle": "Riconciliazione tramite CAMT.053",
+    "camtDesc": "Esporta e carica il tuo estratto conto — le voci aperte vengono abbinate automaticamente.",
+    "empty": "Nessuna richiesta di pagamento. Clicca su \"{btn}\"."
   },
   "billing": {
     "title": "Conteggio spese",
@@ -322,7 +325,9 @@
     "empty": "Nessun rendiconto",
     "emptyDesc": "Nessun rendiconto spese creato ancora.",
     "sentAt": "Inviato il {date}",
-    "yearLabel": "Anno {year}"
+    "yearLabel": "Anno {year}",
+    "colTenant": "Inquilino",
+    "colTotal": "Totale"
   },
   "documents": {
     "title": "Documenti",
@@ -355,7 +360,9 @@
     "nebenkostenabrechnung": "Conteggio spese",
     "mahnung1": "Sollecito 1° livello",
     "mahnung2": "Sollecito 2° livello",
-    "mahnung3": "Sollecito 3° livello"
+    "mahnung3": "Sollecito 3° livello",
+    "importVorlage": "Modello di importazione",
+    "importVorlageDesc": "Scarica il modello Excel, compilalo con i tuoi dati e importa proprietà e inquilini."
   },
   "tasks": {
     "title": "Attività",
@@ -793,5 +800,16 @@
     "newMessageTo": "Nuovo messaggio a",
     "empty": "Nessun messaggio",
     "emptyDesc": "Inizia una conversazione con un affittuario."
+  },
+  "weg": {
+    "title": "Proprietà per piani (PPP)",
+    "count": "{count, plural, one {# comunità} other {# comunità}}",
+    "newBtn": "Nuova PPP",
+    "empty": "Nessuna PPP creata",
+    "emptyDesc": "Crea la tua prima comunità di proprietari per iniziare la gestione.",
+    "checkQuota": "Verifica quote",
+    "owners": "{count, plural, one {# proprietario} other {# proprietari}}",
+    "units": "{count, plural, one {# unità} other {# unità}}",
+    "renewalFund": "Fondo di rinnovo"
   }
 }

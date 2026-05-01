@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import type { TenantShare, CostItem } from '@/lib/utility-billing'
 
 export default async function BillingDetailPage({
@@ -14,6 +15,7 @@ export default async function BillingDetailPage({
   if (!session?.user?.companyId) return null
 
   const { id } = await params
+  const t = await getTranslations('billing')
 
   const bill = await prisma.utilityBill.findUnique({
     where: { id },
@@ -31,7 +33,7 @@ export default async function BillingDetailPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Nebenkostenabrechnung {bill.year}</h1>
+        <h1 className="font-serif text-2xl text-foreground">{t('title')} {bill.year}</h1>
         <p className="text-sm text-muted-foreground">
           {bill.property.name} · CHF {bill.amount.toFixed(2)}
         </p>
@@ -40,15 +42,15 @@ export default async function BillingDetailPage({
       {/* Kostenpositionen */}
       {costItems.length > 0 && (
         <div>
-          <h2 className="font-semibold mb-2">Kostenpositionen</h2>
+          <h2 className="font-semibold mb-2">{t('costItems')}</h2>
           <div className="rounded-lg border overflow-hidden">
             <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-3">Position</th>
-                  <th className="text-right p-3">Betrag (CHF)</th>
-                  <th className="text-left p-3">Verteilschlüssel</th>
+                  <th className="text-left p-3">{t('costName')}</th>
+                  <th className="text-right p-3">{t('costAmount')}</th>
+                  <th className="text-left p-3">{t('distributionKey')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -57,7 +59,7 @@ export default async function BillingDetailPage({
                     <td className="p-3">{item.name}</td>
                     <td className="p-3 text-right font-mono">{item.amount.toFixed(2)}</td>
                     <td className="p-3 text-muted-foreground">
-                      {item.key === 'sqm' ? 'Nach m²' : item.key === 'unit' ? 'Pro Einheit' : 'Nach Personen'}
+                      {item.key === 'sqm' ? t('keySqm') : item.key === 'unit' ? t('keyUnit') : t('keyPersons')}
                     </td>
                   </tr>
                 ))}
@@ -71,19 +73,19 @@ export default async function BillingDetailPage({
       {/* Mieteranteile */}
       {tenantShares.length > 0 && (
         <div>
-          <h2 className="font-semibold mb-2">Mieteranteile</h2>
+          <h2 className="font-semibold mb-2">{t('tenantShare')}</h2>
           <div className="rounded-lg border overflow-hidden">
             <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-3">Mieter</th>
+                  <th className="text-left p-3">{t('colTenant')}</th>
                   {costItems.map((item, i) => (
                     <th key={i} className="text-right p-3">{item.name}</th>
                   ))}
-                  <th className="text-right p-3">Gesamt</th>
+                  <th className="text-right p-3">{t('colTotal')}</th>
                   <th className="text-right p-3">Akonto</th>
-                  <th className="text-right p-3">Saldo</th>
+                  <th className="text-right p-3">{t('balance')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -105,15 +107,13 @@ export default async function BillingDetailPage({
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Positiver Saldo = Nachzahlung · Negativer Saldo = Rückerstattung
+            {t('underpaid')} = + · {t('overpaid')} = -
           </p>
         </div>
       )}
 
       {tenantShares.length === 0 && (
-        <p className="text-muted-foreground text-sm">
-          Keine Mieteranteile berechnet. Abrechnung wurde ohne Kostenpositionen erstellt.
-        </p>
+        <p className="text-muted-foreground text-sm">{t('empty')}</p>
       )}
     </div>
   )
