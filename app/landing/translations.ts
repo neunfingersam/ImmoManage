@@ -78,7 +78,7 @@ export const translations = {
         {
           name: 'Starter',
           price: 'CHF 19',
-          promo: '3 Monate gratis',
+          promo: '1 Monat Testphase',
           desc: '1 Objekt · 1–4 Einheiten',
           features: [
             '1 Benutzer',
@@ -92,7 +92,7 @@ export const translations = {
         {
           name: 'Standard',
           price: 'CHF 49',
-          promo: '2 Monate gratis',
+          promo: '1 Monat Testphase',
           desc: '2–5 Objekte · 5–25 Einheiten',
           features: [
             '1–2 Benutzer',
@@ -106,7 +106,7 @@ export const translations = {
         {
           name: 'Pro',
           price: 'CHF 99',
-          promo: '1 Monat gratis',
+          promo: '2 Monate Testphase',
           desc: '6–20 Objekte · 26–100 Einheiten',
           features: [
             '2–5 Benutzer',
@@ -258,7 +258,7 @@ export const translations = {
         {
           name: 'Starter',
           price: 'CHF 19',
-          promo: '3 mois offerts',
+          promo: '1 mois d\'essai',
           desc: '1 objet · 1–4 logements',
           features: ['1 utilisateur', 'Portail locataires', 'Documents & Tickets', 'Support de base'],
           cta: 'Commencer gratuitement',
@@ -267,7 +267,7 @@ export const translations = {
         {
           name: 'Standard',
           price: 'CHF 49',
-          promo: '2 mois offerts',
+          promo: '1 mois d\'essai',
           desc: '2–5 objets · 5–25 logements',
           features: ['1–2 utilisateurs', 'Facture QR (CH)', 'Portail + Documents', 'Calendrier & Échéances'],
           cta: 'Commencer maintenant',
@@ -276,7 +276,7 @@ export const translations = {
         {
           name: 'Pro',
           price: 'CHF 99',
-          promo: '1 mois offert',
+          promo: '2 mois d\'essai',
           desc: '6–20 objets · 26–100 logements',
           features: ['2–5 utilisateurs', 'QR + Dossier fiscal', 'Assistant IA', 'Protocole de remise', 'Gestion PPE'],
           cta: 'Commencer maintenant',
@@ -422,7 +422,7 @@ export const translations = {
         {
           name: 'Starter',
           price: 'CHF 19',
-          promo: '3 mesi gratuiti',
+          promo: '1 mese di prova',
           desc: '1 oggetto · 1–4 appartamenti',
           features: ['1 utente', 'Portale affittuari', 'Documenti & Ticket', 'Supporto base'],
           cta: 'Inizia gratuitamente',
@@ -431,7 +431,7 @@ export const translations = {
         {
           name: 'Standard',
           price: 'CHF 49',
-          promo: '2 mesi gratuiti',
+          promo: '1 mese di prova',
           desc: '2–5 oggetti · 5–25 appartamenti',
           features: ['1–2 utenti', 'Fattura QR (CH)', 'Portale + Documenti', 'Calendario & Scadenze'],
           cta: 'Inizia ora',
@@ -440,7 +440,7 @@ export const translations = {
         {
           name: 'Pro',
           price: 'CHF 99',
-          promo: '1 mese gratuito',
+          promo: '2 mesi di prova',
           desc: '6–20 oggetti · 26–100 appartamenti',
           features: ['2–5 utenti', 'QR + Dossier fiscale', 'Assistente IA', 'Verbale di consegna', 'Gestione PPP'],
           cta: 'Inizia ora',
@@ -586,7 +586,7 @@ export const translations = {
         {
           name: 'Starter',
           price: 'CHF 19',
-          promo: '3 months free',
+          promo: '1 month trial',
           desc: '1 property · 1–4 units',
           features: ['1 user', 'Tenant portal', 'Documents & Tickets', 'Basic support'],
           cta: 'Start for free',
@@ -595,7 +595,7 @@ export const translations = {
         {
           name: 'Standard',
           price: 'CHF 49',
-          promo: '2 months free',
+          promo: '1 month trial',
           desc: '2–5 properties · 5–25 units',
           features: ['1–2 users', 'QR invoice (CH)', 'Portal + Documents', 'Calendar & Deadlines'],
           cta: 'Get started',
@@ -604,7 +604,7 @@ export const translations = {
         {
           name: 'Pro',
           price: 'CHF 99',
-          promo: '1 month free',
+          promo: '2 months trial',
           desc: '6–20 properties · 26–100 units',
           features: ['2–5 users', 'QR + Tax folder', 'AI assistant', 'Handover protocol', 'Strata management'],
           cta: 'Get started',

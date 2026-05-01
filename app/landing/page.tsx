@@ -36,7 +36,7 @@ const FEATURES = [
   { icon: '📅', key: 'calendar',    live: true  },
   { icon: '🧾', key: 'qr',         live: true  },
   { icon: '🏗️', key: 'weg',         live: true  },
-  { icon: '🤖', key: 'ai',          live: false },
+  { icon: '🤖', key: 'ai',          live: true  },
   { icon: '⚠️', key: 'reminders',   live: false },
   { icon: '📊', key: 'taxes',       live: false },
   { icon: '📱', key: 'whatsapp',    live: false },
@@ -134,7 +134,7 @@ export default function LandingPage() {
 
   const label = {
     de: { live: 'Verfügbar', soon: 'Demnächst', features: 'Funktionen', pricing: 'Preise',
-          login: 'Anmelden', cta: 'Gratis testen', trust: ['Keine Kreditkarte', 'Schweizer Server', 'Monatlich kündbar'],
+          login: 'Anmelden', cta: 'Gratis testen', trust: ['1 Monat kostenlos testen', 'Monatlich kündbar', 'Keine Einrichtungsgebühr'],
           painTitle: 'Kennen Sie das?', painLabel: 'DER ALTE WEG',
           painSub: 'Was Hausverwalter täglich Zeit, Nerven und Geld kostet — und längst gelöst sein sollte.',
           pains: ['Tabellen und Excel-Chaos für Miet- und Nebenkosten', 'Dokumente per E-Mail hin- und herschicken', 'Mieter rufen wegen jeder Kleinigkeit an', 'Fristen verpassen weil alles im Kopf gespeichert ist', 'Stundenlange Nebenkostenabrechnungen manuell erstellen', 'Kein Überblick über Leerstände und auslaufende Verträge'],
@@ -142,7 +142,7 @@ export default function LandingPage() {
           solutionSub: 'Alles was ein Vermieter braucht — in einer einzigen Schweizer Software.',
         },
     fr: { live: 'Disponible', soon: 'Bientôt', features: 'Fonctionnalités', pricing: 'Tarifs',
-          login: 'Connexion', cta: 'Essai gratuit', trust: ['Sans carte de crédit', 'Serveur suisse', 'Résiliable mensuellement'],
+          login: 'Connexion', cta: 'Essai gratuit', trust: ['1 mois d\'essai gratuit', 'Résiliable mensuellement', 'Sans frais d\'installation'],
           painTitle: 'Vous connaissez ça?', painLabel: 'L\'ANCIENNE MÉTHODE',
           painSub: 'Ce qui coûte du temps, des nerfs et de l\'argent aux gérants immobiliers chaque jour.',
           pains: ['Tableaux Excel pour loyers et charges', 'Documents envoyés par e-mail', 'Locataires qui appellent pour tout', 'Délais oubliés car tout est en tête', 'Décomptes de charges manuels et chronophages', 'Aucune vue d\'ensemble des logements vacants et contrats expirants'],
@@ -150,7 +150,7 @@ export default function LandingPage() {
           solutionSub: 'Tout ce dont un propriétaire a besoin — dans un seul logiciel suisse.',
         },
     it: { live: 'Disponibile', soon: 'Prossimamente', features: 'Funzionalità', pricing: 'Prezzi',
-          login: 'Accedi', cta: 'Prova gratuita', trust: ['Senza carta di credito', 'Server svizzero', 'Annullabile mensilmente'],
+          login: 'Accedi', cta: 'Prova gratuita', trust: ['1 mese di prova gratuita', 'Annullabile mensilmente', 'Senza costi di attivazione'],
           painTitle: 'La riconosci?', painLabel: 'IL VECCHIO MODO',
           painSub: 'Quello che costa tempo, nervi e denaro ai gestori immobiliari ogni giorno.',
           pains: ['Fogli Excel per affitti e spese', 'Documenti inviati via e-mail', 'Affittuari che chiamano per tutto', 'Scadenze dimenticate perché tutto è in testa', 'Rendiconti spese manuali e lunghi', 'Nessuna panoramica su unità sfitte e contratti in scadenza'],
@@ -158,7 +158,7 @@ export default function LandingPage() {
           solutionSub: 'Tutto ciò di cui un proprietario ha bisogno — in un unico software svizzero.',
         },
     en: { live: 'Available', soon: 'Coming Soon', features: 'Features', pricing: 'Pricing',
-          login: 'Sign in', cta: 'Try for free', trust: ['No credit card', 'Swiss server', 'Cancel anytime'],
+          login: 'Sign in', cta: 'Try for free', trust: ['1 month free trial', 'Cancel anytime', 'No setup fee'],
           painTitle: 'Sound familiar?', painLabel: 'THE OLD WAY',
           painSub: 'What costs property managers time, nerves and money every day — and should have been solved long ago.',
           pains: ['Spreadsheet chaos for rents and utilities', 'Documents sent back and forth by email', 'Tenants calling about every little thing', 'Missing deadlines because everything is in your head', 'Hours spent creating utility bills manually', 'No overview of vacancies and expiring leases'],
@@ -239,9 +239,11 @@ export default function LandingPage() {
       }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', height: 64, gap: 24 }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => scrollTo('hero')}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="ImmoManage" style={{ height: 36 }} />
+          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }} onClick={() => scrollTo('hero')}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: 'white', fontWeight: 800, fontSize: 16, fontFamily: 'DM Sans, sans-serif' }}>IM</span>
+            </div>
+            <span style={{ fontWeight: 700, fontSize: 17, color: '#1a1a2e', letterSpacing: '-0.3px' }}>ImmoManage</span>
           </div>
 
           {/* Desktop Links */}
@@ -520,9 +522,11 @@ export default function LandingPage() {
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <footer style={{ background: '#111827', padding: '40px 24px', borderTop: '1px solid rgba(255,255,255,.06)' }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="ImmoManage" style={{ height: 28, filter: 'brightness(0) invert(1)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: 'white', fontWeight: 800, fontSize: 13 }}>IM</span>
+            </div>
+            <span style={{ fontWeight: 700, fontSize: 15, color: '#9ca3af' }}>ImmoManage</span>
           </div>
           <div style={{ display: 'flex', gap: 20 }}>
             {t.footer.links.map((link, i) => {
