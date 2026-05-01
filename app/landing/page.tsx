@@ -268,11 +268,11 @@ export default function LandingPage() {
               </button>
             ))}
             <span style={{ width: 1, height: 20, background: '#e5e7eb', margin: '0 4px' }} />
-            <button className="nav-link-item">{lbl.login}</button>
+            <button className="nav-link-item" onClick={() => { window.location.href = `/${locale}/auth/login` }}>{lbl.login}</button>
             <button
               className="btn-coral"
               style={{ padding: '8px 18px', fontSize: 14, minHeight: 36 }}
-              onClick={() => setContactOpen(true)}
+              onClick={() => scrollTo('pricing')}
             >
               {lbl.cta} →
             </button>
@@ -312,7 +312,7 @@ export default function LandingPage() {
           </p>
 
           <div className="fade-up delay-4" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 28 }}>
-            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => setContactOpen(true)}>
+            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => scrollTo('pricing')}>
               {lbl.cta} →
             </button>
           </div>
@@ -514,21 +514,6 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── Final CTA ────────────────────────────────────────────────────────── */}
-      <section style={{ padding: '80px 24px', background: BG, textAlign: 'center' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <h2 className="serif" style={{ fontSize: 'clamp(28px, 4vw, 42px)', color: '#1a1a2e', marginBottom: 14 }}>
-            {locale === 'de' ? 'Bereit loszulegen?' : locale === 'fr' ? 'Prêt à commencer?' : locale === 'it' ? 'Pronto per iniziare?' : 'Ready to get started?'}
-          </h2>
-          <p style={{ color: '#6b6860', fontSize: 16, marginBottom: 28 }}>
-            {locale === 'de' ? 'Kostenlos starten, jederzeit upgraden.' : locale === 'fr' ? 'Commencez gratuitement, upgradez à tout moment.' : locale === 'it' ? 'Inizia gratuitamente, aggiorna quando vuoi.' : 'Start for free, upgrade anytime.'}
-          </p>
-          <button className="btn-coral" style={{ padding: '16px 36px', fontSize: 16, minHeight: 52, borderRadius: 12 }} onClick={() => setContactOpen(true)}>
-            {lbl.cta} →
-          </button>
         </div>
       </section>
 

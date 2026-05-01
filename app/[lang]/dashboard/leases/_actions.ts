@@ -79,6 +79,13 @@ export async function createLease(data: LeaseFormValues): Promise<ActionResult<L
         coldRent: parsed.data.coldRent,
         extraCosts: parsed.data.extraCosts,
         depositPaid: parsed.data.depositPaid ?? false,
+        depositAmount: parsed.data.depositAmount ?? null,
+        depositBank: parsed.data.depositBank ?? null,
+        depositStatus: parsed.data.depositStatus ?? 'AUSSTEHEND',
+        indexierung: parsed.data.indexierung ?? false,
+        referenzzinssatz: parsed.data.referenzzinssatz ?? null,
+        keysCount: parsed.data.keysCount ?? null,
+        noticePeriodMonths: parsed.data.noticePeriodMonths ?? 3,
         status: 'ACTIVE',
       },
     })

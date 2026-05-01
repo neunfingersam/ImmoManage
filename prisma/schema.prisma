@@ -317,6 +317,7 @@ model Unit {
   floor      Int?
   size       Float?
   rooms      Float?
+  persons    Int        @default(1)
   status     UnitStatus @default(LEER)
   photos     Json?
   property       Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
@@ -336,13 +337,15 @@ model Lease {
   endDate           DateTime?
   coldRent          Float
   extraCosts        Float
-  depositPaid       Boolean       @default(false)
-  depositAmount     Float?
-  depositBank       String?
-  depositStatus     DepositStatus @default(AUSSTEHEND)
-  indexierung       Boolean       @default(false)
-  referenzzinssatz  Float?
-  contractPdf       String?
+  depositPaid        Boolean       @default(false)
+  depositAmount      Float?
+  depositBank        String?
+  depositStatus      DepositStatus @default(AUSSTEHEND)
+  indexierung        Boolean       @default(false)
+  referenzzinssatz   Float?
+  keysCount          Int?
+  noticePeriodMonths Int?          @default(3)
+  contractPdf        String?
   handoverWizard    Json?
   createdAt         DateTime      @default(now())
   unit          Unit          @relation(fields: [unitId], references: [id])
@@ -556,6 +559,8 @@ model RentDemand {
   lease     Lease           @relation(fields: [leaseId], references: [id])
   payments  Payment[]
   reminders PaymentReminder[]
+
+  @@unique([leaseId, month, year])
 }
 
 model Payment {
