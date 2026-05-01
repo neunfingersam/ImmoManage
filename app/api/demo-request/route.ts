@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     </div>
   `
 
-  await sendEmail('flaviopeter@immo-manage.ch', `Demo-Anfrage von ${name}`, html)
+  await sendEmail('info@immo-manage.ch', `Demo-Anfrage von ${name}`, html)
 
   return NextResponse.json({ ok: true })
 }

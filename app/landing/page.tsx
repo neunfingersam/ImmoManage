@@ -574,12 +574,21 @@ function FeedbackModal({ t, onClose }: { locale: Locale; t: FeedbackT; onClose: 
   const [form, setForm] = useState({ title: '', category: '', description: '', name: '', email: '' })
   const [submitted, setSubmitted] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title || !form.category || !form.description) return
     const suggestions: Suggestion[] = JSON.parse(localStorage.getItem('immo_suggestions') ?? '[]')
     const item: Suggestion = { id: Date.now().toString(), ...form, votes: 0, votedBy: [], createdAt: new Date().toISOString() }
     localStorage.setItem('immo_suggestions', JSON.stringify([item, ...suggestions]))
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+    } catch {
+      // silent — localStorage already saved it
+    }
     setSubmitted(true)
     setTimeout(() => { setSubmitted(false); setForm({ title: '', category: '', description: '', name: '', email: '' }) }, 2400)
   }
