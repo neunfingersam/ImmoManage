@@ -239,11 +239,9 @@ export default function LandingPage() {
       }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', height: 64, gap: 24 }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }} onClick={() => scrollTo('hero')}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: 'white', fontWeight: 800, fontSize: 16, fontFamily: 'DM Sans, sans-serif' }}>IM</span>
-            </div>
-            <span style={{ fontWeight: 700, fontSize: 17, color: '#1a1a2e', letterSpacing: '-0.3px' }}>ImmoManage</span>
+          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => scrollTo('hero')}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="ImmoManage" style={{ height: 40, width: 'auto', imageRendering: 'auto' }} />
           </div>
 
           {/* Desktop Links */}
@@ -522,11 +520,9 @@ export default function LandingPage() {
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <footer style={{ background: '#111827', padding: '40px 24px', borderTop: '1px solid rgba(255,255,255,.06)' }}>
         <div style={{ maxWidth: 1160, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: 'white', fontWeight: 800, fontSize: 13 }}>IM</span>
-            </div>
-            <span style={{ fontWeight: 700, fontSize: 15, color: '#9ca3af' }}>ImmoManage</span>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="ImmoManage" style={{ height: 32, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.85 }} />
           </div>
           <div style={{ display: 'flex', gap: 20 }}>
             {t.footer.links.map((link, i) => {
