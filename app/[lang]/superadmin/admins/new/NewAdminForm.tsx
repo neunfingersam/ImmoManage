@@ -25,7 +25,6 @@ export function NewAdminForm({ companies }: Props) {
       const result = await createAdmin({
         name: fd.get('name') as string,
         email: fd.get('email') as string,
-        password: fd.get('password') as string,
         companyId: fd.get('companyId') as string,
       })
       if (result.success) router.push('/superadmin/admins')
@@ -43,10 +42,6 @@ export function NewAdminForm({ companies }: Props) {
         <div className="space-y-1">
           <Label htmlFor="email">E-Mail</Label>
           <Input id="email" name="email" type="email" required />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="password">Passwort</Label>
-          <Input id="password" name="password" type="password" minLength={6} required />
         </div>
         <div className="space-y-1">
           <Label htmlFor="companyId">Unternehmen</Label>
