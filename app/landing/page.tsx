@@ -133,32 +133,32 @@ export default function LandingPage() {
   }
 
   const label = {
-    de: { live: 'Verfügbar', soon: 'Demnächst', features: 'Funktionen', pricing: 'Preise',
-          login: 'Anmelden', cta: 'Gratis testen', trust: ['1 Monat kostenlos testen', 'Monatlich kündbar', 'Keine Einrichtungsgebühr'],
+    de: { live: 'Verfügbar', soon: 'Demnächst', features: 'Funktionen', pricing: 'Early Access',
+          login: 'Anmelden', cta: 'Kostenlos Zugang anfragen', trust: ['1 Monat kostenlos testen', 'Produkt mitgestalten', 'Monatlich kündbar'],
           painTitle: 'Kennen Sie das?', painLabel: 'DER ALTE WEG',
           painSub: 'Was Hausverwalter täglich Zeit, Nerven und Geld kostet — und längst gelöst sein sollte.',
           pains: ['Tabellen und Excel-Chaos für Miet- und Nebenkosten', 'Dokumente per E-Mail hin- und herschicken', 'Mieter rufen wegen jeder Kleinigkeit an', 'Fristen verpassen weil alles im Kopf gespeichert ist', 'Stundenlange Nebenkostenabrechnungen manuell erstellen', 'Kein Überblick über Leerstände und auslaufende Verträge'],
           solutionLabel: 'DIE LÖSUNG', solutionTitle: 'ImmoManage macht Schluss damit.',
           solutionSub: 'Alles was ein Vermieter braucht — in einer einzigen Schweizer Software.',
         },
-    fr: { live: 'Disponible', soon: 'Bientôt', features: 'Fonctionnalités', pricing: 'Tarifs',
-          login: 'Connexion', cta: 'Essai gratuit', trust: ['1 mois d\'essai gratuit', 'Résiliable mensuellement', 'Sans frais d\'installation'],
+    fr: { live: 'Disponible', soon: 'Bientôt', features: 'Fonctionnalités', pricing: 'Early Access',
+          login: 'Connexion', cta: 'Demander un accès gratuit', trust: ['1 mois d\'essai gratuit', 'Contribuer au produit', 'Résiliable mensuellement'],
           painTitle: 'Vous connaissez ça?', painLabel: 'L\'ANCIENNE MÉTHODE',
           painSub: 'Ce qui coûte du temps, des nerfs et de l\'argent aux gérants immobiliers chaque jour.',
           pains: ['Tableaux Excel pour loyers et charges', 'Documents envoyés par e-mail', 'Locataires qui appellent pour tout', 'Délais oubliés car tout est en tête', 'Décomptes de charges manuels et chronophages', 'Aucune vue d\'ensemble des logements vacants et contrats expirants'],
           solutionLabel: 'LA SOLUTION', solutionTitle: 'ImmoManage en finit avec ça.',
           solutionSub: 'Tout ce dont un propriétaire a besoin — dans un seul logiciel suisse.',
         },
-    it: { live: 'Disponibile', soon: 'Prossimamente', features: 'Funzionalità', pricing: 'Prezzi',
-          login: 'Accedi', cta: 'Prova gratuita', trust: ['1 mese di prova gratuita', 'Annullabile mensilmente', 'Senza costi di attivazione'],
+    it: { live: 'Disponibile', soon: 'Prossimamente', features: 'Funzionalità', pricing: 'Early Access',
+          login: 'Accedi', cta: 'Richiedi accesso gratuito', trust: ['1 mese di prova gratuita', 'Contribuisci al prodotto', 'Annullabile mensilmente'],
           painTitle: 'La riconosci?', painLabel: 'IL VECCHIO MODO',
           painSub: 'Quello che costa tempo, nervi e denaro ai gestori immobiliari ogni giorno.',
           pains: ['Fogli Excel per affitti e spese', 'Documenti inviati via e-mail', 'Affittuari che chiamano per tutto', 'Scadenze dimenticate perché tutto è in testa', 'Rendiconti spese manuali e lunghi', 'Nessuna panoramica su unità sfitte e contratti in scadenza'],
           solutionLabel: 'LA SOLUZIONE', solutionTitle: 'ImmoManage mette fine a tutto ciò.',
           solutionSub: 'Tutto ciò di cui un proprietario ha bisogno — in un unico software svizzero.',
         },
-    en: { live: 'Available', soon: 'Coming Soon', features: 'Features', pricing: 'Pricing',
-          login: 'Sign in', cta: 'Try for free', trust: ['1 month free trial', 'Cancel anytime', 'No setup fee'],
+    en: { live: 'Available', soon: 'Coming Soon', features: 'Features', pricing: 'Early Access',
+          login: 'Sign in', cta: 'Request free access', trust: ['1 month free trial', 'Shape the product', 'Cancel anytime'],
           painTitle: 'Sound familiar?', painLabel: 'THE OLD WAY',
           painSub: 'What costs property managers time, nerves and money every day — and should have been solved long ago.',
           pains: ['Spreadsheet chaos for rents and utilities', 'Documents sent back and forth by email', 'Tenants calling about every little thing', 'Missing deadlines because everything is in your head', 'Hours spent creating utility bills manually', 'No overview of vacancies and expiring leases'],
@@ -272,7 +272,7 @@ export default function LandingPage() {
             <button
               className="btn-coral"
               style={{ padding: '8px 18px', fontSize: 14, minHeight: 36 }}
-              onClick={() => scrollTo('pricing')}
+              onClick={() => setContactOpen(true)}
             >
               {lbl.cta} →
             </button>
@@ -312,7 +312,7 @@ export default function LandingPage() {
           </p>
 
           <div className="fade-up delay-4" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 28 }}>
-            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => scrollTo('pricing')}>
+            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => setContactOpen(true)}>
               {lbl.cta} →
             </button>
           </div>
@@ -457,63 +457,68 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Pricing ──────────────────────────────────────────────────────────── */}
+      {/* ── Early Access ─────────────────────────────────────────────────────── */}
       <section id="pricing" style={{ padding: '80px 24px', background: 'white' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 52 }}>
-            <h2 className="serif" style={{ fontSize: 'clamp(30px, 4vw, 44px)', color: '#1a1a2e', marginBottom: 10 }}>{t.pricing.title}</h2>
-            <p style={{ color: '#6b6860', fontSize: 16 }}>{t.pricing.subtitle}</p>
+        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
+          {/* Badge */}
+          <div style={{ display: 'inline-block', background: `${CORAL}15`, color: CORAL, fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 999, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 24 }}>
+            {locale === 'de' ? 'Early Access' : locale === 'fr' ? 'Accès anticipé' : locale === 'it' ? 'Accesso anticipato' : 'Early Access'}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, alignItems: 'start' }}>
-            {t.pricing.plans.map((plan, i) => (
-              <div key={i} className="hover-lift" style={{
-                position: 'relative', background: 'white', borderRadius: 20, padding: 28,
-                border: plan.highlight ? `2px solid ${CORAL}` : '1.5px solid #ede8e2',
-                transition: 'all .2s',
-              }}>
-                {plan.highlight && (
-                  <div style={{
-                    position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
-                    background: CORAL, color: 'white', fontSize: 12, fontWeight: 700,
-                    padding: '5px 16px', borderRadius: 999, whiteSpace: 'nowrap',
-                  }}>
-                    {t.pricing.popular}
-                  </div>
-                )}
-                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 4, color: '#1a1a2e' }}>{plan.name}</div>
-                <div className="serif" style={{ fontSize: 40, fontWeight: 700, color: CORAL, marginBottom: 0, lineHeight: 1.1 }}>
-                  {plan.price}
-                  <span style={{ fontSize: 15, fontWeight: 400, color: '#9ca3af' }}> {t.pricing.month}</span>
-                </div>
-                {'promo' in plan && plan.promo && (
-                  <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 12, padding: '3px 10px', borderRadius: 6, background: `${CORAL}15`, color: CORAL, fontSize: 12, fontWeight: 600 }}>
-                    {plan.promo as string}
-                  </div>
-                )}
-                <div style={{ fontSize: 13, color: '#6b6860', marginBottom: 20 }}>{plan.desc}</div>
-                <ul style={{ listStyle: 'none', marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {plan.features.map((f, j) => (
-                    <li key={j} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151' }}>
-                      <span style={{ color: CORAL, fontSize: 13, flexShrink: 0, fontWeight: 700 }}>✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => setContactOpen(true)}
-                  style={{
-                    width: '100%', padding: '12px 0', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
-                    background: plan.highlight ? CORAL : 'white',
-                    color: plan.highlight ? 'white' : CORAL,
-                    border: `1.5px solid ${plan.highlight ? CORAL : '#ede8e2'}`,
-                    transition: 'opacity .15s',
-                  }}
-                >
-                  {plan.cta}
-                </button>
+
+          <h2 className="serif" style={{ fontSize: 'clamp(28px, 4vw, 42px)', color: '#1a1a2e', marginBottom: 16, lineHeight: 1.2 }}>
+            {locale === 'de' ? <>Aktuell im Aufbau —<br />sei von Anfang an dabei.</> :
+             locale === 'fr' ? <>En construction —<br />rejoignez-nous dès le début.</> :
+             locale === 'it' ? <>In fase di sviluppo —<br />unisciti fin dall'inizio.</> :
+                               <>Currently in development —<br />be part of it from day one.</>}
+          </h2>
+          <p style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.7, maxWidth: 560, margin: '0 auto 48px' }}>
+            {locale === 'de' ? 'ImmoManage befindet sich in der Early-Access-Phase. Wer sich jetzt registriert, erhält eine persönliche Demo-Umgebung — und kann das Produkt direkt mitgestalten.' :
+             locale === 'fr' ? 'ImmoManage est en phase d\'accès anticipé. Les personnes qui s\'inscrivent maintenant reçoivent un environnement de démo personnel — et peuvent contribuer directement au développement du produit.' :
+             locale === 'it' ? 'ImmoManage è in fase di accesso anticipato. Chi si registra ora riceve un ambiente demo personale — e può contribuire direttamente allo sviluppo del prodotto.' :
+                               'ImmoManage is in early access. Those who register now get a personal demo environment — and can directly help shape the product.'}
+          </p>
+
+          {/* Two benefit cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 48, textAlign: 'left' }}>
+            <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2' }}>
+              <div style={{ fontSize: 28, marginBottom: 14 }}>🧪</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
+                {locale === 'de' ? '1 Monat kostenlos testen' : locale === 'fr' ? '1 mois d\'essai gratuit' : locale === 'it' ? '1 mese di prova gratuita' : '1 month free trial'}
               </div>
-            ))}
+              <p style={{ fontSize: 14, color: '#6b6860', lineHeight: 1.6 }}>
+                {locale === 'de' ? 'Vollständiger Zugang zur Plattform — ohne Kreditkarte, ohne Risiko. Du kannst alles in deiner eigenen Umgebung testen.' :
+                 locale === 'fr' ? 'Accès complet à la plateforme — sans carte de crédit, sans risque. Testez tout dans votre propre environnement.' :
+                 locale === 'it' ? 'Accesso completo alla piattaforma — senza carta di credito, senza rischi. Testa tutto nel tuo ambiente personale.' :
+                                   'Full access to the platform — no credit card, no risk. Test everything in your own personal environment.'}
+              </p>
+            </div>
+            <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40` }}>
+              <div style={{ fontSize: 28, marginBottom: 14 }}>🎨</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
+                {locale === 'de' ? 'Produkt mitgestalten' : locale === 'fr' ? 'Contribuer au produit' : locale === 'it' ? 'Contribuisci al prodotto' : 'Shape the product'}
+              </div>
+              <p style={{ fontSize: 14, color: '#6b6860', lineHeight: 1.6 }}>
+                {locale === 'de' ? 'Als Early-Access-Nutzer hast du direkten Einfluss auf die Weiterentwicklung. Dein Feedback fliesst direkt ins Produkt ein.' :
+                 locale === 'fr' ? 'En tant qu\'utilisateur Early Access, vous avez une influence directe sur le développement. Vos retours sont intégrés directement dans le produit.' :
+                 locale === 'it' ? 'Come utente Early Access, hai un\'influenza diretta sullo sviluppo. Il tuo feedback viene integrato direttamente nel prodotto.' :
+                                   'As an early access user, you have direct influence on development. Your feedback flows directly into the product.'}
+              </p>
+            </div>
           </div>
+
+          <button
+            className="btn-coral"
+            style={{ padding: '16px 36px', fontSize: 16, minHeight: 52 }}
+            onClick={() => setContactOpen(true)}
+          >
+            {lbl.cta} →
+          </button>
+          <p style={{ marginTop: 16, fontSize: 13, color: '#9ca3af' }}>
+            {locale === 'de' ? 'Preise werden nach der Early-Access-Phase veröffentlicht.' :
+             locale === 'fr' ? 'Les tarifs seront publiés après la phase d\'accès anticipé.' :
+             locale === 'it' ? 'I prezzi verranno pubblicati dopo la fase di accesso anticipato.' :
+                               'Pricing will be published after the early access phase.'}
+          </p>
         </div>
       </section>
 
