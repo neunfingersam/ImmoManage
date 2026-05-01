@@ -21,7 +21,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     maxUsers: 1,
     features: { qrInvoice: false, taxFolder: false, aiAssistant: false },
     label: 'Starter',
-    price: 'CHF 0/Mt.',
+    price: 'CHF 19/Mt.',
     color: '#94a3b8',
   },
   STANDARD: {

@@ -5,6 +5,16 @@ const FROM    = 'ImmoManage <hello@immo-manage.ch>'  // 'noreply@' scores worse 
 const REPLY_TO = 'ImmoManage Support <info@immo-manage.ch>'
 const ADDRESS  = 'ImmoManage · Küntwilerstrasse 23 · 6343 Rotkreuz · Schweiz'
 
+/** Escape user-provided strings before interpolating them into HTML */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+}
+
 /** Strip HTML tags to produce a plain-text fallback (prevents HTML-only spam penalty) */
 function htmlToText(html: string): string {
   return html
@@ -110,12 +120,12 @@ export async function sendTenantInviteEmail(opts: {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1a1a1a;">
       ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p>Hallo ${opts.tenantName},</p>
-        <p><strong>${opts.companyName}</strong> hat ein Mieter-Konto für Sie eingerichtet. Mit ImmoManage können Sie Ihre Mietunterlagen einsehen, Schadensmeldungen erstellen und mit Ihrer Hausverwaltung kommunizieren.</p>
+        <p>Hallo ${escapeHtml(opts.tenantName)},</p>
+        <p><strong>${escapeHtml(opts.companyName)}</strong> hat ein Mieter-Konto für Sie eingerichtet. Mit ImmoManage können Sie Ihre Mietunterlagen einsehen, Schadensmeldungen erstellen und mit Ihrer Hausverwaltung kommunizieren.</p>
         ${emailButton('Passwort festlegen &amp; einloggen', opts.inviteUrl, '#1e3a5f')}
         <p style="color: #6b7280; font-size: 13px;">Dieser Link ist <strong>${expires} Stunden</strong> gültig. Falls Sie diese Einladung nicht erwartet haben, können Sie diese E-Mail ignorieren.</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
-        <p style="font-size: 12px; color: #9ca3af;">ImmoManage · Verwaltet durch ${opts.companyName}</p>
+        <p style="font-size: 12px; color: #9ca3af;">ImmoManage · Verwaltet durch ${escapeHtml(opts.companyName)}</p>
       </div>
     </div>
   `
@@ -132,12 +142,12 @@ export async function sendEscalationEmail(opts: {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p>Hallo ${opts.vermieterName},</p>
+        <p>Hallo ${escapeHtml(opts.vermieterName)},</p>
         <p>Ein Mieter hat eine Frage gestellt, die der KI-Assistent nicht beantworten konnte:</p>
         <blockquote style="border-left: 3px solid #1e3a5f; padding-left: 16px; color: #555;">
-          ${opts.question}
+          ${escapeHtml(opts.question)}
         </blockquote>
-        <p>Mieter: <strong>${opts.tenantName}</strong></p>
+        <p>Mieter: <strong>${escapeHtml(opts.tenantName)}</strong></p>
         <p>Bitte melde dich direkt beim Mieter.</p>
         <hr style="border: none; border-top: 1px solid #eee;">
         <p style="font-size: 12px; color: #999;">ImmoManage · Automatische Benachrichtigung</p>
@@ -159,11 +169,11 @@ export async function sendDeletionRequestEmail(opts: {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p>Hallo ${opts.adminName},</p>
+        <p>Hallo ${escapeHtml(opts.adminName)},</p>
         <p>Der folgende Nutzer hat beantragt, sein Konto zu löschen:</p>
         <div style="background: #e8edf4; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <p style="margin: 0; font-weight: bold;">${opts.userName}</p>
-          <p style="margin: 4px 0 0; color: #555; font-size: 14px;">${opts.userEmail}</p>
+          <p style="margin: 0; font-weight: bold;">${escapeHtml(opts.userName)}</p>
+          <p style="margin: 4px 0 0; color: #555; font-size: 14px;">${escapeHtml(opts.userEmail)}</p>
         </div>
         <p>Bitte prüfen Sie den Antrag in der Verwaltungsoberfläche und genehmigen oder lehnen Sie ihn ab.</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
@@ -182,7 +192,7 @@ export async function sendDeletionApprovedEmail(opts: {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p>Hallo ${opts.userName},</p>
+        <p>Hallo ${escapeHtml(opts.userName)},</p>
         <p>Ihr Antrag auf Kontolöschung wurde genehmigt. Ihre persönlichen Daten wurden gemäss Art. 17 DSGVO / DSG aus unserem System entfernt.</p>
         <p style="color: #6b7280; font-size: 13px;">Falls Sie Fragen haben, wenden Sie sich an info@immo-manage.ch.</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
@@ -202,9 +212,9 @@ export async function sendDeletionRejectedEmail(opts: {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p>Hallo ${opts.userName},</p>
+        <p>Hallo ${escapeHtml(opts.userName)},</p>
         <p>Ihr Antrag auf Kontolöschung wurde abgelehnt.</p>
-        ${opts.reason ? `<p><strong>Begründung:</strong> ${opts.reason}</p>` : ''}
+        ${opts.reason ? `<p><strong>Begründung:</strong> ${escapeHtml(opts.reason)}</p>` : ''}
         <p style="color: #6b7280; font-size: 13px;">Falls Sie Fragen haben, wenden Sie sich direkt an Ihre Hausverwaltung.</p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
         <p style="font-size: 12px; color: #9ca3af;">ImmoManage</p>
@@ -226,12 +236,12 @@ export async function sendEventNotificationEmail(opts: {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       ${EMAIL_HEADER}
       <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none;">
-        <p>Hallo ${opts.tenantName},</p>
+        <p>Hallo ${escapeHtml(opts.tenantName)},</p>
         <p>Es wurde ein neuer Termin für Sie eingetragen:</p>
         <div style="background: #e8edf4; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <p style="margin: 0; font-weight: bold; font-size: 16px;">${opts.eventTitle}</p>
+          <p style="margin: 0; font-weight: bold; font-size: 16px;">${escapeHtml(opts.eventTitle)}</p>
           <p style="margin: 8px 0 0; color: #555;">${dateStr}</p>
-          ${opts.propertyName ? `<p style="margin: 4px 0 0; color: #555; font-size: 14px;">${opts.propertyName}</p>` : ''}
+          ${opts.propertyName ? `<p style="margin: 4px 0 0; color: #555; font-size: 14px;">${escapeHtml(opts.propertyName)}</p>` : ''}
         </div>
         <hr style="border: none; border-top: 1px solid #e5e7eb;">
         <p style="font-size: 12px; color: #9ca3af;">ImmoManage · Automatische Benachrichtigung</p>

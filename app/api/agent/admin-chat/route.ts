@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   }).join('\n')
 
   const leaseContext = leases.map(l =>
-    `Mieter: ${l.tenant.name} (${l.tenant.email}${l.tenant.phone ? ', ' + l.tenant.phone : ''}) — ${l.unit.property.name}, ${l.unit.unitNumber} — Kaltmiete: ${l.coldRent.toFixed(2)} €, Nebenkosten: ${l.extraCosts.toFixed(2)} €, Warmmiete: ${(l.coldRent + l.extraCosts).toFixed(2)} €`
+    `Mieter: ${l.tenant.name} (${l.tenant.email}${l.tenant.phone ? ', ' + l.tenant.phone : ''}) — ${l.unit.property.name}, ${l.unit.unitNumber} — Kaltmiete: ${l.coldRent.toFixed(2)} CHF, Nebenkosten: ${l.extraCosts.toFixed(2)} CHF, Warmmiete: ${(l.coldRent + l.extraCosts).toFixed(2)} CHF`
   ).join('\n')
 
   const ticketContext = tickets.length > 0

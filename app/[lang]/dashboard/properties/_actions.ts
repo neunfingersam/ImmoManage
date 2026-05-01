@@ -196,6 +196,7 @@ export async function createUnit(data: UnitFormValues): Promise<ActionResult<Uni
           floor: parsed.data.floor ?? null,
           size: parsed.data.size ?? null,
           rooms: parsed.data.rooms ?? null,
+          persons: parsed.data.persons ?? 1,
         },
       })
       revalidatePath(`/dashboard/properties/${parsed.data.propertyId}`)
@@ -224,6 +225,7 @@ export async function updateUnit(unitId: string, data: UnitFormValues): Promise<
           floor: parsed.data.floor ?? null,
           size: parsed.data.size ?? null,
           rooms: parsed.data.rooms ?? null,
+          persons: parsed.data.persons ?? undefined,
         },
       })
       revalidatePath(`/dashboard/properties/${parsed.data.propertyId}`)

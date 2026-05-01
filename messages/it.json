@@ -177,7 +177,32 @@
     "recentActivity": "Attività recente",
     "upcomingTasks": "Attività imminenti",
     "tasksNext7Days": "Prossimi 7 giorni",
-    "tasksNext30Days": "Prossimi 30 giorni"
+    "tasksNext30Days": "Prossimi 30 giorni",
+    "greeting": "Buongiorno, {name}",
+    "subtitle": "Panoramica della tua gestione",
+    "revenueMonth": "Entrate questo mese",
+    "occupancy": "Tasso di occupazione",
+    "vacantCount": "{count} liberi",
+    "overdueLabel": "{count} in ritardo",
+    "revenueChart": "Entrate locative",
+    "revenueChartSubtitle": "Ultimi 6 mesi (pagati)",
+    "all": "Tutti",
+    "portfolio": "Portafoglio",
+    "propertiesLabel": "Immobili",
+    "unitsTotal": "Unità totali",
+    "tenantsActive": "Affittuari attivi",
+    "leaseEnds60": "Contratti in scadenza (60 giorni)",
+    "noOpenTickets": "Nessun ticket aperto",
+    "tasksWeek": "Attività (prossimi 7 giorni)",
+    "noTasks": "Nessuna attività in scadenza",
+    "today": "Oggi",
+    "tomorrow": "Domani",
+    "dAbbr": "{n}g",
+    "priorityHigh": "Alta",
+    "priorityMedium": "Media",
+    "priorityLow": "Bassa",
+    "openItems": "Voci aperte",
+    "openTicketsLabel": "Ticket aperti"
   },
   "properties": {
     "title": "Immobili",
@@ -191,7 +216,11 @@
     "unitCount": "Numero di unità",
     "year": "Anno di costruzione",
     "vacancyRate": "Sfitto",
-    "units": "Unità"
+    "units": "Unità",
+    "count": "{count} immobili",
+    "empty": "Nessun immobile ancora",
+    "emptyDesc": "Aggiungi il tuo primo immobile.",
+    "newBtn": "Nuovo"
   },
   "units": {
     "title": "Unità",
@@ -211,7 +240,18 @@
     "email": "E-mail",
     "phone": "Telefono",
     "iban": "IBAN (per rimborsi)",
-    "notes": "Note"
+    "notes": "Note",
+    "total": "{count} affittuari in totale",
+    "searchResults": "{count} risultati per \"{q}\"",
+    "searchPlaceholder": "Nome, e-mail o telefono…",
+    "newBtn": "Nuovo",
+    "noResults": "Nessun risultato",
+    "noResultsDesc": "Nessun inquilino trovato per \"{q}\".",
+    "empty": "Nessun inquilino",
+    "emptyDesc": "Aggiungi il primo inquilino.",
+    "prevPage": "Indietro",
+    "nextPage": "Avanti",
+    "pageInfo": "Pagina {page} di {totalPages} · {total} inquilini"
   },
   "leases": {
     "title": "Contratti",
@@ -230,7 +270,15 @@
     "status": "Stato",
     "statusActive": "Attivo",
     "statusEnded": "Terminato",
-    "statusCancelled": "Disdetto"
+    "statusCancelled": "Disdetto",
+    "activeSection": "Attivi",
+    "endedSection": "Terminati",
+    "expiringBtn": "Contratti in scadenza",
+    "activeCount": "{count} attivi",
+    "endedCount": "{count} terminati",
+    "empty": "Nessun contratto ancora",
+    "emptyDesc": "Crea il tuo primo contratto.",
+    "newBtn": "Nuovo"
   },
   "payments": {
     "title": "Pagamenti",
@@ -265,7 +313,16 @@
     "tenantShare": "Quota inquilino",
     "balance": "Saldo",
     "overpaid": "Rimborso",
-    "underpaid": "Conguaglio"
+    "underpaid": "Conguaglio",
+    "count": "{count} rendiconti",
+    "qrPaymentTitle": "Dati di pagamento (fattura QR)",
+    "qrPaymentDesc": "Questo IBAN e questo indirizzo appaiono nel bollettino di pagamento del rendiconto spese (Swiss QR Bill).",
+    "newBillSection": "Nuovo rendiconto",
+    "allBillsSection": "Tutti i rendiconti",
+    "empty": "Nessun rendiconto",
+    "emptyDesc": "Nessun rendiconto spese creato ancora.",
+    "sentAt": "Inviato il {date}",
+    "yearLabel": "Anno {year}"
   },
   "documents": {
     "title": "Documenti",
@@ -278,7 +335,15 @@
     "categorySonstiges": "Altro",
     "scopeTenant": "Specifico dell'inquilino",
     "scopeProperty": "A livello immobile",
-    "scopeGlobal": "Globale"
+    "scopeGlobal": "Globale",
+    "subtitle": "{count} documenti",
+    "empty": "Nessun documento",
+    "emptyDesc": "Nessun documento caricato ancora.",
+    "uploadSection": "Carica",
+    "allSection": "Tutti i documenti",
+    "folderLabel": "Cartelle",
+    "docCount": "{count} documento",
+    "docCountPlural": "{count} documenti"
   },
   "templates": {
     "title": "Modelli",
@@ -703,5 +768,30 @@
     "effectiveDeductions": "Deduzioni effettive",
     "totalDeductions": "Totale deduzioni",
     "disclaimer": "Stime basate su valore venale × quota. Gli interessi ipotecari vanno dichiarati separatamente. Questo riepilogo non sostituisce una consulenza fiscale."
+  },
+  "tickets": {
+    "title": "Segnalazioni danni",
+    "subtitle": "{open} aperti · {inProgress} in corso · {done} completati",
+    "searchResults": "{count} risultati per \"{q}\"",
+    "searchPlaceholder": "Titolo, descrizione o affittuario…",
+    "kiSummary": "Riepilogo IA",
+    "empty": "Nessuna segnalazione",
+    "emptyDesc": "Nessuna segnalazione di danno al momento.",
+    "noResults": "Nessun risultato",
+    "noResultsDesc": "Nessuna segnalazione trovata per \"{q}\".",
+    "openSection": "Aperti",
+    "inProgressSection": "In corso",
+    "doneSection": "Completati",
+    "newBtn": "Nuova segnalazione",
+    "prevPage": "Precedente",
+    "nextPage": "Successivo"
+  },
+  "messages": {
+    "title": "Messaggi",
+    "count": "{count} conversazione",
+    "countPlural": "{count} conversazioni",
+    "newMessageTo": "Nuovo messaggio a",
+    "empty": "Nessun messaggio",
+    "emptyDesc": "Inizia una conversazione con un affittuario."
   }
 }

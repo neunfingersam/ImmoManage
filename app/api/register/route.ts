@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
   // Create Stripe Checkout Session for paid plans
   let checkoutUrl: string | null = null
   if (plan === 'STARTER' || plan === 'STANDARD' || plan === 'PRO') {
-    const baseUrl = 'https://immo-manage.ch'
+    const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
     const stripeData = await createStripeCheckout({
       email: normalizedEmail,
       name: name.trim(),
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
             <td bgcolor="#fff7ed" style="background-color:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:16px 20px;">
               <p style="margin:0 0 8px; font-weight:700; font-family:Arial,Helvetica,sans-serif; color:#1A1A2E;">Schritt 1: E-Mail-Adresse bestätigen</p>
               <p style="margin:0 0 4px; font-size:14px; font-family:Arial,Helvetica,sans-serif; color:#374151;">Bitte bestätige zuerst deine E-Mail-Adresse, bevor du dich anmelden kannst. Der Link ist 24 Stunden gültig.</p>
-              ${emailButton('E-Mail bestätigen →', `https://immo-manage.ch/api/auth/verify-email?token=${verificationToken}`)}
+              ${emailButton('E-Mail bestätigen →', `${process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'}/api/auth/verify-email?token=${verificationToken}`)}
             </td>
           </tr>
         </table>

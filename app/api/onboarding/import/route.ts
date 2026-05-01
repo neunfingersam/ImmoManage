@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma'
 import * as XLSX from 'xlsx'
 import { parsePropertyRow, parseTenantRow, validateImportData, parseSwissDate } from '@/lib/excel-import'
 import bcrypt from 'bcryptjs'
+import { sendTenantInviteEmail } from '@/lib/email'
+import crypto from 'crypto'
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
@@ -87,6 +89,8 @@ export async function POST(req: Request) {
     }
 
     let tenantsCreated = 0
+    const createdTenants: Array<{ id: string; name: string; email: string }> = []
+
     for (const tenant of validTenants) {
       const propertyId = createdProperties[tenant!.propertyName]
       if (!propertyId) continue
@@ -99,7 +103,8 @@ export async function POST(req: Request) {
         },
       })
 
-      const passwordHash = await bcrypt.hash('TempPass123!', 12)
+      const tempPassword = crypto.randomBytes(32).toString('hex')
+      const passwordHash = await bcrypt.hash(tempPassword, 12)
       const user = await tx.user.create({
         data: {
           companyId,
@@ -128,10 +133,11 @@ export async function POST(req: Request) {
         },
       })
 
+      createdTenants.push({ id: user.id, name: user.name, email: user.email })
       tenantsCreated++
     }
 
-    return { propertiesCreated: validProperties.length, tenantsCreated }
+    return { propertiesCreated: validProperties.length, tenantsCreated, createdTenants }
   })
 
   await prisma.activityLog.create({
@@ -140,9 +146,33 @@ export async function POST(req: Request) {
       userId: session.user.id,
       action: 'EXCEL_IMPORT',
       entity: 'Import',
-      meta: result,
+      meta: { propertiesCreated: result.propertiesCreated, tenantsCreated: result.tenantsCreated },
     },
   })
 
-  return NextResponse.json({ success: true, ...result })
+  // Send invite emails to all imported tenants so they can set their own password
+  const company = await prisma.company.findUnique({ where: { id: companyId }, select: { name: true } })
+  const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+
+  await Promise.all(
+    result.createdTenants.map(async (tenant) => {
+      // Generate invite token (reuse PasswordResetToken, expires in 72h)
+      await prisma.passwordResetToken.deleteMany({ where: { userId: tenant.id } })
+      const token = crypto.randomBytes(32).toString('hex')
+      await prisma.passwordResetToken.create({
+        data: { token, userId: tenant.id, expiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000) },
+      })
+      const inviteUrl = `${baseUrl}/auth/reset-password?token=${token}`
+      await sendTenantInviteEmail({
+        tenantEmail: tenant.email,
+        tenantName: tenant.name,
+        companyName: company?.name ?? 'ImmoManage',
+        inviteUrl,
+        expiresHours: 72,
+      }).catch(() => {})
+    })
+  )
+
+  const { createdTenants: _dropped, ...counts } = result
+  return NextResponse.json({ success: true, ...counts })
 }

@@ -177,7 +177,32 @@
     "recentActivity": "Letzte Aktivitäten",
     "upcomingTasks": "Anstehende Aufgaben",
     "tasksNext7Days": "Nächste 7 Tage",
-    "tasksNext30Days": "Nächste 30 Tage"
+    "tasksNext30Days": "Nächste 30 Tage",
+    "greeting": "Guten Tag, {name}",
+    "subtitle": "Übersicht deiner Verwaltung",
+    "revenueMonth": "Einnahmen diesen Monat",
+    "occupancy": "Belegungsrate",
+    "vacantCount": "{count} leer",
+    "overdueLabel": "{count} überfällig",
+    "revenueChart": "Mieteinnahmen",
+    "revenueChartSubtitle": "Letzte 6 Monate (bezahlt)",
+    "all": "Alle",
+    "portfolio": "Bestand",
+    "propertiesLabel": "Immobilien",
+    "unitsTotal": "Einheiten total",
+    "tenantsActive": "Mieter aktiv",
+    "leaseEnds60": "Vertragsenden (60 Tage)",
+    "noOpenTickets": "Keine offenen Tickets",
+    "tasksWeek": "Aufgaben (nächste 7 Tage)",
+    "noTasks": "Keine fälligen Aufgaben",
+    "today": "Heute",
+    "tomorrow": "Morgen",
+    "dAbbr": "{n}T",
+    "priorityHigh": "Hoch",
+    "priorityMedium": "Mittel",
+    "priorityLow": "Niedrig",
+    "openItems": "Offene Posten",
+    "openTicketsLabel": "Offene Tickets"
   },
   "properties": {
     "title": "Objekte",
@@ -191,7 +216,11 @@
     "unitCount": "Anzahl Einheiten",
     "year": "Baujahr",
     "vacancyRate": "Leerstand",
-    "units": "Einheiten"
+    "units": "Einheiten",
+    "count": "{count} Immobilien",
+    "empty": "Noch keine Immobilien",
+    "emptyDesc": "Legen Sie Ihre erste Immobilie an.",
+    "newBtn": "Neu"
   },
   "units": {
     "title": "Einheiten",
@@ -211,7 +240,18 @@
     "email": "E-Mail",
     "phone": "Telefon",
     "iban": "IBAN (für Rückzahlungen)",
-    "notes": "Notizen"
+    "notes": "Notizen",
+    "total": "{count} Mieter gesamt",
+    "searchResults": "{count} Treffer für \"{q}\"",
+    "searchPlaceholder": "Name, E-Mail oder Telefon…",
+    "newBtn": "Neu",
+    "noResults": "Keine Treffer",
+    "noResultsDesc": "Kein Mieter gefunden für \"{q}\".",
+    "empty": "Noch keine Mieter",
+    "emptyDesc": "Legen Sie den ersten Mieter an.",
+    "prevPage": "Zurück",
+    "nextPage": "Weiter",
+    "pageInfo": "Seite {page} von {totalPages} · {total} Mieter"
   },
   "leases": {
     "title": "Mietverträge",
@@ -230,7 +270,15 @@
     "status": "Status",
     "statusActive": "Aktiv",
     "statusEnded": "Beendet",
-    "statusCancelled": "Gekündigt"
+    "statusCancelled": "Gekündigt",
+    "activeSection": "Aktiv",
+    "endedSection": "Beendet",
+    "expiringBtn": "Ablaufende Verträge",
+    "activeCount": "{count} aktiv",
+    "endedCount": "{count} abgelaufen",
+    "empty": "Noch keine Mietverträge",
+    "emptyDesc": "Erstellen Sie den ersten Mietvertrag.",
+    "newBtn": "Neu"
   },
   "payments": {
     "title": "Zahlungen",
@@ -265,7 +313,16 @@
     "tenantShare": "Mieteranteil",
     "balance": "Saldo",
     "overpaid": "Rückerstattung",
-    "underpaid": "Nachzahlung"
+    "underpaid": "Nachzahlung",
+    "count": "{count} Abrechnungen",
+    "qrPaymentTitle": "Zahlungsangaben (QR-Rechnung)",
+    "qrPaymentDesc": "Diese IBAN und Adresse erscheinen im Zahlungsschein der Nebenkostenabrechnung (Swiss QR Bill).",
+    "newBillSection": "Neue Abrechnung",
+    "allBillsSection": "Alle Abrechnungen",
+    "empty": "Keine Abrechnungen",
+    "emptyDesc": "Noch keine Nebenkostenabrechnung erstellt.",
+    "sentAt": "Gesendet {date}",
+    "yearLabel": "Jahr {year}"
   },
   "documents": {
     "title": "Dokumente",
@@ -278,7 +335,15 @@
     "categorySonstiges": "Sonstiges",
     "scopeTenant": "Mieterspezifisch",
     "scopeProperty": "Immobilienweit",
-    "scopeGlobal": "Global"
+    "scopeGlobal": "Global",
+    "subtitle": "{count} Dokumente",
+    "empty": "Keine Dokumente",
+    "emptyDesc": "Noch keine Dokumente hochgeladen.",
+    "uploadSection": "Hochladen",
+    "allSection": "Alle Dokumente",
+    "folderLabel": "Ordner",
+    "docCount": "{count} Dokument",
+    "docCountPlural": "{count} Dokumente"
   },
   "templates": {
     "title": "Vorlagen",
@@ -703,5 +768,30 @@
     "effectiveDeductions": "Effektive Abzüge",
     "totalDeductions": "Total Abzüge",
     "disclaimer": "Schätzwerte basieren auf Verkehrswert × Wertquote. Hypothekarzinsen separat in der Steuererklärung einzutragen. Diese Aufstellung ersetzt keine Steuerberatung."
+  },
+  "tickets": {
+    "title": "Schadensmeldungen",
+    "subtitle": "{open} offen · {inProgress} in Bearbeitung · {done} erledigt",
+    "searchResults": "{count} Treffer für \"{q}\"",
+    "searchPlaceholder": "Titel, Beschreibung oder Mieter…",
+    "kiSummary": "KI-Zusammenfassung",
+    "empty": "Keine Meldungen",
+    "emptyDesc": "Es liegen aktuell keine Schadensmeldungen vor.",
+    "noResults": "Keine Treffer",
+    "noResultsDesc": "Keine Schadensmeldung gefunden für \"{q}\".",
+    "openSection": "Offen",
+    "inProgressSection": "In Bearbeitung",
+    "doneSection": "Erledigt",
+    "newBtn": "Neue Meldung",
+    "prevPage": "Zurück",
+    "nextPage": "Weiter"
+  },
+  "messages": {
+    "title": "Nachrichten",
+    "count": "{count} Gespräch",
+    "countPlural": "{count} Gespräche",
+    "newMessageTo": "Neue Nachricht an",
+    "empty": "Keine Nachrichten",
+    "emptyDesc": "Starten Sie ein Gespräch mit einem Mieter."
   }
 }

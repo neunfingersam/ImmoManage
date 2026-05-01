@@ -34,9 +34,19 @@ export async function GET(
   }
 
   const company = demand.company
-  // IBAN aus Company-Einstellungen (smtpConfig enthält auch bankIban für jetzt)
-  const smtpConfig = company.smtpConfig as { bankIban?: string; bankName?: string } | null
+  // IBAN and address from Company payment settings (stored in smtpConfig JSON)
+  const smtpConfig = company.smtpConfig as { bankIban?: string; bankName?: string; street?: string; zip?: string; city?: string } | null
   const iban = smtpConfig?.bankIban ?? 'CH0000000000000000000' // Demo-IBAN
+
+  const creditorStreet = smtpConfig?.street ?? null
+  const creditorZip = smtpConfig?.zip ?? null
+  const creditorCity = smtpConfig?.city ?? null
+  const hasAddress = creditorStreet && creditorZip && creditorCity
+  if (!hasAddress) {
+    console.warn(`[QR Invoice] Company ${company.id} has no address configured in payment settings — using placeholder`)
+  }
+  const resolvedCreditorAddress = hasAddress ? `${creditorStreet}` : 'Musterstrasse 1'
+  const resolvedCreditorCity = hasAddress ? `${creditorZip} ${creditorCity}` : '8001 Zürich'
 
   const monthDate = new Date(demand.year, demand.month - 1, 1)
   const monthStr = monthDate.toLocaleDateString('de-CH', { month: 'long', year: 'numeric' })
@@ -45,8 +55,8 @@ export async function GET(
   const qrPayload = buildQrPayload({
     iban,
     creditorName: company.name,
-    creditorAddress: 'Musterstrasse 1', // TODO: Company-Adresse in DB
-    creditorCity: '8001 Zürich',
+    creditorAddress: resolvedCreditorAddress,
+    creditorCity: resolvedCreditorCity,
     amount: demand.amount,
     currency: 'CHF',
     reference,

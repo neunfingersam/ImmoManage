@@ -44,8 +44,9 @@ export function UnitDialog({ propertyId, editUnit, onClose, open, onOpenChange }
           floor: editUnit.floor ?? undefined,
           size: editUnit.size ?? undefined,
           rooms: editUnit.rooms ?? undefined,
+          persons: editUnit.persons ?? 1,
         }
-      : { propertyId },
+      : { propertyId, persons: 1 },
   })
 
   function onSubmit(data: unknown) {
@@ -100,6 +101,11 @@ export function UnitDialog({ propertyId, editUnit, onClose, open, onOpenChange }
               <Label htmlFor="rooms">Zimmer</Label>
               <Input id="rooms" type="number" step="0.5" {...register('rooms')} />
             </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="persons">Personenzahl</Label>
+            <Input id="persons" type="number" min={1} {...register('persons')} placeholder="1" />
           </div>
 
           {serverError && <p className="text-sm text-destructive">{serverError}</p>}

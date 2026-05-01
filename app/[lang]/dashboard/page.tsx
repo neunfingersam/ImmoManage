@@ -15,6 +15,7 @@ import {
 import { Card } from '@/components/ui/card'
 import { RevenueBarChart, type MonthlyRevenue } from './DashboardCharts'
 import type { Priority, TaskType } from '@/lib/generated/prisma/enums'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 type OpenTicket = {
   id: string
@@ -31,12 +32,10 @@ type UpcomingTask = {
   type: TaskType
 }
 
-const MONTH_LABELS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
-
-const PRIORITY_STYLES: Record<string, { label: string; class: string }> = {
-  LOW:    { label: 'Niedrig',  class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  MEDIUM: { label: 'Mittel',   class: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
-  HIGH:   { label: 'Hoch',     class: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
+const PRIORITY_CLASSES: Record<string, string> = {
+  LOW:    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  MEDIUM: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  HIGH:   'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 }
 
 async function getDashboardData(session: { user: { role: string; id: string; companyId: string | null } }) {
@@ -135,7 +134,8 @@ async function getDashboardData(session: { user: { role: string; id: string; com
   const revenueData: MonthlyRevenue[] = Array.from(monthlyMap.entries()).map(([key, amount]) => {
     const [y, m] = key.split('-').map(Number)
     const isCurrent = y === now.getFullYear() && m === now.getMonth() + 1
-    return { label: MONTH_LABELS[m - 1], amount, isCurrent }
+    const label = new Date(y, m - 1, 1).toLocaleDateString('de-CH', { month: 'short' })
+    return { label, amount, isCurrent }
   })
 
   const currentMonthRevenue = revenueData.find((d) => d.isCurrent)?.amount ?? 0
@@ -169,19 +169,29 @@ function daysUntil(date: Date | null) {
 }
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
+  const [t, locale, session] = await Promise.all([
+    getTranslations('dashboard'),
+    getLocale(),
+    getServerSession(authOptions),
+  ])
   if (!session?.user?.companyId) return null
 
   const data = await getDashboardData(session)
   const firstName = session.user.name?.split(' ')[0] ?? 'Admin'
+
+  const priorityLabels: Record<string, string> = {
+    LOW: t('priorityLow'),
+    MEDIUM: t('priorityMedium'),
+    HIGH: t('priorityHigh'),
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Guten Tag, {firstName}</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Hier ist eine Übersicht deiner Verwaltung</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('greeting', { name: firstName })}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -197,7 +207,7 @@ export default async function DashboardPage() {
             <p className="mt-4 text-2xl font-bold text-foreground">
               CHF {formatChf(data.currentMonthRevenue)}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Einnahmen diesen Monat</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('revenueMonth')}</p>
           </Card>
         </Link>
 
@@ -219,7 +229,7 @@ export default async function DashboardPage() {
               )
             })()}
             <p className="text-xs text-muted-foreground mt-1">
-              Belegungsrate · {data.vacantUnits} leer
+              {t('occupancy')} · {t('vacantCount', { count: data.vacantUnits })}
             </p>
           </Card>
         </Link>
@@ -236,14 +246,14 @@ export default async function DashboardPage() {
               </div>
               {data.overdueCount > 0 && (
                 <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600 dark:bg-red-900/30 dark:text-red-400">
-                  {data.overdueCount} überfällig
+                  {t('overdueLabel', { count: data.overdueCount })}
                 </span>
               )}
             </div>
             <p className={`mt-4 text-2xl font-bold ${data.openPayments > 0 ? 'text-amber-600' : 'text-foreground'}`}>
               CHF {formatChf(data.openPayments)}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Offene Posten</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('openItems')}</p>
           </Card>
         </Link>
 
@@ -259,7 +269,7 @@ export default async function DashboardPage() {
             <p className={`mt-4 text-2xl font-bold ${data.openTickets.length > 0 ? 'text-red-500' : 'text-foreground'}`}>
               {data.openTickets.length}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Offene Tickets</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('openTicketsLabel')}</p>
           </Card>
         </Link>
       </div>
@@ -270,14 +280,14 @@ export default async function DashboardPage() {
         <Card className="p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-semibold text-foreground">Mieteinnahmen</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Letzte 6 Monate (bezahlt)</p>
+              <h2 className="text-sm font-semibold text-foreground">{t('revenueChart')}</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">{t('revenueChartSubtitle')}</p>
             </div>
             <Link
               href="/dashboard/payments"
               className="text-xs text-primary hover:underline flex items-center gap-1"
             >
-              Alle <ChevronRight className="h-3 w-3" />
+              {t('all')} <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
           <RevenueBarChart data={data.revenueData} />
@@ -285,14 +295,14 @@ export default async function DashboardPage() {
 
         {/* Quick stats */}
         <Card className="p-5">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Bestand</h2>
+          <h2 className="text-sm font-semibold text-foreground mb-4">{t('portfolio')}</h2>
           <div className="space-y-3">
-            <StatRow label="Immobilien" value={data.propertyCount} href="/dashboard/properties" />
-            <StatRow label="Einheiten total" value={data.totalUnits} href="/dashboard/properties" />
-            <StatRow label="Mieter aktiv" value={data.tenantCount} href="/dashboard/tenants" />
+            <StatRow label={t('propertiesLabel')} value={data.propertyCount} href="/dashboard/properties" />
+            <StatRow label={t('unitsTotal')} value={data.totalUnits} href="/dashboard/properties" />
+            <StatRow label={t('tenantsActive')} value={data.tenantCount} href="/dashboard/tenants" />
             <div className="my-2 border-t border-border" />
             <StatRow
-              label="Vertragsenden (60 Tage)"
+              label={t('leaseEnds60')}
               value={data.upcomingLeaseEnds}
               href="/dashboard/leases"
               highlight={data.upcomingLeaseEnds > 0 ? 'amber' : undefined}
@@ -307,36 +317,33 @@ export default async function DashboardPage() {
         {/* Open tickets */}
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-foreground">Offene Tickets</h2>
+            <h2 className="text-sm font-semibold text-foreground">{t('openTicketsLabel')}</h2>
             <Link href="/dashboard/tickets" className="text-xs text-primary hover:underline flex items-center gap-1">
-              Alle <ChevronRight className="h-3 w-3" />
+              {t('all')} <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
           {data.openTickets.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">Keine offenen Tickets</p>
+            <p className="text-sm text-muted-foreground py-6 text-center">{t('noOpenTickets')}</p>
           ) : (
             <div className="space-y-2">
-              {(data.openTickets as OpenTicket[]).map((ticket) => {
-                const p = PRIORITY_STYLES[ticket.priority] ?? PRIORITY_STYLES.MEDIUM
-                return (
-                  <Link
-                    key={ticket.id}
-                    href={`/dashboard/tickets/${ticket.id}`}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted transition-colors group"
-                  >
-                    <AlertCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                        {ticket.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{ticket.property.name}</p>
-                    </div>
-                    <span className={`text-xs font-medium rounded-full px-2 py-0.5 flex-shrink-0 ${p.class}`}>
-                      {p.label}
-                    </span>
-                  </Link>
-                )
-              })}
+              {(data.openTickets as OpenTicket[]).map((ticket) => (
+                <Link
+                  key={ticket.id}
+                  href={`/dashboard/tickets/${ticket.id}`}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted transition-colors group"
+                >
+                  <AlertCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                      {ticket.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{ticket.property.name}</p>
+                  </div>
+                  <span className={`text-xs font-medium rounded-full px-2 py-0.5 flex-shrink-0 ${PRIORITY_CLASSES[ticket.priority] ?? PRIORITY_CLASSES.MEDIUM}`}>
+                    {priorityLabels[ticket.priority] ?? ticket.priority}
+                  </span>
+                </Link>
+              ))}
             </div>
           )}
         </Card>
@@ -344,13 +351,13 @@ export default async function DashboardPage() {
         {/* Upcoming tasks */}
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-foreground">Aufgaben (nächste 7 Tage)</h2>
+            <h2 className="text-sm font-semibold text-foreground">{t('tasksWeek')}</h2>
             <Link href="/dashboard/tasks" className="text-xs text-primary hover:underline flex items-center gap-1">
-              Alle <ChevronRight className="h-3 w-3" />
+              {t('all')} <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
           {data.upcomingTasks.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">Keine fälligen Aufgaben</p>
+            <p className="text-sm text-muted-foreground py-6 text-center">{t('noTasks')}</p>
           ) : (
             <div className="space-y-2">
               {(data.upcomingTasks as UpcomingTask[]).map((task) => {
@@ -378,7 +385,7 @@ export default async function DashboardPage() {
                             : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {days === 0 ? 'Heute' : days === 1 ? 'Morgen' : `${days}d`}
+                        {days === 0 ? t('today') : days === 1 ? t('tomorrow') : t('dAbbr', { n: days })}
                       </span>
                     )}
                   </Link>

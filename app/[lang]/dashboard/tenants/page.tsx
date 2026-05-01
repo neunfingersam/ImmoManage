@@ -5,6 +5,7 @@ import { TenantCard } from '@/components/tenants/TenantCard'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { getTenants } from './_actions'
 import { Users } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 const PAGE_SIZE = 20
 
@@ -13,7 +14,10 @@ export default async function TenantsPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string }>
 }) {
-  const { page: pageParam, q } = await searchParams
+  const [t, { page: pageParam, q }] = await Promise.all([
+    getTranslations('tenants'),
+    searchParams,
+  ])
   const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
   const search = q ?? ''
   const { tenants, total } = await getTenants(page, search)
@@ -31,9 +35,9 @@ export default async function TenantsPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-serif text-2xl text-foreground">Mieter</h1>
+          <h1 className="font-serif text-2xl text-foreground">{t('title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {search ? `${total} Treffer für „${search}"` : `${total} Mieter gesamt`}
+            {search ? t('searchResults', { count: total, q: search }) : t('total', { count: total })}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -46,19 +50,18 @@ export default async function TenantsPage({
           </a>
           <Button render={<Link href="/dashboard/tenants/new" />} className="bg-primary hover:bg-primary/90">
             <Plus className="h-4 w-4 mr-1" />
-            Neu
+            {t('newBtn')}
           </Button>
         </div>
       </div>
 
-      {/* Suche */}
       <form method="GET" action="/dashboard/tenants" className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         <input
           type="search"
           name="q"
           defaultValue={search}
-          placeholder="Name, E-Mail oder Telefon…"
+          placeholder={t('searchPlaceholder')}
           className="w-full rounded-md border border-input bg-background pl-9 pr-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </form>
@@ -66,21 +69,21 @@ export default async function TenantsPage({
       {tenants.length === 0 ? (
         <EmptyState
           icon={<Users className="h-7 w-7" />}
-          titel={search ? 'Keine Treffer' : 'Noch keine Mieter'}
-          beschreibung={search ? `Kein Mieter gefunden für „${search}".` : 'Legen Sie den ersten Mieter an.'}
+          titel={search ? t('noResults') : t('empty')}
+          beschreibung={search ? t('noResultsDesc', { q: search }) : t('emptyDesc')}
         />
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {tenants.map((t) => (
-              <TenantCard key={t.id} tenant={t} />
+            {tenants.map((tenant) => (
+              <TenantCard key={tenant.id} tenant={tenant} />
             ))}
           </div>
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between border-t border-border pt-4">
               <p className="text-sm text-muted-foreground">
-                Seite {page} von {totalPages} · {total} Mieter
+                {t('pageInfo', { page, totalPages, total })}
               </p>
               <div className="flex items-center gap-2">
                 {page > 1 && (
@@ -89,7 +92,7 @@ export default async function TenantsPage({
                     className="inline-flex items-center gap-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm hover:bg-accent transition-colors"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Zurück
+                    {t('prevPage')}
                   </Link>
                 )}
                 {page < totalPages && (
@@ -97,7 +100,7 @@ export default async function TenantsPage({
                     href={pageHref(page + 1)}
                     className="inline-flex items-center gap-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm hover:bg-accent transition-colors"
                   >
-                    Weiter
+                    {t('nextPage')}
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 )}

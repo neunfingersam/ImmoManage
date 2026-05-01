@@ -33,5 +33,5 @@ export async function POST(req: NextRequest) {
   await prisma.user.update({ where: { id: resetToken.userId }, data: { passwordHash } })
   await prisma.passwordResetToken.deleteMany({ where: { userId: resetToken.userId } })
 
-  redirect(`/auth/reset-password?token=${token}&success=1`)
+  redirect(`/auth/login?reset=success`)
 }

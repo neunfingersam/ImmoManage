@@ -31,9 +31,9 @@ Adresse: ${l.unit.property.address}
 Einheit: ${l.unit.unitNumber}${l.unit.floor != null ? ` (Etage ${l.unit.floor})` : ''}${l.unit.size != null ? `, ${l.unit.size} m²` : ''}${l.unit.rooms != null ? `, ${l.unit.rooms} Zimmer` : ''}
 Mietbeginn: ${start}
 Mietende: ${end}
-Kaltmiete: ${l.coldRent.toFixed(2)} €/Monat
-Nebenkosten-Vorauszahlung: ${l.extraCosts.toFixed(2)} €/Monat
-Warmmiete gesamt: ${warmmiete.toFixed(2)} €/Monat
+Kaltmiete: ${l.coldRent.toFixed(2)} CHF/Monat
+Nebenkosten-Vorauszahlung: ${l.extraCosts.toFixed(2)} CHF/Monat
+Warmmiete gesamt: ${warmmiete.toFixed(2)} CHF/Monat
 Kautionsstatus: ${l.depositPaid ? 'Kaution bezahlt' : 'Kaution noch offen'}`
   }).join('\n\n')
 
@@ -49,7 +49,7 @@ Kautionsstatus: ${l.depositPaid ? 'Kaution bezahlt' : 'Kaution noch offen'}`
   })
   const billContext = utilityBills.length > 0
     ? `=== Nebenkostenabrechnungen ===\n` + utilityBills.map(b =>
-        `Jahr ${b.year}: ${b.amount.toFixed(2)} € (${b.property.name})${b.sentAt ? ` — zugestellt am ${new Date(b.sentAt).toLocaleDateString('de-DE')}` : ''}`
+        `Jahr ${b.year}: ${b.amount.toFixed(2)} CHF (${b.property.name})${b.sentAt ? ` — zugestellt am ${new Date(b.sentAt).toLocaleDateString('de-DE')}` : ''}`
       ).join('\n')
     : ''
 

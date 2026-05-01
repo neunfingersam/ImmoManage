@@ -5,6 +5,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { randomBytes } from 'crypto'
+import { sendTenantInviteEmail } from '@/lib/email'
 import { ensureSystemFolders, ensureAssemblyFolder } from '@/lib/document-folders'
 
 // ─── Get all WEG properties for this company ─────────────────────────────────
@@ -119,6 +121,9 @@ export async function updateWegConfig(propertyId: string, data: unknown) {
   const parsed = wegConfigSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
 
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
+
   await prisma.wegConfig.upsert({
     where: { propertyId },
     update: parsed.data,
@@ -162,9 +167,10 @@ export async function addWegOwner(propertyId: string, data: unknown) {
 
   // Find or create user
   let user = await prisma.user.findUnique({ where: { email: parsed.data.email } })
+  const isNewUser = !user
   if (!user) {
     const bcrypt = await import('bcryptjs')
-    const tempPassword = Math.random().toString(36).slice(-10)
+    const tempPassword = randomBytes(16).toString('hex')
     user = await prisma.user.create({
       data: {
         email: parsed.data.email,
@@ -198,6 +204,25 @@ export async function addWegOwner(propertyId: string, data: unknown) {
       mea: parsed.data.mea,
     },
   })
+
+  // Send invite email for newly created users
+  if (isNewUser) {
+    const inviteToken = randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000)
+    await prisma.passwordResetToken.create({ data: { token: inviteToken, userId: user.id, expiresAt } })
+    const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
+    const inviteUrl = `${baseUrl}/de/auth/reset-password?token=${inviteToken}`
+    const company = await prisma.company.findUnique({
+      where: { id: session.user.companyId },
+      select: { name: true },
+    })
+    await sendTenantInviteEmail({
+      tenantEmail: parsed.data.email,
+      tenantName: parsed.data.name,
+      companyName: company?.name ?? 'ImmoManage',
+      inviteUrl,
+    })
+  }
 
   revalidatePath(`/dashboard/weg/${propertyId}`)
   revalidatePath(`/dashboard/weg/${propertyId}/owners`)
@@ -284,6 +309,9 @@ export async function addRenewalItem(propertyId: string, data: unknown) {
   const parsed = renewalItemSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
 
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
+
   const config = await prisma.wegConfig.findUnique({ where: { propertyId } })
   if (!config) return { success: false, error: 'WEG-Konfiguration nicht gefunden' }
 
@@ -302,6 +330,9 @@ export async function updateRenewalItem(id: string, propertyId: string, data: un
   const parsed = renewalItemSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
 
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
+
   await prisma.renewalPlanItem.update({ where: { id }, data: parsed.data })
 
   revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
@@ -311,6 +342,9 @@ export async function updateRenewalItem(id: string, propertyId: string, data: un
 export async function deleteRenewalItem(id: string, propertyId: string) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
 
   await prisma.renewalPlanItem.delete({ where: { id } })
 
@@ -331,6 +365,9 @@ export async function updateFondsConfig(propertyId: string, data: unknown) {
 
   const parsed = fondsConfigSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
 
   await prisma.wegConfig.upsert({
     where: { propertyId },
@@ -355,6 +392,9 @@ export async function createAssembly(propertyId: string, data: unknown) {
 
   const parsed = createAssemblySchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
 
   const wegConfig = await prisma.wegConfig.findUnique({ where: { propertyId } })
   if (!wegConfig) return { success: false, error: 'WEG-Konfiguration nicht gefunden' }
@@ -389,6 +429,9 @@ export async function castAssemblyVote(propertyId: string, data: unknown) {
   const parsed = castVoteSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
 
+  const property = await prisma.property.findFirst({ where: { id: propertyId, companyId: session.user.companyId } })
+  if (!property) return { success: false, error: 'Zugriff verweigert' }
+
   // Snapshot MEA at time of vote
   const ownerRecord = await prisma.propertyOwner.findFirst({
     where: { id: parsed.data.ownerId },
@@ -420,6 +463,9 @@ export async function castAssemblyVote(propertyId: string, data: unknown) {
 
 // ─── Get Assembly Votes with weighted results ─────────────────────────────────
 export async function getAgendaItemVotes(agendaItemId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.companyId) return { votes: [], headCount: { JA: 0, NEIN: 0, ENTHALTUNG: 0 }, meaWeight: { JA: 0, NEIN: 0, ENTHALTUNG: 0 } }
+
   const votes = await prisma.assemblyVote.findMany({
     where: { agendaItemId },
     include: { owner: { include: { user: { select: { name: true } } } } },

@@ -42,7 +42,8 @@ export async function markOneRead(id: string) {
   })
 }
 
-export async function createNotification(userId: string, type: string, text: string, link?: string) {
+// Internal utility — not exported. Use directly within server actions in this module.
+async function createNotification(userId: string, type: string, text: string, link?: string) {
   return prisma.notification.create({
     data: { userId, type, text, link },
   })

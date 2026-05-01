@@ -6,6 +6,7 @@ export const unitSchema = z.object({
   floor: z.coerce.number().int().optional().nullable(),
   size: z.coerce.number().positive().optional().nullable(),
   rooms: z.coerce.number().positive().optional().nullable(),
+  persons: z.coerce.number().int().min(1).optional().nullable(),
 })
 
 export type UnitFormValues = z.infer<typeof unitSchema>

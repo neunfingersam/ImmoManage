@@ -177,7 +177,32 @@
     "recentActivity": "Activité récente",
     "upcomingTasks": "Tâches à venir",
     "tasksNext7Days": "7 prochains jours",
-    "tasksNext30Days": "30 prochains jours"
+    "tasksNext30Days": "30 prochains jours",
+    "greeting": "Bonjour, {name}",
+    "subtitle": "Aperçu de votre gestion",
+    "revenueMonth": "Revenus ce mois",
+    "occupancy": "Taux d'occupation",
+    "vacantCount": "{count} vacant",
+    "overdueLabel": "{count} en retard",
+    "revenueChart": "Revenus locatifs",
+    "revenueChartSubtitle": "6 derniers mois (payé)",
+    "all": "Tout",
+    "portfolio": "Portefeuille",
+    "propertiesLabel": "Immeubles",
+    "unitsTotal": "Logements total",
+    "tenantsActive": "Locataires actifs",
+    "leaseEnds60": "Baux expirant (60 jours)",
+    "noOpenTickets": "Aucun ticket ouvert",
+    "tasksWeek": "Tâches (7 prochains jours)",
+    "noTasks": "Aucune tâche échue",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "dAbbr": "{n}j",
+    "priorityHigh": "Haute",
+    "priorityMedium": "Moyenne",
+    "priorityLow": "Faible",
+    "openItems": "Postes ouverts",
+    "openTicketsLabel": "Tickets ouverts"
   },
   "properties": {
     "title": "Objets",
@@ -191,7 +216,11 @@
     "unitCount": "Nombre d'unités",
     "year": "Année de construction",
     "vacancyRate": "Vacance",
-    "units": "Unités"
+    "units": "Unités",
+    "count": "{count} immeubles",
+    "empty": "Aucun immeuble pour l'instant",
+    "emptyDesc": "Ajoutez votre premier immeuble.",
+    "newBtn": "Nouveau"
   },
   "units": {
     "title": "Unités",
@@ -211,7 +240,18 @@
     "email": "E-mail",
     "phone": "Téléphone",
     "iban": "IBAN (pour remboursements)",
-    "notes": "Notes"
+    "notes": "Notes",
+    "total": "{count} locataires au total",
+    "searchResults": "{count} résultats pour « {q} »",
+    "searchPlaceholder": "Nom, e-mail ou téléphone…",
+    "newBtn": "Nouveau",
+    "noResults": "Aucun résultat",
+    "noResultsDesc": "Aucun locataire trouvé pour \"{q}\".",
+    "empty": "Aucun locataire",
+    "emptyDesc": "Ajoutez votre premier locataire.",
+    "prevPage": "Précédent",
+    "nextPage": "Suivant",
+    "pageInfo": "Page {page} de {totalPages} · {total} locataires"
   },
   "leases": {
     "title": "Baux",
@@ -230,7 +270,15 @@
     "status": "Statut",
     "statusActive": "Actif",
     "statusEnded": "Terminé",
-    "statusCancelled": "Résilié"
+    "statusCancelled": "Résilié",
+    "activeSection": "Actifs",
+    "endedSection": "Terminés",
+    "expiringBtn": "Baux expirants",
+    "activeCount": "{count} actifs",
+    "endedCount": "{count} terminés",
+    "empty": "Aucun bail pour l'instant",
+    "emptyDesc": "Créez votre premier bail.",
+    "newBtn": "Nouveau"
   },
   "payments": {
     "title": "Paiements",
@@ -265,7 +313,16 @@
     "tenantShare": "Part du locataire",
     "balance": "Solde",
     "overpaid": "Remboursement",
-    "underpaid": "Supplément à payer"
+    "underpaid": "Supplément à payer",
+    "count": "{count} décomptes",
+    "qrPaymentTitle": "Coordonnées bancaires (facture QR)",
+    "qrPaymentDesc": "Ce numéro IBAN et cette adresse apparaissent sur le bulletin de paiement du décompte de charges (Swiss QR Bill).",
+    "newBillSection": "Nouveau décompte",
+    "allBillsSection": "Tous les décomptes",
+    "empty": "Aucun décompte",
+    "emptyDesc": "Aucun décompte de charges créé pour l'instant.",
+    "sentAt": "Envoyé le {date}",
+    "yearLabel": "Année {year}"
   },
   "documents": {
     "title": "Documents",
@@ -278,7 +335,15 @@
     "categorySonstiges": "Autre",
     "scopeTenant": "Spécifique au locataire",
     "scopeProperty": "À l'immeuble",
-    "scopeGlobal": "Global"
+    "scopeGlobal": "Global",
+    "subtitle": "{count} documents",
+    "empty": "Aucun document",
+    "emptyDesc": "Aucun document téléchargé pour l'instant.",
+    "uploadSection": "Téléverser",
+    "allSection": "Tous les documents",
+    "folderLabel": "Dossiers",
+    "docCount": "{count} document",
+    "docCountPlural": "{count} documents"
   },
   "templates": {
     "title": "Modèles",
@@ -703,5 +768,30 @@
     "effectiveDeductions": "Déductions effectives",
     "totalDeductions": "Total déductions",
     "disclaimer": "Estimations basées sur la valeur vénale × quote-part. Les intérêts hypothécaires doivent être déclarés séparément. Ce récapitulatif ne remplace pas un conseil fiscal."
+  },
+  "tickets": {
+    "title": "Signalements de dommages",
+    "subtitle": "{open} ouverts · {inProgress} en cours · {done} terminés",
+    "searchResults": "{count} résultats pour « {q} »",
+    "searchPlaceholder": "Titre, description ou locataire…",
+    "kiSummary": "Résumé IA",
+    "empty": "Aucun signalement",
+    "emptyDesc": "Aucun signalement de dommage pour l'instant.",
+    "noResults": "Aucun résultat",
+    "noResultsDesc": "Aucun signalement trouvé pour « {q} ».",
+    "openSection": "Ouverts",
+    "inProgressSection": "En cours",
+    "doneSection": "Terminés",
+    "newBtn": "Nouveau signalement",
+    "prevPage": "Précédent",
+    "nextPage": "Suivant"
+  },
+  "messages": {
+    "title": "Messages",
+    "count": "{count} conversation",
+    "countPlural": "{count} conversations",
+    "newMessageTo": "Nouveau message à",
+    "empty": "Aucun message",
+    "emptyDesc": "Commencez une conversation avec un locataire."
   }
 }

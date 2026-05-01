@@ -45,12 +45,22 @@ export interface TaxSummary {
   totalTaxableIncome: number
 }
 
-export async function computeTaxSummary(companyId: string, year: number): Promise<TaxSummary> {
+/**
+ * Compute a tax summary for a given company and year.
+ * @param companyId - The company to scope the query to.
+ * @param year - The tax year.
+ * @param propertyIds - Optional list of property IDs to restrict the summary to (used for
+ *   role-based access control, e.g. VERMIETER who can only see their assigned properties).
+ *   When omitted all properties of the company are included (ADMIN scope).
+ */
+export async function computeTaxSummary(companyId: string, year: number, propertyIds?: string[]): Promise<TaxSummary> {
   const yearStart = new Date(year, 0, 1)
   const yearEnd   = new Date(year, 11, 31, 23, 59, 59)
 
   const properties = await prisma.property.findMany({
-    where: { companyId },
+    where: propertyIds
+      ? { companyId, id: { in: propertyIds } }
+      : { companyId },
     include: {
       units: {
         include: {
@@ -225,6 +235,13 @@ export async function computeTaxSummary(companyId: string, year: number): Promis
   }
 }
 
+/**
+ * Count the number of calendar months covered between two dates, inclusive of both the
+ * start month and the end month.  This is intentional for tax year occupancy calculations:
+ * a lease that runs from Jan 1 to Jan 31 counts as 1 month; one that runs from Jan 1 to
+ * Feb 28 counts as 2 months.  Callers pass already-clamped effective dates (bounded by
+ * yearStart / yearEnd), so the result is always in [0, 12].
+ */
 function monthsBetween(start: Date, end: Date): number {
   const months =
     (end.getFullYear() - start.getFullYear()) * 12 +

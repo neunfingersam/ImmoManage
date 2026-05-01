@@ -177,7 +177,32 @@
     "recentActivity": "Recent Activity",
     "upcomingTasks": "Upcoming Tasks",
     "tasksNext7Days": "Next 7 Days",
-    "tasksNext30Days": "Next 30 Days"
+    "tasksNext30Days": "Next 30 Days",
+    "greeting": "Hello, {name}",
+    "subtitle": "Your management overview",
+    "revenueMonth": "Revenue this month",
+    "occupancy": "Occupancy rate",
+    "vacantCount": "{count} vacant",
+    "overdueLabel": "{count} overdue",
+    "revenueChart": "Rental income",
+    "revenueChartSubtitle": "Last 6 months (paid)",
+    "all": "All",
+    "portfolio": "Portfolio",
+    "propertiesLabel": "Properties",
+    "unitsTotal": "Total units",
+    "tenantsActive": "Active tenants",
+    "leaseEnds60": "Lease ends (60 days)",
+    "noOpenTickets": "No open tickets",
+    "tasksWeek": "Tasks (next 7 days)",
+    "noTasks": "No due tasks",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "dAbbr": "{n}d",
+    "priorityHigh": "High",
+    "priorityMedium": "Medium",
+    "priorityLow": "Low",
+    "openItems": "Open Items",
+    "openTicketsLabel": "Open Tickets"
   },
   "properties": {
     "title": "Properties",
@@ -191,7 +216,11 @@
     "unitCount": "Number of Units",
     "year": "Year Built",
     "vacancyRate": "Vacancy",
-    "units": "Units"
+    "units": "Units",
+    "count": "{count} properties",
+    "empty": "No properties yet",
+    "emptyDesc": "Add your first property.",
+    "newBtn": "New"
   },
   "units": {
     "title": "Units",
@@ -211,7 +240,18 @@
     "email": "Email",
     "phone": "Phone",
     "iban": "IBAN (for refunds)",
-    "notes": "Notes"
+    "notes": "Notes",
+    "total": "{count} tenants total",
+    "searchResults": "{count} results for \"{q}\"",
+    "searchPlaceholder": "Name, email or phone…",
+    "newBtn": "New",
+    "noResults": "No results",
+    "noResultsDesc": "No tenant found for \"{q}\".",
+    "empty": "No tenants yet",
+    "emptyDesc": "Add your first tenant.",
+    "prevPage": "Back",
+    "nextPage": "Next",
+    "pageInfo": "Page {page} of {totalPages} · {total} tenants"
   },
   "leases": {
     "title": "Leases",
@@ -230,7 +270,15 @@
     "status": "Status",
     "statusActive": "Active",
     "statusEnded": "Ended",
-    "statusCancelled": "Cancelled"
+    "statusCancelled": "Cancelled",
+    "activeSection": "Active",
+    "endedSection": "Ended",
+    "expiringBtn": "Expiring leases",
+    "activeCount": "{count} active",
+    "endedCount": "{count} ended",
+    "empty": "No leases yet",
+    "emptyDesc": "Create your first lease.",
+    "newBtn": "New"
   },
   "payments": {
     "title": "Payments",
@@ -265,7 +313,16 @@
     "tenantShare": "Tenant Share",
     "balance": "Balance",
     "overpaid": "Refund",
-    "underpaid": "Additional Payment"
+    "underpaid": "Additional Payment",
+    "count": "{count} bills",
+    "qrPaymentTitle": "Payment details (QR Invoice)",
+    "qrPaymentDesc": "This IBAN and address appear on the payment slip of the utility bill (Swiss QR Bill).",
+    "newBillSection": "New bill",
+    "allBillsSection": "All bills",
+    "empty": "No bills",
+    "emptyDesc": "No utility bills created yet.",
+    "sentAt": "Sent {date}",
+    "yearLabel": "Year {year}"
   },
   "documents": {
     "title": "Documents",
@@ -278,7 +335,15 @@
     "categorySonstiges": "Other",
     "scopeTenant": "Tenant-specific",
     "scopeProperty": "Property-wide",
-    "scopeGlobal": "Global"
+    "scopeGlobal": "Global",
+    "subtitle": "{count} documents",
+    "empty": "No documents",
+    "emptyDesc": "No documents uploaded yet.",
+    "uploadSection": "Upload",
+    "allSection": "All Documents",
+    "folderLabel": "Folders",
+    "docCount": "{count} document",
+    "docCountPlural": "{count} documents"
   },
   "templates": {
     "title": "Templates",
@@ -703,5 +768,30 @@
     "effectiveDeductions": "Effective deductions",
     "totalDeductions": "Total deductions",
     "disclaimer": "Estimates based on market value × ownership share. Mortgage interest must be declared separately in the tax return. This summary does not replace tax advice."
+  },
+  "tickets": {
+    "title": "Damage Reports",
+    "subtitle": "{open} open · {inProgress} in progress · {done} done",
+    "searchResults": "{count} results for \"{q}\"",
+    "searchPlaceholder": "Title, description or tenant…",
+    "kiSummary": "AI Summary",
+    "empty": "No reports",
+    "emptyDesc": "No damage reports at this time.",
+    "noResults": "No results",
+    "noResultsDesc": "No damage report found for \"{q}\".",
+    "openSection": "Open",
+    "inProgressSection": "In Progress",
+    "doneSection": "Done",
+    "newBtn": "New report",
+    "prevPage": "Previous",
+    "nextPage": "Next"
+  },
+  "messages": {
+    "title": "Messages",
+    "count": "{count} conversation",
+    "countPlural": "{count} conversations",
+    "newMessageTo": "New message to",
+    "empty": "No messages",
+    "emptyDesc": "Start a conversation with a tenant."
   }
 }

@@ -12,7 +12,7 @@ export async function getAssemblyWithAttendance(assemblyId: string) {
   if (!session?.user?.companyId) return null
 
   return prisma.assembly.findFirst({
-    where: { id: assemblyId },
+    where: { id: assemblyId, wegConfig: { property: { companyId: session.user.companyId } } },
     include: {
       wegConfig: {
         include: {
@@ -80,6 +80,11 @@ export async function saveAttendance(
 ): Promise<ActionResult<null>> {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
+
+  const assembly = await prisma.assembly.findFirst({
+    where: { id: assemblyId, wegConfig: { property: { companyId: session.user.companyId } } },
+  })
+  if (!assembly) return { success: false, error: 'Zugriff verweigert' }
 
   await prisma.assemblyAttendance.upsert({
     where: { assemblyId_ownerId: { assemblyId, ownerId } },

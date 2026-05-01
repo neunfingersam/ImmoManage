@@ -19,6 +19,12 @@ export async function recordPaymentAction(data: unknown) {
 
   const parsed = recordPaymentSchema.parse(data)
 
+  // Verify RentDemand belongs to this company
+  const demandCheck = await prisma.rentDemand.findFirst({
+    where: { id: parsed.rentDemandId, companyId: session.user.companyId },
+  })
+  if (!demandCheck) throw new Error('Nicht autorisiert')
+
   const payment = await prisma.payment.create({
     data: {
       rentDemandId: parsed.rentDemandId,
@@ -66,17 +72,58 @@ export async function bulkRecordPaymentsAction(
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) throw new Error('Unauthorized')
 
-  for (const m of matches) {
-    await recordPaymentAction(m)
-  }
+  const demandIds = matches.map((m) => m.rentDemandId)
+  const validDemands = await prisma.rentDemand.findMany({
+    where: { id: { in: demandIds }, companyId: session.user.companyId },
+    select: { id: true, amount: true, dueDate: true },
+  })
+  const validIds = new Set(validDemands.map((d) => d.id))
+  const authorizedMatches = matches.filter((m) => validIds.has(m.rentDemandId))
+
+  await prisma.$transaction(async (tx) => {
+    for (const m of authorizedMatches) {
+      const payment = await tx.payment.create({
+        data: {
+          rentDemandId: m.rentDemandId,
+          amount: m.amount,
+          paymentDate: new Date(m.paymentDate),
+          method: 'BANK_TRANSFER',
+          note: m.note,
+        },
+      })
+
+      const demand = validDemands.find((d) => d.id === m.rentDemandId)!
+      const allPayments = await tx.payment.findMany({ where: { rentDemandId: m.rentDemandId } })
+      const totalPaid = allPayments.reduce((sum, p) => sum + p.amount, 0)
+      const newStatus = totalPaid >= demand.amount ? 'PAID' : demand.dueDate < new Date() ? 'OVERDUE' : 'PENDING'
+
+      await tx.rentDemand.update({ where: { id: m.rentDemandId }, data: { status: newStatus } })
+      await tx.activityLog.create({
+        data: {
+          companyId: session.user.companyId!,
+          userId: session.user.id,
+          action: 'PAYMENT_RECORDED',
+          entity: 'Payment',
+          entityId: payment.id,
+          meta: { amount: m.amount },
+        },
+      })
+    }
+  })
 
   revalidatePath('/dashboard/payments')
-  return { count: matches.length }
+  return { count: authorizedMatches.length }
 }
 
 export async function sendReminderAction(rentDemandId: string) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) throw new Error('Unauthorized')
+
+  // Verify RentDemand belongs to this company
+  const demandCheck = await prisma.rentDemand.findFirst({
+    where: { id: rentDemandId, companyId: session.user.companyId },
+  })
+  if (!demandCheck) throw new Error('Nicht autorisiert')
 
   // Aktuellen Mahnlevel ermitteln
   const lastReminder = await prisma.paymentReminder.findFirst({

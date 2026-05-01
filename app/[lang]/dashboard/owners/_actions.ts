@@ -86,7 +86,23 @@ export async function assignOwnerProperty(data: {
   propertyId: string
   unitId?: string
 }): Promise<ActionResult<{ id: string }>> {
-  return withAuthAction(async () => {
+  return withAuthAction(async (session) => {
+    const ownerUser = await prisma.user.findUnique({
+      where: { id: data.ownerId },
+      select: { companyId: true },
+    })
+    if (!ownerUser || ownerUser.companyId !== session.user.companyId) {
+      return { success: false, error: 'Nicht autorisiert' }
+    }
+
+    const property = await prisma.property.findUnique({
+      where: { id: data.propertyId },
+      select: { companyId: true },
+    })
+    if (!property || property.companyId !== session.user.companyId) {
+      return { success: false, error: 'Nicht autorisiert' }
+    }
+
     const ownership = await prisma.propertyOwner.create({
       data: {
         userId: data.ownerId,
@@ -100,7 +116,15 @@ export async function assignOwnerProperty(data: {
 }
 
 export async function removeOwnerProperty(ownershipId: string): Promise<ActionResult<null>> {
-  return withAuthAction(async () => {
+  return withAuthAction(async (session) => {
+    const ownership = await prisma.propertyOwner.findUnique({
+      where: { id: ownershipId },
+      select: { property: { select: { companyId: true } } },
+    })
+    if (!ownership || ownership.property.companyId !== session.user.companyId) {
+      return { success: false, error: 'Nicht autorisiert' }
+    }
+
     await prisma.propertyOwner.delete({ where: { id: ownershipId } })
     revalidatePath('/dashboard/owners')
     return { success: true, data: null }

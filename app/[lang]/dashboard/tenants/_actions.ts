@@ -120,8 +120,13 @@ export async function resendTenantInvite(tenantId: string): Promise<ActionResult
 
 export async function deactivateTenant(tenantId: string): Promise<ActionResult<void>> {
   return withAuthAction(async (session) => {
+    const tenant = await prisma.user.findFirst({
+      where: { id: tenantId, ...getTenantWhere(session) },
+    })
+    if (!tenant) return { success: false, error: 'Mieter nicht gefunden' }
+
     await prisma.user.update({
-      where: { id: tenantId, companyId: session.user.companyId, role: 'MIETER' },
+      where: { id: tenantId },
       data: { active: false },
     })
     revalidatePath('/dashboard/tenants')
@@ -241,8 +246,13 @@ export async function moveTenantToUnit(tenantId: string, newUnitId: string): Pro
 
 export async function reactivateTenant(tenantId: string): Promise<ActionResult<void>> {
   return withAuthAction(async (session) => {
+    const tenant = await prisma.user.findFirst({
+      where: { id: tenantId, ...getTenantWhere(session) },
+    })
+    if (!tenant) return { success: false, error: 'Mieter nicht gefunden' }
+
     await prisma.user.update({
-      where: { id: tenantId, companyId: session.user.companyId, role: 'MIETER' },
+      where: { id: tenantId },
       data: { active: true },
     })
     revalidatePath('/dashboard/tenants')

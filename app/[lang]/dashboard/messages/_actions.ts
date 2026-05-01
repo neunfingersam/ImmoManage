@@ -9,6 +9,7 @@ import type { ActionResult } from '@/lib/action-result'
 import type { Message } from '@/lib/generated/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
 import { sendPushToUser } from '@/lib/push'
+import { getTenantWhere } from '@/lib/access-control'
 
 export async function getThreads() {
   const session = await getServerSession(authOptions)
@@ -112,14 +113,13 @@ export async function sendMessage(data: { toId: string; text: string }): Promise
 }
 
 export async function getMyTenants() {
-  // Für Vermieter: alle aktiven Mieter der Company
+  // For VERMIETER: only tenants in their assigned properties. For ADMIN: all company tenants.
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return []
 
   return prisma.user.findMany({
     where: {
-      companyId: session.user.companyId,
-      role: 'MIETER',
+      ...getTenantWhere({ user: { role: session.user.role ?? '', id: session.user.id ?? '', companyId: session.user.companyId } }),
       active: true,
     },
     select: { id: true, name: true, email: true },

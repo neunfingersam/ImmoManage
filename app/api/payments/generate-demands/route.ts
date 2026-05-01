@@ -26,28 +26,30 @@ export async function POST() {
   let skipped = 0
 
   for (const lease of activeLeases) {
-    // Idempotenz: prüfen ob Eintrag für diesen Monat bereits existiert
-    const existing = await prisma.rentDemand.findFirst({
-      where: { leaseId: lease.id, month, year },
-    })
-
-    if (existing) {
-      skipped++
-      continue
+    try {
+      await prisma.rentDemand.create({
+        data: {
+          companyId,
+          leaseId: lease.id,
+          month,
+          year,
+          amount: calculateRentDemandAmount(lease),
+          status: 'PENDING',
+          dueDate,
+        },
+      })
+      created++
+    } catch (e: unknown) {
+      // Unique constraint violation = demand already exists for this lease/month/year
+      const isUniqueViolation =
+        e instanceof Error &&
+        (e.message.includes('Unique constraint') || e.message.includes('SQLITE_CONSTRAINT') || e.message.includes('UNIQUE constraint'))
+      if (isUniqueViolation) {
+        skipped++
+      } else {
+        throw e
+      }
     }
-
-    await prisma.rentDemand.create({
-      data: {
-        companyId,
-        leaseId: lease.id,
-        month,
-        year,
-        amount: calculateRentDemandAmount(lease),
-        status: 'PENDING',
-        dueDate,
-      },
-    })
-    created++
   }
 
   // ActivityLog schreiben

@@ -7,6 +7,7 @@ import { renderToBuffer } from '@react-pdf/renderer'
 import React from 'react'
 import * as XLSX from 'xlsx'
 import { prisma } from '@/lib/prisma'
+import { getPropertyWhere } from '@/lib/access-control'
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
@@ -19,7 +20,14 @@ export async function GET(req: NextRequest) {
   const locale = searchParams.get('lang') ?? 'de'
   const i18n = getTaxI18n(locale)
 
-  const summary = await computeTaxSummary(session.user.companyId, year)
+  // Resolve which properties the current user may access (role-scoped for VERMIETER)
+  const accessibleProperties = await prisma.property.findMany({
+    where: getPropertyWhere(session),
+    select: { id: true },
+  })
+  const propertyIds = accessibleProperties.map((p) => p.id)
+
+  const summary = await computeTaxSummary(session.user.companyId, year, propertyIds)
 
   if (!format || format === 'json') {
     return NextResponse.json(summary)

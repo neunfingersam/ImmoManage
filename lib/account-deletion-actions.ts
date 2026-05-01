@@ -55,9 +55,13 @@ export async function requestAccountDeletion(): Promise<ActionResult<null>> {
     })
     if (!user?.companyId) return { success: false, error: 'no_company' }
 
-    await prisma.accountDeletionRequest.create({
+    const deletionRequest = await prisma.accountDeletionRequest.create({
       data: { userId, companyId: user.companyId },
     })
+
+    const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
+    const approveUrl = `${baseUrl}/dashboard/settings/deletion-requests?id=${deletionRequest.id}`
+    const rejectUrl = `${baseUrl}/dashboard/settings/deletion-requests?id=${deletionRequest.id}`
 
     // If requester is ADMIN → notify SUPER_ADMIN; otherwise notify company admin
     if (user.role === 'ADMIN') {
@@ -71,15 +75,15 @@ export async function requestAccountDeletion(): Promise<ActionResult<null>> {
           adminName: superAdmin.name,
           userName: user.name,
           userEmail: user.email,
-          approveUrl: '',
-          rejectUrl: '',
+          approveUrl,
+          rejectUrl,
         })
       }
     } else {
       const admin = await prisma.user.findFirst({
         where: {
           companyId: user.companyId,
-          role: { in: ['ADMIN', 'VERMIETER'] },
+          role: 'ADMIN',
           active: true,
         },
         select: { name: true, email: true },
@@ -90,8 +94,8 @@ export async function requestAccountDeletion(): Promise<ActionResult<null>> {
           adminName: admin.name,
           userName: user.name,
           userEmail: user.email,
-          approveUrl: '',
-          rejectUrl: '',
+          approveUrl,
+          rejectUrl,
         })
       }
     }
@@ -106,7 +110,7 @@ export async function approveAccountDeletion(
 ): Promise<ActionResult<null>> {
   return withAuthAction(async (session) => {
     const sessionRole = session.user.role
-    if (sessionRole !== 'ADMIN' && sessionRole !== 'VERMIETER' && sessionRole !== 'SUPER_ADMIN') {
+    if (sessionRole !== 'ADMIN' && sessionRole !== 'SUPER_ADMIN') {
       return { success: false, error: 'forbidden' }
     }
 
@@ -166,7 +170,7 @@ export async function rejectAccountDeletion(
 ): Promise<ActionResult<null>> {
   return withAuthAction(async (session) => {
     const role = session.user.role
-    if (role !== 'ADMIN' && role !== 'VERMIETER' && role !== 'SUPER_ADMIN') {
+    if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
       return { success: false, error: 'forbidden' }
     }
 
