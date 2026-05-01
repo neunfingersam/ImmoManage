@@ -134,7 +134,7 @@ export default function LandingPage() {
 
   const label = {
     de: { live: 'Verfügbar', soon: 'Demnächst', features: 'Funktionen', pricing: 'Early Access',
-          login: 'Anmelden', cta: 'Kostenlos Zugang anfragen', trust: ['1 Monat kostenlos testen', 'Produkt mitgestalten', 'Monatlich kündbar'],
+          login: 'Anmelden', cta: 'Kostenlos Zugang anfragen', trust: ['Während Early Access kostenlos', 'Produkt mitgestalten', 'Monatlich kündbar'],
           painTitle: 'Kennen Sie das?', painLabel: 'DER ALTE WEG',
           painSub: 'Was Hausverwalter täglich Zeit, Nerven und Geld kostet — und längst gelöst sein sollte.',
           pains: ['Tabellen und Excel-Chaos für Miet- und Nebenkosten', 'Dokumente per E-Mail hin- und herschicken', 'Mieter rufen wegen jeder Kleinigkeit an', 'Fristen verpassen weil alles im Kopf gespeichert ist', 'Stundenlange Nebenkostenabrechnungen manuell erstellen', 'Kein Überblick über Leerstände und auslaufende Verträge'],
@@ -142,7 +142,7 @@ export default function LandingPage() {
           solutionSub: 'Alles was ein Vermieter braucht — in einer einzigen Schweizer Software.',
         },
     fr: { live: 'Disponible', soon: 'Bientôt', features: 'Fonctionnalités', pricing: 'Early Access',
-          login: 'Connexion', cta: 'Demander un accès gratuit', trust: ['1 mois d\'essai gratuit', 'Contribuer au produit', 'Résiliable mensuellement'],
+          login: 'Connexion', cta: 'Demander un accès gratuit', trust: ['Gratuit pendant l\'Early Access', 'Contribuer au produit', 'Résiliable mensuellement'],
           painTitle: 'Vous connaissez ça?', painLabel: 'L\'ANCIENNE MÉTHODE',
           painSub: 'Ce qui coûte du temps, des nerfs et de l\'argent aux gérants immobiliers chaque jour.',
           pains: ['Tableaux Excel pour loyers et charges', 'Documents envoyés par e-mail', 'Locataires qui appellent pour tout', 'Délais oubliés car tout est en tête', 'Décomptes de charges manuels et chronophages', 'Aucune vue d\'ensemble des logements vacants et contrats expirants'],
@@ -150,7 +150,7 @@ export default function LandingPage() {
           solutionSub: 'Tout ce dont un propriétaire a besoin — dans un seul logiciel suisse.',
         },
     it: { live: 'Disponibile', soon: 'Prossimamente', features: 'Funzionalità', pricing: 'Early Access',
-          login: 'Accedi', cta: 'Richiedi accesso gratuito', trust: ['1 mese di prova gratuita', 'Contribuisci al prodotto', 'Annullabile mensilmente'],
+          login: 'Accedi', cta: 'Richiedi accesso gratuito', trust: ['Gratuito durante l\'Early Access', 'Contribuisci al prodotto', 'Annullabile mensilmente'],
           painTitle: 'La riconosci?', painLabel: 'IL VECCHIO MODO',
           painSub: 'Quello che costa tempo, nervi e denaro ai gestori immobiliari ogni giorno.',
           pains: ['Fogli Excel per affitti e spese', 'Documenti inviati via e-mail', 'Affittuari che chiamano per tutto', 'Scadenze dimenticate perché tutto è in testa', 'Rendiconti spese manuali e lunghi', 'Nessuna panoramica su unità sfitte e contratti in scadenza'],
@@ -158,7 +158,7 @@ export default function LandingPage() {
           solutionSub: 'Tutto ciò di cui un proprietario ha bisogno — in un unico software svizzero.',
         },
     en: { live: 'Available', soon: 'Coming Soon', features: 'Features', pricing: 'Early Access',
-          login: 'Sign in', cta: 'Request free access', trust: ['1 month free trial', 'Shape the product', 'Cancel anytime'],
+          login: 'Sign in', cta: 'Request free access', trust: ['Free during Early Access', 'Shape the product', 'Cancel anytime'],
           painTitle: 'Sound familiar?', painLabel: 'THE OLD WAY',
           painSub: 'What costs property managers time, nerves and money every day — and should have been solved long ago.',
           pains: ['Spreadsheet chaos for rents and utilities', 'Documents sent back and forth by email', 'Tenants calling about every little thing', 'Missing deadlines because everything is in your head', 'Hours spent creating utility bills manually', 'No overview of vacancies and expiring leases'],
@@ -483,13 +483,13 @@ export default function LandingPage() {
             <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2' }}>
               <div style={{ fontSize: 28, marginBottom: 14 }}>🧪</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
-                {locale === 'de' ? '1 Monat kostenlos testen' : locale === 'fr' ? '1 mois d\'essai gratuit' : locale === 'it' ? '1 mese di prova gratuita' : '1 month free trial'}
+                {locale === 'de' ? 'Kostenlos bis zum Launch' : locale === 'fr' ? 'Gratuit jusqu\'au lancement' : locale === 'it' ? 'Gratuito fino al lancio' : 'Free until launch'}
               </div>
               <p style={{ fontSize: 14, color: '#6b6860', lineHeight: 1.6 }}>
-                {locale === 'de' ? 'Vollständiger Zugang zur Plattform — ohne Kreditkarte, ohne Risiko. Du kannst alles in deiner eigenen Umgebung testen.' :
-                 locale === 'fr' ? 'Accès complet à la plateforme — sans carte de crédit, sans risque. Testez tout dans votre propre environnement.' :
-                 locale === 'it' ? 'Accesso completo alla piattaforma — senza carta di credito, senza rischi. Testa tutto nel tuo ambiente personale.' :
-                                   'Full access to the platform — no credit card, no risk. Test everything in your own personal environment.'}
+                {locale === 'de' ? 'Vollständiger Zugang zur Plattform — ohne Kreditkarte, ohne Risiko. Du zahlst erst wenn das Produkt fertig ist.' :
+                 locale === 'fr' ? 'Accès complet à la plateforme — sans carte de crédit, sans risque. Vous ne payez qu\'une fois le produit terminé.' :
+                 locale === 'it' ? 'Accesso completo alla piattaforma — senza carta di credito, senza rischi. Paghi solo quando il prodotto è pronto.' :
+                                   'Full access to the platform — no credit card, no risk. You only pay once the product is ready.'}
               </p>
             </div>
             <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40` }}>
