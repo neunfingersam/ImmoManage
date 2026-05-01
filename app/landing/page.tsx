@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { translations, type Locale } from './translations'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -117,7 +117,15 @@ export default function LandingPage() {
     if (saved && ['de', 'fr', 'it', 'en'].includes(saved)) setLocale(saved)
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
+
+    // Intersection Observer for scroll-reveal animations
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target) } }),
+      { threshold: 0.12 }
+    )
+    document.querySelectorAll('.scroll-reveal').forEach((el) => observer.observe(el))
+
+    return () => { window.removeEventListener('scroll', onScroll); observer.disconnect() }
   }, [])
 
   const changeLocale = (l: Locale) => {
@@ -175,21 +183,30 @@ export default function LandingPage() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body { background: ${BG}; }
+        body { background: ${BG}; overflow-x: hidden; }
         .serif { font-family: 'DM Serif Display', Georgia, serif; }
-        .hover-lift { transition: transform .2s, box-shadow .2s; }
-        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.1); }
+        .hover-lift { transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 56px rgba(0,0,0,.12); }
         .nav-link-item { position: relative; cursor: pointer; font-size: 14px; font-weight: 500; color: #374151; background: none; border: none; padding: 4px 0; }
-        .nav-link-item::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: ${CORAL}; transition: width .2s; }
+        .nav-link-item::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: ${CORAL}; transition: width .25s cubic-bezier(.4,0,.2,1); }
         .nav-link-item:hover::after { width: 100%; }
         .nav-link-item:hover { color: #1a1a2e; }
-        .fade-up { animation: fadeUp .6s ease forwards; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        .delay-1 { animation-delay: .1s; opacity: 0; }
-        .delay-2 { animation-delay: .22s; opacity: 0; }
-        .delay-3 { animation-delay: .34s; opacity: 0; }
-        .delay-4 { animation-delay: .46s; opacity: 0; }
-        .mockup-window { background: #1e2533; border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,.25), 0 0 0 1px rgba(0,0,0,.1); }
+        /* Hero entrance animations */
+        .fade-up { animation: fadeUp .7s cubic-bezier(.4,0,.2,1) forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        .delay-1 { animation-delay: .12s; opacity: 0; }
+        .delay-2 { animation-delay: .24s; opacity: 0; }
+        .delay-3 { animation-delay: .38s; opacity: 0; }
+        .delay-4 { animation-delay: .52s; opacity: 0; }
+        /* Scroll-reveal for below-fold sections */
+        .scroll-reveal { opacity: 0; transform: translateY(32px); transition: opacity .65s cubic-bezier(.4,0,.2,1), transform .65s cubic-bezier(.4,0,.2,1); }
+        .scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
+        .scroll-reveal.delay-s1 { transition-delay: .1s; }
+        .scroll-reveal.delay-s2 { transition-delay: .2s; }
+        .scroll-reveal.delay-s3 { transition-delay: .3s; }
+        .scroll-reveal.delay-s4 { transition-delay: .4s; }
+        /* Mockup */
+        .mockup-window { background: #1e2533; border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,.28), 0 0 0 1px rgba(0,0,0,.1); }
         .mockup-topbar { background: #2a3142; padding: 10px 14px; display: flex; align-items: center; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
         .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
@@ -206,27 +223,51 @@ export default function LandingPage() {
         .badge-red { background: rgba(239,68,68,.1); color: #ef4444; }
         .badge-green { background: rgba(34,197,94,.1); color: #16a34a; }
         .badge-yellow { background: rgba(234,179,8,.1); color: #ca8a04; }
-        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 16px 0; border-bottom: 1px solid #e8dfd6; }
-        .pain-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(232,115,74,.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
-        .feature-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #ede8e2; transition: all .2s; cursor: default; }
-        .feature-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.08); border-color: ${CORAL}40; }
+        .feature-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #ede8e2; transition: all .25s cubic-bezier(.34,1.2,.64,1); cursor: default; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.09); border-color: ${CORAL}50; }
         .live-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(34,197,94,.1); color: #15803d; }
         .soon-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(99,102,241,.1); color: #4f46e5; }
-        .btn-coral { background: ${CORAL}; color: white; border: none; cursor: pointer; border-radius: 8px; font-weight: 600; transition: opacity .15s, transform .15s; }
-        .btn-coral:hover { opacity: .92; transform: translateY(-1px); }
-        .btn-outline { background: transparent; color: #374151; border: 1.5px solid #d1cdc8; cursor: pointer; border-radius: 8px; font-weight: 600; transition: all .15s; }
+        .btn-coral { background: ${CORAL}; color: white; border: none; cursor: pointer; border-radius: 10px; font-weight: 600; transition: opacity .15s, transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; box-shadow: 0 4px 16px ${CORAL}40; }
+        .btn-coral:hover { opacity: .93; transform: translateY(-2px); box-shadow: 0 8px 28px ${CORAL}55; }
+        .btn-coral:active { transform: translateY(0); }
+        .btn-outline { background: transparent; color: #374151; border: 1.5px solid #d1cdc8; cursor: pointer; border-radius: 10px; font-weight: 600; transition: all .15s; }
         .btn-outline:hover { border-color: ${CORAL}; color: ${CORAL}; }
-        .pricing-card { background: white; border-radius: 20px; padding: 28px; border: 1.5px solid #ede8e2; transition: all .2s; }
-        .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.1); }
-        .pricing-card.featured { border-color: ${CORAL}; background: ${CORAL}; color: white; }
-        .testimonial-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 24px; }
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; padding: 16px; animation: fadeIn .2s ease; }
-        @media (min-width: 640px) { .modal-bg { align-items: center; } }
-        .modal-box { background: white; border-radius: 20px; width: 100%; max-width: 460px; overflow: hidden; max-height: 90vh; animation: slideUp .3s ease; }
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; padding: 0; animation: fadeIn .2s ease; }
+        @media (min-width: 640px) { .modal-bg { align-items: center; padding: 16px; } }
+        .modal-box { background: white; border-radius: 24px 24px 0 0; width: 100%; max-width: 460px; overflow: hidden; max-height: 92vh; animation: slideUp .32s cubic-bezier(.4,0,.2,1); }
+        @media (min-width: 640px) { .modal-box { border-radius: 24px; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .float-anim { animation: floatBtn 3s ease-in-out infinite; }
-        @keyframes floatBtn { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .float-anim { animation: floatBtn 3.5s ease-in-out infinite; }
+        @keyframes floatBtn { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        /* Mobile nav */
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; color: #374151; }
+        .mobile-menu { display: none; position: fixed; inset: 0; top: 64px; background: rgba(253,248,244,.98); backdrop-filter: blur(12px); z-index: 99; padding: 24px; flex-direction: column; gap: 8px; border-top: 1px solid #ede8e2; animation: slideDown .22s ease; overflow-y: auto; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu-link { font-size: 18px; font-weight: 600; color: #1a1a2e; background: none; border: none; cursor: pointer; padding: 14px 0; border-bottom: 1px solid #f0ece7; text-align: left; width: 100%; }
+        .mobile-menu-link:last-child { border-bottom: none; }
+        /* Responsive layout */
+        .hidden-mobile { display: flex; }
+        @media (max-width: 768px) {
+          .hidden-mobile { display: none !important; }
+          .hamburger { display: block !important; }
+          .hero-grid { grid-template-columns: 1fr !important; gap: 36px !important; padding: 88px 20px 48px !important; }
+          .hero-mockup { display: none !important; }
+          .section-pad { padding: 56px 20px !important; }
+          .hero-title { font-size: clamp(34px, 9vw, 48px) !important; }
+          .pain-grid { grid-template-columns: 1fr !important; }
+          .features-grid { grid-template-columns: 1fr !important; }
+          .benefit-grid { grid-template-columns: 1fr !important; }
+          .footer-inner { flex-direction: column !important; gap: 20px !important; text-align: center !important; }
+          .footer-links { justify-content: center !important; }
+          .nav-cta-text { display: none !important; }
+          .float-btn-text { display: none !important; }
+          .float-btn { padding: 12px !important; border-radius: 50% !important; }
+        }
+        @media (max-width: 480px) {
+          .nav-lang { display: none !important; }
+        }
       `}</style>
 
       {/* ── Navbar ───────────────────────────────────────────────────────────── */}
@@ -237,9 +278,9 @@ export default function LandingPage() {
         borderBottom: scrolled ? '1px solid #ede8e2' : 'none',
         transition: 'all .3s',
       }}>
-        <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', height: 64, gap: 24 }}>
+        <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', height: 64, gap: 16 }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => scrollTo('hero')}>
+          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', flexShrink: 0 }} onClick={() => scrollTo('hero')}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="ImmoManage" style={{ height: 40, width: 'auto', imageRendering: 'auto' }} />
           </div>
@@ -251,37 +292,82 @@ export default function LandingPage() {
           </div>
 
           {/* Right side */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
             {/* Language switcher */}
-            {LOCALES.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => changeLocale(l.code)}
-                style={{
-                  padding: '4px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none',
-                  background: locale === l.code ? CORAL : 'transparent',
-                  color: locale === l.code ? 'white' : '#9ca3af',
-                  transition: 'all .15s',
-                }}
-              >
-                {l.label}
-              </button>
-            ))}
-            <span style={{ width: 1, height: 20, background: '#e5e7eb', margin: '0 4px' }} />
-            <button className="nav-link-item" onClick={() => { window.location.href = `/${locale}/auth/login` }}>{lbl.login}</button>
+            <div className="nav-lang" style={{ display: 'flex', gap: 2 }}>
+              {LOCALES.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => changeLocale(l.code)}
+                  style={{
+                    padding: '4px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none',
+                    background: locale === l.code ? CORAL : 'transparent',
+                    color: locale === l.code ? 'white' : '#9ca3af',
+                    transition: 'all .15s',
+                  }}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+            <span className="hidden-mobile" style={{ width: 1, height: 20, background: '#e5e7eb', margin: '0 4px' }} />
+            <button className="nav-link-item hidden-mobile" onClick={() => { window.location.href = `/${locale}/auth/login` }}>{lbl.login}</button>
             <button
               className="btn-coral"
-              style={{ padding: '8px 18px', fontSize: 14, minHeight: 36 }}
+              style={{ padding: '8px 16px', fontSize: 14, minHeight: 36, whiteSpace: 'nowrap' }}
               onClick={() => setContactOpen(true)}
             >
-              {lbl.cta} →
+              <span className="nav-cta-text">{lbl.cta} →</span>
+              <span style={{ display: 'none' }} className="nav-cta-short">→</span>
+            </button>
+            {/* Hamburger */}
+            <button
+              className="hamburger"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Menu"
+            >
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                {mobileMenuOpen
+                  ? <><line x1="4" y1="4" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><line x1="18" y1="4" x2="4" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></>
+                  : <><line x1="3" y1="7" x2="19" y2="7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><line x1="3" y1="11" x2="19" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><line x1="3" y1="15" x2="19" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></>
+                }
+              </svg>
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu open">
+            <button className="mobile-menu-link" onClick={() => scrollTo('features')}>{lbl.features}</button>
+            <button className="mobile-menu-link" onClick={() => scrollTo('pricing')}>{lbl.pricing}</button>
+            <button className="mobile-menu-link" onClick={() => { window.location.href = `/${locale}/auth/login`; setMobileMenuOpen(false) }}>{lbl.login}</button>
+            <div style={{ paddingTop: 8 }}>
+              <button className="btn-coral" style={{ width: '100%', padding: '14px', fontSize: 15, minHeight: 48 }} onClick={() => { setContactOpen(true); setMobileMenuOpen(false) }}>
+                {lbl.cta} →
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: 8, paddingTop: 8 }}>
+              {LOCALES.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => changeLocale(l.code)}
+                  style={{
+                    padding: '6px 12px', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none',
+                    background: locale === l.code ? CORAL : '#f3f0ec',
+                    color: locale === l.code ? 'white' : '#6b6860',
+                  }}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <section id="hero" style={{ maxWidth: 1160, margin: '0 auto', padding: '120px 24px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
+      <section id="hero" className="hero-grid" style={{ maxWidth: 1160, margin: '0 auto', padding: '120px 24px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
         <div>
           <div className="fade-up" style={{
             display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px',
@@ -292,13 +378,13 @@ export default function LandingPage() {
             {locale === 'de' ? 'Für die Schweiz gebaut' : locale === 'fr' ? 'Conçu pour la Suisse' : locale === 'it' ? 'Fatto per la Svizzera' : 'Built for Switzerland'}
           </div>
 
-          <h1 className="serif fade-up delay-1" style={{ fontSize: 'clamp(38px, 5vw, 58px)', lineHeight: 1.08, color: '#1a1a2e', marginBottom: 0 }}>
+          <h1 className="serif fade-up delay-1 hero-title" style={{ fontSize: 'clamp(38px, 5vw, 58px)', lineHeight: 1.08, color: '#1a1a2e', marginBottom: 0 }}>
             {locale === 'de' ? <>Schluss mit<br />Zettelwirtschaft.</> :
              locale === 'fr' ? <>Fini le chaos<br />administratif.</> :
              locale === 'it' ? <>Basta con il<br />caos cartaceo.</> :
                                <>No more<br />paper chaos.</>}
           </h1>
-          <h1 className="serif fade-up delay-2" style={{ fontSize: 'clamp(38px, 5vw, 58px)', lineHeight: 1.08, color: CORAL, marginBottom: 24 }}>
+          <h1 className="serif fade-up delay-2 hero-title" style={{ fontSize: 'clamp(38px, 5vw, 58px)', lineHeight: 1.08, color: CORAL, marginBottom: 24 }}>
             {locale === 'de' ? 'Automatisch verwaltet.' :
              locale === 'fr' ? 'Géré automatiquement.' :
              locale === 'it' ? 'Gestito automaticamente.' :
@@ -329,7 +415,7 @@ export default function LandingPage() {
         </div>
 
         {/* App Mockup */}
-        <div className="fade-up delay-2" style={{ position: 'relative' }}>
+        <div className="fade-up delay-2 hero-mockup" style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', inset: -20, background: `radial-gradient(ellipse at center, ${CORAL}18 0%, transparent 70%)`, zIndex: 0 }} />
           <div className="mockup-window" style={{ position: 'relative', zIndex: 1 }}>
             {/* Browser top bar */}
@@ -401,14 +487,14 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pain section ─────────────────────────────────────────────────────── */}
-      <section style={{ background: 'white', padding: '80px 24px' }}>
+      <section className="section-pad" style={{ background: 'white', padding: '80px 24px' }}>
         <div style={{ maxWidth: 960, margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: CORAL, marginBottom: 12 }}>{lbl.painLabel}</div>
-          <h2 className="serif" style={{ fontSize: 'clamp(32px, 4vw, 46px)', color: '#1a1a2e', marginBottom: 12 }}>{lbl.painTitle}</h2>
-          <p style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{lbl.painSub}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, textAlign: 'left' }}>
+          <div className="scroll-reveal" style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: CORAL, marginBottom: 12 }}>{lbl.painLabel}</div>
+          <h2 className="serif scroll-reveal delay-s1" style={{ fontSize: 'clamp(32px, 4vw, 46px)', color: '#1a1a2e', marginBottom: 12 }}>{lbl.painTitle}</h2>
+          <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{lbl.painSub}</p>
+          <div className="pain-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, textAlign: 'left' }}>
             {lbl.pains.map((pain, i) => (
-              <div key={i} style={{
+              <div key={i} className="scroll-reveal" style={{ transitionDelay: `${0.05 * i}s`,
                 background: 'linear-gradient(135deg, #fff7f5 0%, #fef3ef 100%)',
                 borderRadius: 16, padding: '22px 20px',
                 border: '1.5px solid #fce4da',
@@ -427,18 +513,18 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────────────── */}
-      <section id="features" style={{ padding: '80px 24px', background: BG }}>
+      <section id="features" className="section-pad" style={{ padding: '80px 24px', background: BG }}>
         <div style={{ maxWidth: 1160, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: CORAL, marginBottom: 12 }}>{lbl.solutionLabel}</div>
-            <h2 className="serif" style={{ fontSize: 'clamp(30px, 4vw, 44px)', color: '#1a1a2e', marginBottom: 12 }}>{lbl.solutionTitle}</h2>
-            <p style={{ color: '#6b6860', fontSize: 16 }}>{lbl.solutionSub}</p>
+            <div className="scroll-reveal" style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: CORAL, marginBottom: 12 }}>{lbl.solutionLabel}</div>
+            <h2 className="serif scroll-reveal delay-s1" style={{ fontSize: 'clamp(30px, 4vw, 44px)', color: '#1a1a2e', marginBottom: 12 }}>{lbl.solutionTitle}</h2>
+            <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 16 }}>{lbl.solutionSub}</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-            {FEATURES.map((f) => {
+          <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+            {FEATURES.map((f, fi) => {
               const content = FEATURE_CONTENT[f.key][locale]
               return (
-                <div key={f.key} className="feature-card hover-lift" style={{ opacity: f.live ? 1 : 0.82 }}>
+                <div key={f.key} className="feature-card hover-lift scroll-reveal" style={{ opacity: f.live ? 1 : 0.82, transitionDelay: `${0.05 * (fi % 4)}s` }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                     <div style={{ width: 40, height: 40, borderRadius: 10, background: f.live ? `${CORAL}15` : 'rgba(99,102,241,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
                       {f.icon}
@@ -458,7 +544,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Early Access ─────────────────────────────────────────────────────── */}
-      <section id="pricing" style={{ padding: '80px 24px', background: 'white' }}>
+      <section id="pricing" className="section-pad" style={{ padding: '80px 24px', background: 'white' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
           {/* Badge */}
           <div style={{ display: 'inline-block', background: `${CORAL}15`, color: CORAL, fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 999, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 24 }}>
@@ -479,7 +565,7 @@ export default function LandingPage() {
           </p>
 
           {/* Two benefit cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 48, textAlign: 'left' }}>
+          <div className="benefit-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 48, textAlign: 'left' }}>
             <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2' }}>
               <div style={{ fontSize: 28, marginBottom: 14 }}>🧪</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
@@ -524,14 +610,14 @@ export default function LandingPage() {
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <footer style={{ background: '#111827', padding: '40px 24px', borderTop: '1px solid rgba(255,255,255,.06)' }}>
-        <div style={{ maxWidth: 1160, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+        <div className="footer-inner" style={{ maxWidth: 1160, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 28, height: 28, borderRadius: 7, background: CORAL, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ color: 'white', fontWeight: 800, fontSize: 13 }}>IM</span>
             </div>
             <span style={{ fontWeight: 700, fontSize: 15, color: '#9ca3af' }}>ImmoManage</span>
           </div>
-          <div style={{ display: 'flex', gap: 20 }}>
+          <div className="footer-links" style={{ display: 'flex', gap: 20 }}>
             {t.footer.links.map((link, i) => {
               const footerHrefs = [`/${locale}/datenschutz`, `/${locale}/impressum`, 'mailto:info@immo-manage.ch']
               return (
@@ -546,19 +632,19 @@ export default function LandingPage() {
       {/* ── Floating Feedback Button ──────────────────────────────────────────── */}
       <button
         onClick={() => setFeedbackOpen(true)}
-        className="float-anim"
+        className="float-anim float-btn"
         style={{
-          position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
+          position: 'fixed', bottom: 24, right: 20, zIndex: 9999,
           display: 'flex', alignItems: 'center', gap: 8,
           padding: '11px 20px', borderRadius: 999,
           fontWeight: 600, fontSize: 14, color: 'white',
           background: CORAL, border: 'none', cursor: 'pointer',
-          minHeight: 44, boxShadow: `0 8px 30px ${CORAL}60`,
+          minHeight: 48, boxShadow: `0 8px 32px ${CORAL}65`,
           fontFamily: "'DM Sans', system-ui, sans-serif",
         }}
       >
-        <span style={{ fontSize: 16 }}>💡</span>
-        <span>{t.feedback.buttonTitle}</span>
+        <span style={{ fontSize: 17 }}>💡</span>
+        <span className="float-btn-text">{t.feedback.buttonTitle}</span>
       </button>
 
       {/* ── Modals ───────────────────────────────────────────────────────────── */}
