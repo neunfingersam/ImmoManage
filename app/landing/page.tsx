@@ -133,7 +133,7 @@ export default function LandingPage() {
   }
 
   const label = {
-    de: { live: 'Verfügbar', soon: 'Coming Soon', features: 'Funktionen', pricing: 'Preise',
+    de: { live: 'Verfügbar', soon: 'Demnächst', features: 'Funktionen', pricing: 'Preise',
           login: 'Anmelden', cta: 'Gratis testen', trust: ['Keine Kreditkarte', 'Schweizer Server', 'Monatlich kündbar'],
           painTitle: 'Kennen Sie das?', painLabel: 'DER ALTE WEG',
           painSub: 'Was Hausverwalter täglich Zeit, Nerven und Geld kostet — und längst gelöst sein sollte.',
@@ -141,7 +141,7 @@ export default function LandingPage() {
           solutionLabel: 'DIE LÖSUNG', solutionTitle: 'ImmoManage macht Schluss damit.',
           solutionSub: 'Alles was ein Vermieter braucht — in einer einzigen Schweizer Software.',
         },
-    fr: { live: 'Disponible', soon: 'Coming Soon', features: 'Fonctionnalités', pricing: 'Tarifs',
+    fr: { live: 'Disponible', soon: 'Bientôt', features: 'Fonctionnalités', pricing: 'Tarifs',
           login: 'Connexion', cta: 'Essai gratuit', trust: ['Sans carte de crédit', 'Serveur suisse', 'Résiliable mensuellement'],
           painTitle: 'Vous connaissez ça?', painLabel: 'L\'ANCIENNE MÉTHODE',
           painSub: 'Ce qui coûte du temps, des nerfs et de l\'argent aux gérants immobiliers chaque jour.',
@@ -149,7 +149,7 @@ export default function LandingPage() {
           solutionLabel: 'LA SOLUTION', solutionTitle: 'ImmoManage en finit avec ça.',
           solutionSub: 'Tout ce dont un propriétaire a besoin — dans un seul logiciel suisse.',
         },
-    it: { live: 'Disponibile', soon: 'Coming Soon', features: 'Funzionalità', pricing: 'Prezzi',
+    it: { live: 'Disponibile', soon: 'Prossimamente', features: 'Funzionalità', pricing: 'Prezzi',
           login: 'Accedi', cta: 'Prova gratuita', trust: ['Senza carta di credito', 'Server svizzero', 'Annullabile mensilmente'],
           painTitle: 'La riconosci?', painLabel: 'IL VECCHIO MODO',
           painSub: 'Quello che costa tempo, nervi e denaro ai gestori immobiliari ogni giorno.',
