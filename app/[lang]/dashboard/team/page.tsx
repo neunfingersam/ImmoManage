@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 import Link from 'next/link'
 import { Plus, Users } from 'lucide-react'
 import { Card } from '@/components/ui/card'
@@ -12,6 +13,7 @@ import { redirect } from 'next/navigation'
 const roleLabels: Record<string, string> = { ADMIN: 'Admin', VERMIETER: 'Vermieter' }
 
 export default async function TeamPage() {
+  const lang = await getLocale()
   const session = await getServerSession(authOptions)
   if (session?.user?.role !== 'ADMIN') redirect('/403')
 
@@ -24,7 +26,7 @@ export default async function TeamPage() {
           <h1 className="font-serif text-2xl text-foreground">Team</h1>
           <p className="text-sm text-muted-foreground mt-1">{members.length} Mitglieder</p>
         </div>
-        <Button render={<Link href="/dashboard/team/new" />} className="bg-primary hover:bg-primary/90">
+        <Button render={<Link href={`/${lang}/dashboard/team/new`} />} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-1" />Vermieter hinzufügen
         </Button>
       </div>

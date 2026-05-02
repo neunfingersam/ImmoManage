@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -17,6 +18,7 @@ export default async function TenantDetailPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  const lang = await getLocale()
   const { id } = await params
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return null
@@ -39,7 +41,7 @@ export default async function TenantDetailPage({
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-3">
         <Link
-          href="/dashboard/tenants"
+          href={`/${lang}/dashboard/tenants`}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />

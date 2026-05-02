@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, User, MapPin, Clock, Home, Building2 } from 'lucide-react'
@@ -15,7 +16,8 @@ function parseImages(raw: unknown): string[] {
   try { return JSON.parse(raw as string) } catch { return [] }
 }
 
-export default async function TicketDetailPage({ params }: { params: Promise<{ ticketId: string }> }) {
+export default async function TicketDetailPage({params }: { params: Promise<{ ticketId: string }> }) {
+  const lang = await getLocale()
   const { ticketId } = await params
   const ticket = await getTicket(ticketId)
   if (!ticket) notFound()
@@ -41,7 +43,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Button render={<Link href="/dashboard/tickets" />} variant="ghost" size="sm">
+        <Button render={<Link href={`/${lang}/dashboard/tickets`} />} variant="ghost" size="sm">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Zurück
         </Button>

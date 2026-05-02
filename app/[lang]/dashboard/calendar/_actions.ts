@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { getServerSession } from 'next-auth'
@@ -58,7 +59,7 @@ export async function createEvent(data: {
   // Betroffene Mieter benachrichtigen
   await notifyAffectedTenants(event, session.user.companyId)
 
-  revalidatePath('/dashboard/calendar')
+  revalidateAllLocales('/dashboard/calendar')
   return { success: true, data: event }
 }
 
@@ -133,7 +134,7 @@ export async function deleteEvent(eventId: string): Promise<ActionResult<void>> 
   if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
   await requireCompanyAccess(session.user.companyId)
   await prisma.calendarEvent.deleteMany({ where: { id: eventId, companyId: session.user.companyId } })
-  revalidatePath('/dashboard/calendar')
+  revalidateAllLocales('/dashboard/calendar')
   return { success: true, data: undefined }
 }
 

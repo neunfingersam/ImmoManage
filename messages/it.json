@@ -278,7 +278,9 @@
     "endedCount": "{count} terminati",
     "empty": "Nessun contratto ancora",
     "emptyDesc": "Crea il tuo primo contratto.",
-    "newBtn": "Nuovo"
+    "newBtn": "Nuovo",
+    "newTitle": "Nuovo contratto",
+    "newDesc": "Crea un nuovo contratto di locazione"
   },
   "payments": {
     "title": "Pagamenti",

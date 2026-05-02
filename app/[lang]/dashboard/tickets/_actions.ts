@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -71,7 +72,7 @@ export async function updateTicketStatus(ticketId: string, data: { status: strin
       where: { id: ticketId },
       data: { status: parsed.data.status },
     })
-    revalidatePath('/dashboard/tickets')
+    revalidateAllLocales('/dashboard/tickets')
     revalidatePath(`/dashboard/tickets/${ticketId}`)
     if (ticket.tenantId) {
       sendPushToUser(
@@ -97,7 +98,7 @@ export async function updateRepairCost(ticketId: string, repairCost: number | nu
       data: { repairCost },
     })
     revalidatePath(`/dashboard/tickets/${ticketId}`)
-    revalidatePath('/dashboard/tax')
+    revalidateAllLocales('/dashboard/tax')
     return { success: true, data: ticket }
   })
 }

@@ -10,8 +10,8 @@ function fmt(n: number) {
   return new Intl.NumberFormat('de-CH', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(n)
 }
 
-export default async function WegOwnersPage({ params }: { params: Promise<{ propertyId: string }> }) {
-  const { propertyId } = await params
+export default async function WegOwnersPage({ params }: { params: Promise<{ propertyId: string; lang: string }> }) {
+  const { propertyId, lang } = await params
   const property = await getWegProperty(propertyId)
   if (!property) notFound()
 
@@ -28,7 +28,7 @@ export default async function WegOwnersPage({ params }: { params: Promise<{ prop
           <h1 className="font-serif text-2xl text-foreground">Eigentümer</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{property.name}</p>
         </div>
-        <Button render={<Link href={`/dashboard/weg/${propertyId}/owners/new`} />}>
+        <Button render={<Link href={`/${lang}/dashboard/weg/${propertyId}/owners/new`} />}>
           <Plus className="h-4 w-4 mr-1.5" />
           Eigentümer hinzufügen
         </Button>
@@ -61,7 +61,7 @@ export default async function WegOwnersPage({ params }: { params: Promise<{ prop
       {owners.length === 0 ? (
         <Card className="p-8 text-center">
           <p className="text-muted-foreground text-sm mb-3">Noch keine Eigentümer erfasst.</p>
-          <Button render={<Link href={`/dashboard/weg/${propertyId}/owners/new`} />} size="sm">
+          <Button render={<Link href={`/${lang}/dashboard/weg/${propertyId}/owners/new`} />} size="sm">
             <Plus className="h-4 w-4 mr-1.5" />
             Ersten Eigentümer hinzufügen
           </Button>
@@ -89,7 +89,7 @@ export default async function WegOwnersPage({ params }: { params: Promise<{ prop
                 </div>
                 <div className="flex items-center gap-1">
                   <Button
-                    render={<Link href={`/dashboard/weg/${propertyId}/owners/${o.id}/edit`} />}
+                    render={<Link href={`/${lang}/dashboard/weg/${propertyId}/owners/${o.id}/edit`} />}
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0"

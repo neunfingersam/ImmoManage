@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -51,6 +52,6 @@ export async function updateWizardStepAction(leaseId: string, step: number, data
     },
   })
 
-  revalidatePath('/dashboard/tenants')
+  revalidateAllLocales('/dashboard/tenants')
   return { nextStep: step + 1 }
 }

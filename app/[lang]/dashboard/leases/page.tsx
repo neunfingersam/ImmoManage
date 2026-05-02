@@ -7,7 +7,12 @@ import { KiSummaryButton } from '@/components/shared/KiSummaryButton'
 import { getLeases } from './_actions'
 import { getTranslations } from 'next-intl/server'
 
-export default async function LeasesPage() {
+export default async function LeasesPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>
+}) {
+  const { lang } = await params
   const [t, leases] = await Promise.all([
     getTranslations('leases'),
     getLeases(),
@@ -24,7 +29,7 @@ export default async function LeasesPage() {
         </div>
         <div className="flex items-center gap-2">
           <KiSummaryButton apiPath="/api/agent/lease-reminders" label={t('expiringBtn')} />
-          <Button render={<Link href="/dashboard/leases/new" />} className="bg-primary hover:bg-primary/90">
+          <Button render={<Link href={`/${lang}/dashboard/leases/new`} />} className="bg-primary hover:bg-primary/90">
             <Plus className="h-4 w-4 mr-1" />
             {t('newBtn')}
           </Button>

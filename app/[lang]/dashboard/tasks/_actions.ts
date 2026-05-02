@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -34,7 +35,7 @@ export async function createTaskAction(data: unknown) {
     },
   })
 
-  revalidatePath('/dashboard/tasks')
+  revalidateAllLocales('/dashboard/tasks')
 }
 
 export async function updateTaskStatusAction(taskId: string, status: 'OFFEN' | 'IN_BEARBEITUNG' | 'ERLEDIGT') {
@@ -46,7 +47,7 @@ export async function updateTaskStatusAction(taskId: string, status: 'OFFEN' | '
     data: { status },
   })
 
-  revalidatePath('/dashboard/tasks')
+  revalidateAllLocales('/dashboard/tasks')
 }
 
 export async function deleteTaskAction(taskId: string) {
@@ -57,5 +58,5 @@ export async function deleteTaskAction(taskId: string) {
     where: { id: taskId, companyId: session.user.companyId },
   })
 
-  revalidatePath('/dashboard/tasks')
+  revalidateAllLocales('/dashboard/tasks')
 }

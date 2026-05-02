@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
@@ -95,7 +96,7 @@ export async function createHandover(
       status: 'ENTWURF',
     },
   })
-  revalidatePath('/dashboard/handovers')
+  revalidateAllLocales('/dashboard/handovers')
   return { success: true, data: { id: handover.id } }
 }
 
@@ -108,7 +109,7 @@ export async function finalizeHandover(id: string): Promise<ActionResult<void>> 
     where: { id, companyId: session.user.companyId },
     data: { status: 'ABGESCHLOSSEN', signedByVermieter: true },
   })
-  revalidatePath('/dashboard/handovers')
+  revalidateAllLocales('/dashboard/handovers')
   revalidatePath(`/dashboard/handovers/${id}`)
   return { success: true, data: undefined }
 }

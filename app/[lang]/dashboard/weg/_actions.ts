@@ -1,7 +1,7 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
@@ -100,7 +100,7 @@ export async function createWegProperty(data: unknown) {
     },
   })
 
-  revalidatePath('/dashboard/weg')
+  revalidateAllLocales('/dashboard/weg')
   return { success: true, data: { id: property.id } }
 }
 
@@ -130,7 +130,7 @@ export async function updateWegConfig(propertyId: string, data: unknown) {
     create: { propertyId, ...parsed.data },
   })
 
-  revalidatePath(`/dashboard/weg/${propertyId}`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}`)
   return { success: true, data: null }
 }
 
@@ -224,8 +224,8 @@ export async function addWegOwner(propertyId: string, data: unknown) {
     })
   }
 
-  revalidatePath(`/dashboard/weg/${propertyId}`)
-  revalidatePath(`/dashboard/weg/${propertyId}/owners`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/owners`)
   return { success: true, data: null }
 }
 
@@ -276,7 +276,7 @@ export async function updateWegOwner(ownerId: string, propertyId: string, data: 
     },
   })
 
-  revalidatePath(`/dashboard/weg/${propertyId}/owners`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/owners`)
   return { success: true, data: null }
 }
 
@@ -290,7 +290,7 @@ export async function removeWegOwner(ownerId: string, propertyId: string) {
   }
 
   await prisma.propertyOwner.delete({ where: { id: ownerId } })
-  revalidatePath(`/dashboard/weg/${propertyId}/owners`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/owners`)
   return { success: true, data: null }
 }
 
@@ -319,7 +319,7 @@ export async function addRenewalItem(propertyId: string, data: unknown) {
     data: { wegConfigId: config.id, ...parsed.data },
   })
 
-  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/fonds`)
   return { success: true, data: null }
 }
 
@@ -335,7 +335,7 @@ export async function updateRenewalItem(id: string, propertyId: string, data: un
 
   await prisma.renewalPlanItem.update({ where: { id }, data: parsed.data })
 
-  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/fonds`)
   return { success: true, data: null }
 }
 
@@ -348,7 +348,7 @@ export async function deleteRenewalItem(id: string, propertyId: string) {
 
   await prisma.renewalPlanItem.delete({ where: { id } })
 
-  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/fonds`)
   return { success: true, data: null }
 }
 
@@ -375,7 +375,7 @@ export async function updateFondsConfig(propertyId: string, data: unknown) {
     create: { propertyId, ...parsed.data },
   })
 
-  revalidatePath(`/dashboard/weg/${propertyId}/fonds`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/fonds`)
   return { success: true, data: null }
 }
 
@@ -411,7 +411,7 @@ export async function createAssembly(propertyId: string, data: unknown) {
   const year = new Date(parsed.data.datum).getFullYear()
   await ensureAssemblyFolder(assembly.id, propertyId, session.user.companyId, `GV ${year}`)
 
-  revalidatePath(`/dashboard/weg/${propertyId}`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}`)
   return { success: true, data: { id: assembly.id } }
 }
 
@@ -457,7 +457,7 @@ export async function castAssemblyVote(propertyId: string, data: unknown) {
     },
   })
 
-  revalidatePath(`/dashboard/weg/${propertyId}`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}`)
   return { success: true, data: null }
 }
 

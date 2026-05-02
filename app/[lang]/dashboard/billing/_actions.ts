@@ -1,7 +1,7 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
@@ -85,7 +85,7 @@ export async function createBill(data: {
     },
   })
 
-  revalidatePath('/dashboard/billing')
+  revalidateAllLocales('/dashboard/billing')
   return { success: true, data: bill }
 }
 
@@ -157,6 +157,6 @@ export async function savePaymentSettings(data: unknown): Promise<ActionResult<n
     },
   })
 
-  revalidatePath('/dashboard/billing')
+  revalidateAllLocales('/dashboard/billing')
   return { success: true, data: null }
 }

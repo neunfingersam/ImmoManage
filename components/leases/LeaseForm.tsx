@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { leaseSchema, type LeaseFormValues } from '@/lib/schemas/lease'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,6 +36,7 @@ export function LeaseForm({ units, tenants, action }: Props) {
   const [pending, startTransition] = useTransition()
   const [serverError, setServerError] = useState<string | null>(null)
   const router = useRouter()
+  const locale = useLocale()
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<LeaseFormValues>({
     resolver: zodResolver(leaseSchema) as any,
@@ -57,7 +59,7 @@ export function LeaseForm({ units, tenants, action }: Props) {
     startTransition(async () => {
       const result = await action(formData)
       if (result.success) {
-        router.push('/dashboard/leases')
+        router.push(`/${locale}/dashboard/leases`)
       } else {
         setServerError(result.error)
       }
@@ -211,7 +213,7 @@ export function LeaseForm({ units, tenants, action }: Props) {
         <Button type="submit" disabled={pending} className="bg-primary hover:bg-primary/90">
           {pending ? 'Wird gespeichert…' : 'Mietvertrag erstellen'}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.push('/dashboard/leases')}>
+        <Button type="button" variant="outline" onClick={() => router.push(`/${locale}/dashboard/leases`)}>
           Abbrechen
         </Button>
       </div>

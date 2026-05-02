@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { LeaseForm } from '@/components/leases/LeaseForm'
 import { createLease } from '../_actions'
+import { getTranslations } from 'next-intl/server'
 
 export default async function NewLeasePage() {
   const session = await getServerSession(authOptions)
@@ -12,7 +13,8 @@ export default async function NewLeasePage() {
     ? { property: { companyId: session.user.companyId, assignments: { some: { userId: session.user.id } } } }
     : { property: { companyId: session.user.companyId } }
 
-  const [units, tenants] = await Promise.all([
+  const [t, units, tenants] = await Promise.all([
+    getTranslations('leases'),
     prisma.unit.findMany({
       where: unitWhere,
       include: { property: { select: { id: true, name: true } } },
@@ -28,8 +30,8 @@ export default async function NewLeasePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Neuer Mietvertrag</h1>
-        <p className="text-sm text-muted-foreground mt-1">Mietvertrag erstellen</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('newTitle')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('newDesc')}</p>
       </div>
       <LeaseForm units={units as any} tenants={tenants} action={createLease} />
     </div>

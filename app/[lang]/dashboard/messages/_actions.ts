@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -107,7 +108,7 @@ export async function sendMessage(data: { toId: string; text: string }): Promise
     parsed.data.text.trim(),
     `/dashboard/messages/${session.user.id}`,
   ).catch(() => {})
-  revalidatePath('/dashboard/messages')
+  revalidateAllLocales('/dashboard/messages')
   revalidatePath(`/dashboard/messages/${parsed.data.toId}`)
   return { success: true, data: message }
 }

@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -9,7 +10,8 @@ import { MessageInput } from '@/components/messages/MessageInput'
 import { MessagePoller } from '@/components/messages/MessagePoller'
 import { getThread, getPartner, sendMessage } from '../_actions'
 
-export default async function ThreadPage({ params }: { params: Promise<{ partnerId: string }> }) {
+export default async function ThreadPage({params }: { params: Promise<{ partnerId: string }> }) {
+  const lang = await getLocale()
   const { partnerId } = await params
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) return null
@@ -30,7 +32,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ partner
     <div className="flex flex-col flex-1 sm:h-[calc(100vh-8rem)] max-w-2xl space-y-4">
       <MessagePoller />
       <div className="flex items-center gap-3">
-        <Button render={<Link href="/dashboard/messages" />} variant="ghost" size="sm">
+        <Button render={<Link href={`/${lang}/dashboard/messages`} />} variant="ghost" size="sm">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Zurück
         </Button>

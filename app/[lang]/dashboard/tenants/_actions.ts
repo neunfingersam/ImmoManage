@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -81,7 +82,7 @@ export async function createTenant(data: TenantFormValues): Promise<ActionResult
         expiresHours: 72,
       }).catch(() => {})
 
-      revalidatePath('/dashboard/tenants')
+      revalidateAllLocales('/dashboard/tenants')
       return { success: true, data: tenant }
     } catch (e) {
       return { success: false, error: 'Fehler beim Erstellen des Mieters' }
@@ -129,7 +130,7 @@ export async function deactivateTenant(tenantId: string): Promise<ActionResult<v
       where: { id: tenantId },
       data: { active: false },
     })
-    revalidatePath('/dashboard/tenants')
+    revalidateAllLocales('/dashboard/tenants')
     return { success: true, data: undefined }
   })
 }
@@ -166,7 +167,7 @@ export async function updateTenant(tenantId: string, data: UpdateTenantValues): 
         whatsapp: parsed.data.whatsapp ?? null,
       },
     })
-    revalidatePath('/dashboard/tenants')
+    revalidateAllLocales('/dashboard/tenants')
     revalidatePath(`/dashboard/tenants/${tenantId}`)
     return { success: true, data: undefined }
   })
@@ -237,9 +238,9 @@ export async function moveTenantToUnit(tenantId: string, newUnitId: string): Pro
       }),
     ])
 
-    revalidatePath('/dashboard/tenants')
+    revalidateAllLocales('/dashboard/tenants')
     revalidatePath(`/dashboard/tenants/${tenantId}`)
-    revalidatePath('/dashboard/leases')
+    revalidateAllLocales('/dashboard/leases')
     return { success: true, data: undefined }
   })
 }
@@ -255,7 +256,7 @@ export async function reactivateTenant(tenantId: string): Promise<ActionResult<v
       where: { id: tenantId },
       data: { active: true },
     })
-    revalidatePath('/dashboard/tenants')
+    revalidateAllLocales('/dashboard/tenants')
     return { success: true, data: undefined }
   })
 }

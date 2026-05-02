@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 import Link from 'next/link'
 import { ClipboardCheck, Plus, Calendar, CheckCircle2, Clock, ArrowRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
@@ -40,6 +41,7 @@ function TypeBadge({ type }: { type: string }) {
 }
 
 export default async function HandoversPage() {
+  const lang = await getLocale()
   const handovers = await getHandovers()
 
   return (
@@ -54,7 +56,7 @@ export default async function HandoversPage() {
           </p>
         </div>
         <Link
-          href="/dashboard/handovers/new"
+          href={`/${lang}/dashboard/handovers/new`}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
@@ -77,7 +79,7 @@ export default async function HandoversPage() {
               year: 'numeric',
             })
             return (
-              <Link key={h.id} href={`/dashboard/handovers/${h.id}`} className="block group">
+              <Link key={h.id} href={`/${lang}/dashboard/handovers/${h.id}`} className="block group">
                 <Card className="p-4 hover:ring-primary/30 transition-all">
                   <div className="flex items-center justify-between gap-4 flex-wrap">
                     <div className="space-y-1 min-w-0">

@@ -278,7 +278,9 @@
     "endedCount": "{count} ended",
     "empty": "No leases yet",
     "emptyDesc": "Create your first lease.",
-    "newBtn": "New"
+    "newBtn": "New",
+    "newTitle": "New Lease",
+    "newDesc": "Create a new lease contract"
   },
   "payments": {
     "title": "Payments",

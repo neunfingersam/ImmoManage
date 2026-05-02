@@ -5,7 +5,7 @@ import { TenantCard } from '@/components/tenants/TenantCard'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { getTenants } from './_actions'
 import { Users } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 const PAGE_SIZE = 20
 
@@ -14,6 +14,7 @@ export default async function TenantsPage({
 }: {
   searchParams: Promise<{ page?: string; q?: string }>
 }) {
+  const lang = await getLocale()
   const [t, { page: pageParam, q }] = await Promise.all([
     getTranslations('tenants'),
     searchParams,
@@ -28,7 +29,7 @@ export default async function TenantsPage({
     if (p > 1) params.set('page', String(p))
     if (search) params.set('q', search)
     const qs = params.toString()
-    return `/dashboard/tenants${qs ? `?${qs}` : ''}`
+    return `/${lang}/dashboard/tenants${qs ? `?${qs}` : ''}`
   }
 
   return (
@@ -48,7 +49,7 @@ export default async function TenantsPage({
             <Download className="h-4 w-4" />
             Excel
           </a>
-          <Button render={<Link href="/dashboard/tenants/new" />} className="bg-primary hover:bg-primary/90">
+          <Button render={<Link href={`/${lang}/dashboard/tenants/new`} />} className="bg-primary hover:bg-primary/90">
             <Plus className="h-4 w-4 mr-1" />
             {t('newBtn')}
           </Button>

@@ -278,7 +278,9 @@
     "endedCount": "{count} abgelaufen",
     "empty": "Noch keine Mietverträge",
     "emptyDesc": "Erstellen Sie den ersten Mietvertrag.",
-    "newBtn": "Neu"
+    "newBtn": "Neu",
+    "newTitle": "Neuer Mietvertrag",
+    "newDesc": "Mietvertrag erstellen"
   },
   "payments": {
     "title": "Zahlungen",

@@ -1,7 +1,7 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
@@ -100,7 +100,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
   // Fire-and-forget Indexierung (non-blocking)
   indexDocument(doc.id).catch(() => {})
 
-  revalidatePath('/dashboard/documents')
+  revalidateAllLocales('/dashboard/documents')
   if (parsed.data.scope === 'TENANT' && parsed.data.tenantId) {
     sendPushToUser(
       parsed.data.tenantId,
@@ -129,7 +129,7 @@ export async function deleteDocument(documentId: string): Promise<ActionResult<v
     await unlink(filePath)
   } catch { /* Datei bereits gelöscht oder nicht gefunden */ }
 
-  revalidatePath('/dashboard/documents')
+  revalidateAllLocales('/dashboard/documents')
   return { success: true, data: undefined }
 }
 
@@ -162,7 +162,7 @@ export async function createSubFolder(data: { parentId: string; name: string }):
       isSystem: false,
     },
   })
-  revalidatePath('/dashboard/documents')
+  revalidateAllLocales('/dashboard/documents')
   return { success: true, data: { id: folder.id } }
 }
 
@@ -181,7 +181,7 @@ export async function deleteFolder(folderId: string): Promise<ActionResult<null>
   }
 
   await prisma.documentFolder.delete({ where: { id: folderId } })
-  revalidatePath('/dashboard/documents')
+  revalidateAllLocales('/dashboard/documents')
   return { success: true, data: null }
 }
 
@@ -221,7 +221,7 @@ export async function moveDocumentToFolder(documentId: string, folderId: string 
   if (!doc) return { success: false, error: 'Dokument nicht gefunden' }
 
   await prisma.document.update({ where: { id: documentId }, data: { folderId } })
-  revalidatePath('/dashboard/documents')
+  revalidateAllLocales('/dashboard/documents')
   return { success: true, data: null }
 }
 

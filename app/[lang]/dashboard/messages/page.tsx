@@ -6,9 +6,10 @@ import { EmptyState } from '@/components/shared/EmptyState'
 import { getThreads, getMyTenants } from './_actions'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 export default async function MessagesPage() {
+  const lang = await getLocale()
   const [t, session, threads, tenants] = await Promise.all([
     getTranslations('messages'),
     getServerSession(authOptions),
@@ -30,7 +31,7 @@ export default async function MessagesPage() {
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('newMessageTo')}</h2>
           <div className="flex flex-wrap gap-2">
             {tenants.map(t => (
-              <Button key={t.id} render={<Link href={`/dashboard/messages/${t.id}`} />} variant="outline" size="sm">
+              <Button key={t.id} render={<Link href={`/${lang}/dashboard/messages/${t.id}`} />} variant="outline" size="sm">
                 {t.name}
               </Button>
             ))}
@@ -46,7 +47,7 @@ export default async function MessagesPage() {
             const partnerId = m.fromId === session?.user?.id ? m.toId : m.fromId
             const partnerName = m.fromId === session?.user?.id ? m.to.name : m.from.name
             return (
-              <Link key={partnerId} href={`/dashboard/messages/${partnerId}`}>
+              <Link key={partnerId} href={`/${lang}/dashboard/messages/${partnerId}`}>
                 <Card className="p-4 flex items-center gap-3 hover:shadow-card-hover transition-shadow">
                   <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-foreground font-medium shrink-0">
                     {partnerName.charAt(0).toUpperCase()}

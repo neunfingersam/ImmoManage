@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -117,7 +118,7 @@ export async function createProperty(data: PropertyFormValues): Promise<ActionRe
           data: { userId: session.user.id, propertyId: property.id },
         })
       }
-      revalidatePath('/dashboard/properties')
+      revalidateAllLocales('/dashboard/properties')
       return { success: true, data: property }
     } catch (e) {
       return { success: false, error: 'Fehler beim Erstellen der Immobilie' }
@@ -140,7 +141,7 @@ export async function updateProperty(propertyId: string, data: PropertyFormValue
         where: { id: propertyId },
         data: { ...parsed.data, year: parsed.data.year ?? null, description: parsed.data.description ?? null },
       })
-      revalidatePath('/dashboard/properties')
+      revalidateAllLocales('/dashboard/properties')
       revalidatePath(`/dashboard/properties/${propertyId}`)
       return { success: true, data: property }
     } catch (e) {
@@ -162,7 +163,7 @@ export async function deleteProperty(propertyId: string): Promise<ActionResult<v
     if (activeLeases > 0) return { success: false, error: 'Immobilie hat noch aktive Mietverträge' }
 
     await prisma.property.delete({ where: { id: propertyId } })
-    revalidatePath('/dashboard/properties')
+    revalidateAllLocales('/dashboard/properties')
     return { success: true, data: undefined }
   })
 }
@@ -245,7 +246,7 @@ export async function updateUnitStatusAction(unitId: string, status: 'VERMIETET'
     data: { status },
   })
 
-  revalidatePath('/dashboard/properties')
+  revalidateAllLocales('/dashboard/properties')
 }
 
 export async function deleteUnit(unitId: string, propertyId: string): Promise<ActionResult<void>> {

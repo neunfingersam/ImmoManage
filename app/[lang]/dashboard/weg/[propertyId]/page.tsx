@@ -12,9 +12,9 @@ function fmt(n: number) {
 export default async function WegDetailPage({
   params,
 }: {
-  params: Promise<{ propertyId: string }>
+  params: Promise<{ propertyId: string; lang: string }>
 }) {
-  const { propertyId } = await params
+  const { propertyId, lang } = await params
   const property = await getWegProperty(propertyId)
   if (!property) notFound()
 
@@ -41,14 +41,14 @@ export default async function WegDetailPage({
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <Link href="/dashboard/weg" className="hover:text-foreground">WEG</Link>
+            <Link href={`/${lang}/dashboard/weg`} className="hover:text-foreground">WEG</Link>
             <ChevronRight className="h-3.5 w-3.5" />
             <span>{property.name}</span>
           </div>
           <h1 className="font-serif text-2xl text-foreground">{property.name}</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{property.address}{cfg?.kanton ? ` · Kanton ${cfg.kanton}` : ''}</p>
         </div>
-        <Button render={<Link href={`/dashboard/weg/${propertyId}/settings`} />} variant="outline" size="sm">
+        <Button render={<Link href={`/${lang}/dashboard/weg/${propertyId}/settings`} />} variant="outline" size="sm">
           <Settings className="h-4 w-4 mr-1.5" />
           Einstellungen
         </Button>
@@ -121,7 +121,7 @@ export default async function WegDetailPage({
 
       {/* Module Links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link href={`/dashboard/weg/${propertyId}/fonds`}>
+        <Link href={`/${lang}/dashboard/weg/${propertyId}/fonds`}>
           <Card className="p-4 hover:border-primary/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -136,7 +136,7 @@ export default async function WegDetailPage({
             </div>
           </Card>
         </Link>
-        <Link href={`/dashboard/weg/${propertyId}/hauswart`}>
+        <Link href={`/${lang}/dashboard/weg/${propertyId}/hauswart`}>
           <Card className="p-4 hover:border-primary/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -149,7 +149,7 @@ export default async function WegDetailPage({
             </div>
           </Card>
         </Link>
-        <Link href={`/dashboard/weg/${propertyId}/budget`}>
+        <Link href={`/${lang}/dashboard/weg/${propertyId}/budget`}>
           <Card className="p-4 hover:border-primary/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -162,7 +162,7 @@ export default async function WegDetailPage({
             </div>
           </Card>
         </Link>
-        <Link href={`/dashboard/weg/${propertyId}/jahresabrechnung`}>
+        <Link href={`/${lang}/dashboard/weg/${propertyId}/jahresabrechnung`}>
           <Card className="p-4 hover:border-primary/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -181,7 +181,7 @@ export default async function WegDetailPage({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Eigentümer</h2>
-          <Button render={<Link href={`/dashboard/weg/${propertyId}/owners`} />} variant="outline" size="sm">
+          <Button render={<Link href={`/${lang}/dashboard/weg/${propertyId}/owners`} />} variant="outline" size="sm">
             <Users className="h-4 w-4 mr-1.5" />
             Verwalten
           </Button>
@@ -191,7 +191,7 @@ export default async function WegDetailPage({
           <Card className="p-6 text-center">
             <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm text-muted-foreground mb-3">Noch keine Eigentümer erfasst</p>
-            <Button render={<Link href={`/dashboard/weg/${propertyId}/owners/new`} />} size="sm">
+            <Button render={<Link href={`/${lang}/dashboard/weg/${propertyId}/owners/new`} />} size="sm">
               <Plus className="h-4 w-4 mr-1.5" />
               Ersten Eigentümer hinzufügen
             </Button>

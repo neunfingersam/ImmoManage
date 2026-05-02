@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 // app/dashboard/properties/[propertyId]/page.tsx
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -12,7 +13,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { PropertyAssignments } from './PropertyAssignments'
 
-export default async function PropertyDetailPage({ params }: { params: Promise<{ propertyId: string }> }) {
+export default async function PropertyDetailPage({params }: { params: Promise<{ propertyId: string }> }) {
+  const lang = await getLocale()
   const { propertyId } = await params
   const session = await getServerSession(authOptions)
   const isAdmin = session?.user?.role === 'ADMIN'
@@ -28,7 +30,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button render={<Link href="/dashboard/properties" />} variant="ghost" size="sm">
+        <Button render={<Link href={`/${lang}/dashboard/properties`} />} variant="ghost" size="sm">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Zurück
         </Button>
@@ -44,7 +46,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
         </div>
         <div className="flex gap-2 shrink-0">
           <Badge variant="secondary">{typeLabel}</Badge>
-          <Button render={<Link href={`/dashboard/properties/${property.id}/edit`} />} variant="outline" size="sm">
+          <Button render={<Link href={`/${lang}/dashboard/properties/${property.id}/edit`} />} variant="outline" size="sm">
             Bearbeiten
           </Button>
         </div>

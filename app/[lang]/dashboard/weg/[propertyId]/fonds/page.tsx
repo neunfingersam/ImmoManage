@@ -54,9 +54,9 @@ function fmt(n: number) {
 export default async function FondsPage({
   params,
 }: {
-  params: Promise<{ propertyId: string }>
+  params: Promise<{ propertyId: string; lang: string }>
 }) {
-  const { propertyId } = await params
+  const { propertyId, lang } = await params
   const property = await getWegProperty(propertyId)
   if (!property) notFound()
 
@@ -79,7 +79,7 @@ export default async function FondsPage({
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" render={<Link href={`/dashboard/weg/${propertyId}`} />}>
+          <Button variant="ghost" size="sm" render={<Link href={`/${lang}/dashboard/weg/${propertyId}`} />}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <div>

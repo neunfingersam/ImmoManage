@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -63,7 +64,7 @@ export async function recordPaymentAction(data: unknown) {
     },
   })
 
-  revalidatePath('/dashboard/payments')
+  revalidateAllLocales('/dashboard/payments')
 }
 
 export async function bulkRecordPaymentsAction(
@@ -111,7 +112,7 @@ export async function bulkRecordPaymentsAction(
     }
   })
 
-  revalidatePath('/dashboard/payments')
+  revalidateAllLocales('/dashboard/payments')
   return { count: authorizedMatches.length }
 }
 
@@ -144,7 +145,7 @@ export async function sendReminderAction(rentDemandId: string) {
   // TODO Plan D: E-Mail aus Mahnvorlage generieren und senden
   // Für jetzt: nur DB-Eintrag
 
-  revalidatePath('/dashboard/payments')
+  revalidateAllLocales('/dashboard/payments')
 
   return { level: nextLevel }
 }

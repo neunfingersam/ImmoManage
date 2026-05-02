@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -69,7 +70,7 @@ export async function createVermieter(data: { name: string; email: string; passw
       phone: parsed.data.phone ?? null,
     },
   })
-  revalidatePath('/dashboard/team')
+  revalidateAllLocales('/dashboard/team')
   return { success: true, data: user }
 }
 
@@ -84,6 +85,6 @@ export async function toggleUserActive(userId: string): Promise<ActionResult<Use
     where: { id: userId },
     data: { active: !user.active },
   })
-  revalidatePath('/dashboard/team')
+  revalidateAllLocales('/dashboard/team')
   return { success: true, data: updated }
 }

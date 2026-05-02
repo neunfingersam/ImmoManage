@@ -198,7 +198,7 @@ export default async function DashboardPage() {
       {/* KPI Cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {/* Einnahmen aktueller Monat */}
-        <Link href="/dashboard/payments">
+        <Link href={`/${locale}/dashboard/payments`}>
           <Card className="p-5 hover:shadow-card-hover transition-shadow cursor-pointer group relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
             <div className="rounded-xl bg-primary/10 p-2.5 w-fit">
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
         </Link>
 
         {/* Belegungsrate */}
-        <Link href="/dashboard/properties">
+        <Link href={`/${locale}/dashboard/properties`}>
           <Card className="p-5 hover:shadow-card-hover transition-shadow cursor-pointer group relative overflow-hidden">
             {(() => {
               const isGood = data.occupancyRate >= 90
@@ -235,7 +235,7 @@ export default async function DashboardPage() {
         </Link>
 
         {/* Offene Posten */}
-        <Link href="/dashboard/payments">
+        <Link href={`/${locale}/dashboard/payments`}>
           <Card className="p-5 hover:shadow-card-hover transition-shadow cursor-pointer group relative overflow-hidden">
             {data.openPayments > 0 && (
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
@@ -258,7 +258,7 @@ export default async function DashboardPage() {
         </Link>
 
         {/* Offene Tickets */}
-        <Link href="/dashboard/tickets">
+        <Link href={`/${locale}/dashboard/tickets`}>
           <Card className="p-5 hover:shadow-card-hover transition-shadow cursor-pointer group relative overflow-hidden">
             {data.openTickets.length > 0 && (
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none" />
@@ -284,7 +284,7 @@ export default async function DashboardPage() {
               <p className="text-xs text-muted-foreground mt-0.5">{t('revenueChartSubtitle')}</p>
             </div>
             <Link
-              href="/dashboard/payments"
+              href={`/${locale}/dashboard/payments`}
               className="text-xs text-primary hover:underline flex items-center gap-1"
             >
               {t('all')} <ChevronRight className="h-3 w-3" />
@@ -297,14 +297,14 @@ export default async function DashboardPage() {
         <Card className="p-5">
           <h2 className="text-sm font-semibold text-foreground mb-4">{t('portfolio')}</h2>
           <div className="space-y-3">
-            <StatRow label={t('propertiesLabel')} value={data.propertyCount} href="/dashboard/properties" />
-            <StatRow label={t('unitsTotal')} value={data.totalUnits} href="/dashboard/properties" />
-            <StatRow label={t('tenantsActive')} value={data.tenantCount} href="/dashboard/tenants" />
+            <StatRow label={t('propertiesLabel')} value={data.propertyCount} href={`/${locale}/dashboard/properties`} />
+            <StatRow label={t('unitsTotal')} value={data.totalUnits} href={`/${locale}/dashboard/properties`} />
+            <StatRow label={t('tenantsActive')} value={data.tenantCount} href={`/${locale}/dashboard/tenants`} />
             <div className="my-2 border-t border-border" />
             <StatRow
               label={t('leaseEnds60')}
               value={data.upcomingLeaseEnds}
-              href="/dashboard/leases"
+              href={`/${locale}/dashboard/leases`}
               highlight={data.upcomingLeaseEnds > 0 ? 'amber' : undefined}
               icon={<CalendarClock className="h-3.5 w-3.5" />}
             />
@@ -318,7 +318,7 @@ export default async function DashboardPage() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-foreground">{t('openTicketsLabel')}</h2>
-            <Link href="/dashboard/tickets" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <Link href={`/${locale}/dashboard/tickets`} className="text-xs text-primary hover:underline flex items-center gap-1">
               {t('all')} <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
@@ -329,7 +329,7 @@ export default async function DashboardPage() {
               {(data.openTickets as OpenTicket[]).map((ticket) => (
                 <Link
                   key={ticket.id}
-                  href={`/dashboard/tickets/${ticket.id}`}
+                  href={`/${locale}/dashboard/tickets/${ticket.id}`}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted transition-colors group"
                 >
                   <AlertCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -352,7 +352,7 @@ export default async function DashboardPage() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-foreground">{t('tasksWeek')}</h2>
-            <Link href="/dashboard/tasks" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <Link href={`/${locale}/dashboard/tasks`} className="text-xs text-primary hover:underline flex items-center gap-1">
               {t('all')} <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
@@ -365,7 +365,7 @@ export default async function DashboardPage() {
                 return (
                   <Link
                     key={task.id}
-                    href="/dashboard/tasks"
+                    href={`/${locale}/dashboard/tasks`}
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted transition-colors group"
                   >
                     <CheckSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />

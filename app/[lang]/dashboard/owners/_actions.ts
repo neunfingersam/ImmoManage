@@ -1,3 +1,4 @@
+import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -76,7 +77,7 @@ export async function createOwner(data: {
       inviteUrl,
     })
 
-    revalidatePath('/dashboard/owners')
+    revalidateAllLocales('/dashboard/owners')
     return { success: true, data: { id: user.id } }
   })
 }
@@ -110,7 +111,7 @@ export async function assignOwnerProperty(data: {
         unitId: data.unitId || null,
       },
     })
-    revalidatePath('/dashboard/owners')
+    revalidateAllLocales('/dashboard/owners')
     return { success: true, data: { id: ownership.id } }
   })
 }
@@ -126,7 +127,7 @@ export async function removeOwnerProperty(ownershipId: string): Promise<ActionRe
     }
 
     await prisma.propertyOwner.delete({ where: { id: ownershipId } })
-    revalidatePath('/dashboard/owners')
+    revalidateAllLocales('/dashboard/owners')
     return { success: true, data: null }
   })
 }

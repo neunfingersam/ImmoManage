@@ -1,7 +1,7 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { requireCompanyAccess } from '@/lib/auth-guard'
@@ -106,7 +106,7 @@ export async function createLease(data: LeaseFormValues): Promise<ActionResult<L
         })
       } catch { /* Non-critical */ }
     }
-    revalidatePath('/dashboard/leases')
+    revalidateAllLocales('/dashboard/leases')
     return { success: true, data: lease }
   } catch (e) {
     return { success: false, error: 'Fehler beim Erstellen des Mietvertrags' }
@@ -127,6 +127,6 @@ export async function endLease(leaseId: string, endDate?: string): Promise<Actio
     where: { id: leaseId },
     data: { status: 'ENDED', endDate: endDate ? new Date(endDate) : (lease.endDate ?? new Date()) },
   })
-  revalidatePath('/dashboard/leases')
+  revalidateAllLocales('/dashboard/leases')
   return { success: true, data: undefined }
 }

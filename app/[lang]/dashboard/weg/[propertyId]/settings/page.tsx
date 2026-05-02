@@ -5,8 +5,8 @@ import { Card } from '@/components/ui/card'
 import { getWegProperty } from '../../_actions'
 import { WegSettingsForm } from './WegSettingsForm'
 
-export default async function WegSettingsPage({ params }: { params: Promise<{ propertyId: string }> }) {
-  const { propertyId } = await params
+export default async function WegSettingsPage({ params }: { params: Promise<{ propertyId: string; lang: string }> }) {
+  const { propertyId, lang } = await params
   const property = await getWegProperty(propertyId)
   if (!property) notFound()
 
@@ -14,9 +14,9 @@ export default async function WegSettingsPage({ params }: { params: Promise<{ pr
     <div className="space-y-6">
       <div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-          <Link href="/dashboard/weg" className="hover:text-foreground">WEG</Link>
+          <Link href={`/${lang}/dashboard/weg`} className="hover:text-foreground">WEG</Link>
           <ChevronRight className="h-3.5 w-3.5" />
-          <Link href={`/dashboard/weg/${propertyId}`} className="hover:text-foreground">{property.name}</Link>
+          <Link href={`/${lang}/dashboard/weg/${propertyId}`} className="hover:text-foreground">{property.name}</Link>
           <ChevronRight className="h-3.5 w-3.5" />
           <span>Einstellungen</span>
         </div>

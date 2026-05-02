@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, MapPin, User, Calendar, CheckCircle2, Clock } from 'lucide-react'
@@ -50,6 +51,7 @@ export default async function HandoverDetailPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  const lang = await getLocale()
   const { id } = await params
   const handover = await getHandover(id)
   if (!handover) notFound()
@@ -69,7 +71,7 @@ export default async function HandoverDetailPage({
       {/* Back + actions */}
       <div className="flex items-center justify-between gap-4 print:hidden">
         <Link
-          href="/dashboard/handovers"
+          href={`/${lang}/dashboard/handovers`}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />

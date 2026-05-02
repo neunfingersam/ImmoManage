@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button'
 import { PropertyCard } from '@/components/properties/PropertyCard'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { getProperties } from './_actions'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 export default async function PropertiesPage() {
+  const lang = await getLocale()
   const [t, properties] = await Promise.all([
     getTranslations('properties'),
     getProperties(),
@@ -19,7 +20,7 @@ export default async function PropertiesPage() {
           <h1 className="font-serif text-2xl text-foreground">{t('title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">{t('count', { count: properties.length })}</p>
         </div>
-        <Button render={<Link href="/dashboard/properties/new" />} className="bg-primary hover:bg-primary/90">
+        <Button render={<Link href={`/${lang}/dashboard/properties/new`} />} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-1" />
           {t('newBtn')}
         </Button>

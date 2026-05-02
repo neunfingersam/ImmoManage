@@ -278,7 +278,9 @@
     "endedCount": "{count} terminés",
     "empty": "Aucun bail pour l'instant",
     "emptyDesc": "Créez votre premier bail.",
-    "newBtn": "Nouveau"
+    "newBtn": "Nouveau",
+    "newTitle": "Nouveau bail",
+    "newDesc": "Créer un nouveau contrat de bail"
   },
   "payments": {
     "title": "Paiements",
