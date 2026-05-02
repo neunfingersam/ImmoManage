@@ -1,5 +1,5 @@
-import { revalidateAllLocales } from '@/lib/revalidate'
 'use server'
+import { revalidateAllLocales } from '@/lib/revalidate'
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
