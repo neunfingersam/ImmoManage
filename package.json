@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && echo \"export * from './client'\" > lib/generated/prisma/index.ts && next build",
+    "build": "prisma generate && echo \"export * from './client'\" > lib/generated/prisma/index.ts && prisma migrate deploy && next build",
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
