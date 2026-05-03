@@ -11,9 +11,10 @@ async function extractText(fileUrl: string, fileType: string): Promise<string | 
     const buffer = Buffer.from(await res.arrayBuffer())
 
     if (fileType === 'application/pdf' || fileUrl.endsWith('.pdf')) {
-      const pdfParse = (await import('pdf-parse')).default
-      const data = await pdfParse(buffer)
-      return data.text.slice(0, 4000).trim() || null
+      const { PDFParse } = await import('pdf-parse')
+      const parser = new PDFParse({ data: new Uint8Array(buffer) })
+      const result = await parser.getText()
+      return result.text.slice(0, 4000).trim() || null
     }
 
     if (
