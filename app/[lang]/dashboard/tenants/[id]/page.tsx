@@ -60,7 +60,7 @@ export default async function TenantDetailPage({
             {activeLease.unit.property.name} · Einheit {activeLease.unit.unitNumber}
           </p>
           <p className="text-muted-foreground">
-            Warmmiete: {(activeLease.coldRent + activeLease.extraCosts).toFixed(2)} €/Monat
+            Warmmiete: CHF {(activeLease.coldRent + activeLease.extraCosts).toFixed(2)}/Monat
           </p>
           <p className="text-muted-foreground">
             Seit: {new Date(activeLease.startDate).toLocaleDateString('de-DE')}

@@ -36,8 +36,9 @@ export async function GET(
 
   const company = await prisma.company.findUnique({
     where: { id: session.user.companyId },
-    select: { name: true },
+    select: { name: true, templateTexts: true },
   })
+  const customTexts = (company?.templateTexts as Record<string, Record<string, string>> | null) ?? {}
 
   let tenantData = null
   if (tenantId) {
@@ -64,9 +65,50 @@ export async function GET(
   const endDate = tenantData?.leases[0]?.endDate?.toISOString() ?? null
   const landlordName = session.user.name ?? companyName
 
+  function applyPlaceholders(text: string, vars: Record<string, string>): string {
+    return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{${k}}`, v), text)
+  }
+
+  const templateVars: Record<string, string> = {
+    mieterName: tenantName,
+    mieterAdresse: tenantAddress,
+    objektAdresse: propertyAddress,
+    einheit: unitNumber,
+    startDatum: new Date(startDate).toLocaleDateString('de-CH'),
+    kaltmiete: coldRent.toFixed(2),
+    nebenkosten: extraCosts.toFixed(2),
+    kaution: (coldRent * 3).toFixed(2),
+    vermieterName: landlordName,
+    datum: new Date().toLocaleDateString('de-CH'),
+    kuendigungsDatum: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('de-CH'),
+    monat: new Date().toLocaleDateString('de-CH', { month: 'long', year: 'numeric' }),
+    betrag: (coldRent + extraCosts).toFixed(2),
+    faelligAm: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toLocaleDateString('de-CH'),
+    zeitraum: `${new Date().getFullYear() - 1}`,
+  }
+
+  const customBodyText = customTexts[type]?.[locale]
+    ? applyPlaceholders(customTexts[type][locale], templateVars)
+    : null
+
   let pdfBuffer: Buffer
 
-  if (type.startsWith('mahnung')) {
+  if (customBodyText) {
+    const { CustomTextPdf } = await import('@/lib/templates/placeholder')
+    const templateTitles: Record<string, string> = {
+      mietvertrag: 'Mietvertrag', uebergabeprotokoll: 'Übergabeprotokoll',
+      kuendigung: 'Kündigung', nebenkostenabrechnung: 'Nebenkostenabrechnung',
+      mahnung1: 'Zahlungserinnerung', mahnung2: '2. Mahnung', mahnung3: '3. Mahnung',
+    }
+    pdfBuffer = await renderToBuffer(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      React.createElement(CustomTextPdf, {
+        companyName,
+        title: templateTitles[type] ?? type,
+        bodyText: customBodyText,
+      }) as any
+    )
+  } else if (type.startsWith('mahnung')) {
     const level = parseInt(type.replace('mahnung', '')) as 1 | 2 | 3
     const { MahnungPdf } = await import('@/lib/templates/mahnung')
     pdfBuffer = await renderToBuffer(

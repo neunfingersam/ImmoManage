@@ -104,6 +104,6 @@ export async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     // Match all paths except Next.js internals, static files, and service worker
-    '/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|sw\\.js|manifest\\.json|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.webp|.*\\.ico|.*\\.xml|.*\\.txt|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.otf).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap\\.xml|robots\\.txt|sw\\.js|manifest\\.json|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.webp|.*\\.ico|.*\\.xml|.*\\.txt|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.otf|.*\\.xlsx|.*\\.csv|.*\\.pdf).*)',
   ],
 }

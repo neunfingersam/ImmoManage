@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { createHandover } from '../_actions'
 import { Plus, Trash2 } from 'lucide-react'
@@ -28,6 +29,7 @@ const conditionLabels: Record<Room['condition'], string> = {
 
 export function HandoverForm({ leases }: { leases: Lease[] }) {
   const router = useRouter()
+  const locale = useLocale()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [rooms, setRooms] = useState<Room[]>(DEFAULT_ROOMS)
@@ -61,7 +63,7 @@ export function HandoverForm({ leases }: { leases: Lease[] }) {
     })
     setSubmitting(false)
     if (result.success) {
-      router.push(`/dashboard/handovers/${result.data.id}`)
+      router.push(`/${locale}/dashboard/handovers/${result.data.id}`)
     } else {
       setError(result.error ?? 'Fehler')
     }

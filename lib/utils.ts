@@ -14,9 +14,9 @@ export function formatDate(date: Date | string): string {
   }).format(new Date(date))
 }
 
-export function formatEuro(amount: number): string {
-  return new Intl.NumberFormat('de-DE', {
+export function formatCHF(amount: number): string {
+  return new Intl.NumberFormat('de-CH', {
     style: 'currency',
-    currency: 'EUR',
+    currency: 'CHF',
   }).format(amount)
 }

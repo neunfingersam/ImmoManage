@@ -100,7 +100,11 @@ export function EventForm({ properties, units }: Props) {
         <div className="space-y-1">
           <Label>Immobilie</Label>
           <Select value={propertyId} onValueChange={(v) => { setPropertyId(v ?? ''); setUnitId('') }}>
-            <SelectTrigger><SelectValue placeholder="Immobilie wählen" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Immobilie wählen">
+                {propertyId ? (properties.find(p => p.id === propertyId)?.name ?? propertyId) : undefined}
+              </SelectValue>
+            </SelectTrigger>
             <SelectContent>
               {properties.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
             </SelectContent>
@@ -112,7 +116,11 @@ export function EventForm({ properties, units }: Props) {
         <div className="space-y-1">
           <Label>Einheit</Label>
           <Select value={unitId} onValueChange={(v) => setUnitId(v ?? '')}>
-            <SelectTrigger><SelectValue placeholder="Einheit wählen" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Einheit wählen">
+                {unitId ? (filteredUnits.find(u => u.id === unitId)?.unitNumber ?? unitId) : undefined}
+              </SelectValue>
+            </SelectTrigger>
             <SelectContent>
               {filteredUnits.map(u => <SelectItem key={u.id} value={u.id}>{u.unitNumber}</SelectItem>)}
             </SelectContent>

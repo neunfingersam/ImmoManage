@@ -37,9 +37,9 @@ export async function GET(_req: NextRequest) {
       Telefon: t.phone ?? '',
       Einheit: lease?.unit.unitNumber ?? '',
       Immobilie: lease?.unit.property.name ?? '',
-      'Kaltmiete (€)': lease?.coldRent ?? '',
-      'Nebenkosten (€)': lease?.extraCosts ?? '',
-      'Warmmiete (€)': lease ? lease.coldRent + lease.extraCosts : '',
+      'Kaltmiete (CHF)': lease?.coldRent ?? '',
+      'Nebenkosten (CHF)': lease?.extraCosts ?? '',
+      'Warmmiete (CHF)': lease ? lease.coldRent + lease.extraCosts : '',
       Mietbeginn: lease ? new Date(lease.startDate).toLocaleDateString('de-DE') : '',
       Status: lease ? 'Aktiv' : 'Kein Vertrag',
     }

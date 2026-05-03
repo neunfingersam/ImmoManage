@@ -84,16 +84,16 @@ export default async function TenantPage() {
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
               <div>
                 <p className="text-xs text-muted-foreground">{t('coldRent')}</p>
-                <p className="text-sm font-medium text-foreground">{lease.coldRent.toFixed(2)} €</p>
+                <p className="text-sm font-medium text-foreground">CHF {lease.coldRent.toFixed(2)}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{t('extraCosts')}</p>
-                <p className="text-sm font-medium text-foreground">{lease.extraCosts.toFixed(2)} €</p>
+                <p className="text-sm font-medium text-foreground">CHF {lease.extraCosts.toFixed(2)}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{t('warmRent')}</p>
                 <p className="text-sm font-medium text-foreground font-serif">
-                  {(lease.coldRent + lease.extraCosts).toFixed(2)} €
+                  CHF {(lease.coldRent + lease.extraCosts).toFixed(2)}
                 </p>
               </div>
               <div>

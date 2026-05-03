@@ -59,7 +59,11 @@ export function NewOwnerForm({ properties }: { properties: Property[] }) {
       <div className="space-y-1">
         <Label>{t('property')}</Label>
         <Select value={propertyId} onValueChange={val => handlePropertyChange(val ?? '')}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger>
+            <SelectValue>
+              {propertyId ? (properties.find(p => p.id === propertyId)?.name ?? propertyId) : t('property')}
+            </SelectValue>
+          </SelectTrigger>
           <SelectContent>
             {properties.map(p => (
               <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
@@ -72,7 +76,11 @@ export function NewOwnerForm({ properties }: { properties: Property[] }) {
         <div className="space-y-1">
           <Label>{t('unit')} <span className="text-muted-foreground text-xs">({t('optional')})</span></Label>
           <Select value={unitId} onValueChange={val => setUnitId(val ?? '')}>
-            <SelectTrigger><SelectValue placeholder={t('noUnit')} /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder={t('noUnit')}>
+                {unitId ? (selectedProperty.units.find(u => u.id === unitId)?.unitNumber ?? unitId) : undefined}
+              </SelectValue>
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="">{t('noUnit')}</SelectItem>
               {selectedProperty.units.map(u => (

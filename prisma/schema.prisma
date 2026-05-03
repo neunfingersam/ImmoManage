@@ -193,6 +193,7 @@ model Company {
   stripeSubscriptionId String?
   onboardingCompleted  Boolean         @default(false)
   smtpConfig           Json?
+  templateTexts        Json?
   createdAt            DateTime        @default(now())
   users                  User[]
   properties             Property[]

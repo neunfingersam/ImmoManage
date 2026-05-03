@@ -88,7 +88,11 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
         <div className="space-y-1">
           <Label>Mieter</Label>
           <Select value={tenantId} onValueChange={(v) => setTenantId(v ?? '')}>
-            <SelectTrigger><SelectValue placeholder="Mieter auswählen" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Mieter auswählen">
+                {tenantId ? (tenants.find(t => t.id === tenantId)?.name ?? tenantId) : undefined}
+              </SelectValue>
+            </SelectTrigger>
             <SelectContent>
               {tenants.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
             </SelectContent>
@@ -100,7 +104,11 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
         <div className="space-y-1">
           <Label>Immobilie</Label>
           <Select value={propertyId} onValueChange={(v) => setPropertyId(v ?? '')}>
-            <SelectTrigger><SelectValue placeholder="Immobilie auswählen" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Immobilie auswählen">
+                {propertyId ? (properties.find(p => p.id === propertyId)?.name ?? propertyId) : undefined}
+              </SelectValue>
+            </SelectTrigger>
             <SelectContent>
               {properties.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
             </SelectContent>

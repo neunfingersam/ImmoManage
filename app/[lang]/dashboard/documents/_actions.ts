@@ -69,10 +69,15 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
   const ext = path.extname(file.name)
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
   const uploadDir = path.join(process.cwd(), 'private', 'uploads', session.user.companyId, session.user.id)
-  await mkdir(uploadDir, { recursive: true })
-  const filePath = path.join(uploadDir, filename)
   const buffer = Buffer.from(await file.arrayBuffer())
-  await writeFile(filePath, buffer)
+  try {
+    await mkdir(uploadDir, { recursive: true })
+    const filePath = path.join(uploadDir, filename)
+    await writeFile(filePath, buffer)
+  } catch {
+    return { success: false, error: 'Datei konnte nicht gespeichert werden. Bitte prüfen Sie die Serverkonfiguration.' }
+  }
+  const filePath = path.join(uploadDir, filename)
 
   const fileUrl = `/api/uploads/${session.user.companyId}/${session.user.id}/${filename}`
 

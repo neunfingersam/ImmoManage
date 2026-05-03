@@ -1,7 +1,7 @@
 'use client'
 
 import { useTransition, useState } from 'react'
-import { Euro, CalendarDays } from 'lucide-react'
+import { CircleDollarSign, CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -54,8 +54,8 @@ export function LeaseCard({ lease }: { lease: LeaseWithDetails }) {
       </div>
       <div className="flex gap-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-1">
-          <Euro className="h-3.5 w-3.5" />
-          <span>{totalRent.toFixed(0)} €/Monat</span>
+          <CircleDollarSign className="h-3.5 w-3.5" />
+          <span>CHF {totalRent.toFixed(0)}/Monat</span>
         </div>
         <div className="flex items-center gap-1">
           <CalendarDays className="h-3.5 w-3.5" />
