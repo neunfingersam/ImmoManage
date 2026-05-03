@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  Rectangle,
 } from 'recharts'
 
 export type MonthlyRevenue = {
@@ -60,7 +61,15 @@ export function RevenueBarChart({ data }: { data: MonthlyRevenue[] }) {
           width={36}
         />
         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', radius: 6 }} />
-        <Bar dataKey="amount" radius={[6, 6, 0, 0]}>
+        <Bar
+          dataKey="amount"
+          radius={[6, 6, 0, 0]}
+          activeBar={(props: any) => {
+            const entry = data[props.index]
+            const fill = entry.isCurrent ? '#c95e36' : 'rgba(232, 115, 74, 0.38)'
+            return <Rectangle {...props} fill={fill} radius={[6, 6, 0, 0]} />
+          }}
+        >
           {data.map((entry, i) => (
             <Cell
               key={i}

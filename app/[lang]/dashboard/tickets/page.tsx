@@ -4,7 +4,7 @@ import { TicketCard } from '@/components/tickets/TicketCard'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { KiSummaryButton } from '@/components/shared/KiSummaryButton'
 import { getTickets } from './_actions'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 
 const DONE_PAGE_SIZE = 20
 
@@ -13,7 +13,8 @@ export default async function TicketsPage({
 }: {
   searchParams: Promise<{ done?: string; q?: string }>
 }) {
-  const [t, { done: doneParam, q }] = await Promise.all([
+  const [lang, t, { done: doneParam, q }] = await Promise.all([
+    getLocale(),
     getTranslations('tickets'),
     searchParams,
   ])
@@ -27,7 +28,7 @@ export default async function TicketsPage({
     if (p > 1) params.set('done', String(p))
     if (search) params.set('q', search)
     const qs = params.toString()
-    return `/dashboard/tickets${qs ? `?${qs}` : ''}`
+    return `/${lang}/dashboard/tickets${qs ? `?${qs}` : ''}`
   }
 
   return (
@@ -44,7 +45,7 @@ export default async function TicketsPage({
         <KiSummaryButton apiPath="/api/agent/ticket-summary" label={t('kiSummary')} />
       </div>
 
-      <form method="GET" action="/dashboard/tickets" className="relative max-w-sm">
+      <form method="GET" action={`/${lang}/dashboard/tickets`} className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         <input
           type="search"
@@ -67,7 +68,7 @@ export default async function TicketsPage({
             <section className="space-y-3">
               <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('openSection')}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {open.map(ticket => <TicketCard key={ticket.id} ticket={ticket as any} detailHref={`/dashboard/tickets/${ticket.id}`} />)}
+                {open.map(ticket => <TicketCard key={ticket.id} ticket={ticket as any} detailHref={`/${lang}/dashboard/tickets/${ticket.id}`} />)}
               </div>
             </section>
           )}
@@ -75,7 +76,7 @@ export default async function TicketsPage({
             <section className="space-y-3">
               <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('inProgressSection')}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {inProgress.map(ticket => <TicketCard key={ticket.id} ticket={ticket as any} detailHref={`/dashboard/tickets/${ticket.id}`} />)}
+                {inProgress.map(ticket => <TicketCard key={ticket.id} ticket={ticket as any} detailHref={`/${lang}/dashboard/tickets/${ticket.id}`} />)}
               </div>
             </section>
           )}
@@ -85,7 +86,7 @@ export default async function TicketsPage({
                 {t('doneSection')}{doneTotalPages > 1 ? ` · ${donePage}/${doneTotalPages}` : ''}
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {done.map(ticket => <TicketCard key={ticket.id} ticket={ticket as any} detailHref={`/dashboard/tickets/${ticket.id}`} />)}
+                {done.map(ticket => <TicketCard key={ticket.id} ticket={ticket as any} detailHref={`/${lang}/dashboard/tickets/${ticket.id}`} />)}
               </div>
               {doneTotalPages > 1 && (
                 <div className="flex items-center gap-2 pt-2">
