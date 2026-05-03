@@ -1,4 +1,7 @@
+'use client'
+
 import { FileText } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { deleteDocument } from '@/app/[lang]/dashboard/documents/_actions'
@@ -12,21 +15,37 @@ type DocumentWithRels = Document & {
   property: Pick<Property, 'id' | 'name'> | null
 }
 
-const categoryLabels: Record<string, string> = {
-  MIETVERTRAG: 'Mietvertrag',
-  HAUSORDNUNG: 'Hausordnung',
-  NEBENKOSTENABRECHNUNG: 'Nebenkostenabr.',
-  UEBERGABEPROTOKOLL: 'Übergabeprotokoll',
-  SONSTIGES: 'Sonstiges',
+const CATEGORY_KEY: Record<string, string> = {
+  MIETVERTRAG: 'categoryMietvertrag',
+  HAUSORDNUNG: 'categoryHausordnung',
+  NEBENKOSTENABRECHNUNG: 'categoryNebenkostenabrechnung',
+  UEBERGABEPROTOKOLL: 'categoryUebergabeprotokoll',
+  SONSTIGES: 'categorySonstiges',
+  EINLADUNG: 'categoryEinladung',
+  VERSAMMLUNGSPROTOKOLL: 'categoryVersammlungsprotokoll',
+  VOLLMACHT: 'categoryVollmacht',
+  JAHRESRECHNUNG: 'categoryJahresrechnung',
+  BUDGET: 'categoryBudget',
+  HAUSWART_BELEG: 'categoryHauswartBeleg',
+}
+
+const SCOPE_KEY: Record<string, string> = {
+  TENANT: 'scopeTenant',
+  PROPERTY: 'scopeProperty',
+  GLOBAL: 'scopeGlobal',
 }
 
 export function DocumentCard({ doc }: { doc: DocumentWithRels }) {
-  const date = new Date(doc.createdAt).toLocaleDateString('de-DE')
+  const t = useTranslations('documents')
+  const date = new Date(doc.createdAt).toLocaleDateString()
 
   async function handleDelete() {
     'use server'
     await deleteDocument(doc.id)
   }
+
+  const categoryLabel = CATEGORY_KEY[doc.category] ? t(CATEGORY_KEY[doc.category] as any) : doc.category
+  const scopeLabel = SCOPE_KEY[doc.scope] ? t(SCOPE_KEY[doc.scope] as any) : doc.scope
 
   return (
     <Card className="p-4 space-y-2">
@@ -37,13 +56,13 @@ export function DocumentCard({ doc }: { doc: DocumentWithRels }) {
         <div className="flex-1 min-w-0">
           <p className="font-medium text-foreground truncate">{doc.name}</p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {categoryLabels[doc.category] ?? doc.category} · {doc.tenant?.name ?? doc.property?.name ?? 'Global'} · {date}
+            {categoryLabel} · {doc.tenant?.name ?? doc.property?.name ?? t('scopeGlobal')} · {date}
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Badge variant="outline">{doc.scope}</Badge>
+          <Badge variant="outline">{scopeLabel}</Badge>
           <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-            Öffnen
+            {t('open')}
           </a>
           <DocumentDeleteButton action={handleDelete} />
         </div>

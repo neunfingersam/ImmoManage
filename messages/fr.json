@@ -361,7 +361,14 @@
     "selectProperty": "Sélectionner un immeuble",
     "uploadButton": "Téléverser",
     "uploading": "Téléversement…",
-    "uploadSuccess": "Document téléversé et en cours d'indexation."
+    "uploadSuccess": "Document téléversé et en cours d'indexation.",
+    "open": "Ouvrir",
+    "categoryEinladung": "Invitation",
+    "categoryVersammlungsprotokoll": "PV d'assemblée",
+    "categoryVollmacht": "Procuration",
+    "categoryJahresrechnung": "Comptes annuels",
+    "categoryBudget": "Budget",
+    "categoryHauswartBeleg": "Justificatif concierge"
   },
   "templates": {
     "title": "Modèles",

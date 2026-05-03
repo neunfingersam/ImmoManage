@@ -361,7 +361,14 @@
     "selectProperty": "Immobilie auswählen",
     "uploadButton": "Hochladen",
     "uploading": "Hochladen…",
-    "uploadSuccess": "Dokument hochgeladen und wird indexiert."
+    "uploadSuccess": "Dokument hochgeladen und wird indexiert.",
+    "open": "Öffnen",
+    "categoryEinladung": "Einladung",
+    "categoryVersammlungsprotokoll": "Versammlungsprotokoll",
+    "categoryVollmacht": "Vollmacht",
+    "categoryJahresrechnung": "Jahresrechnung",
+    "categoryBudget": "Budget",
+    "categoryHauswartBeleg": "Hauswart-Beleg"
   },
   "templates": {
     "title": "Vorlagen",

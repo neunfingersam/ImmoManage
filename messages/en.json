@@ -361,7 +361,14 @@
     "selectProperty": "Select property",
     "uploadButton": "Upload",
     "uploading": "Uploading…",
-    "uploadSuccess": "Document uploaded and being indexed."
+    "uploadSuccess": "Document uploaded and being indexed.",
+    "open": "Open",
+    "categoryEinladung": "Invitation",
+    "categoryVersammlungsprotokoll": "Assembly Minutes",
+    "categoryVollmacht": "Power of Attorney",
+    "categoryJahresrechnung": "Annual Report",
+    "categoryBudget": "Budget",
+    "categoryHauswartBeleg": "Caretaker Receipt"
   },
   "templates": {
     "title": "Templates",

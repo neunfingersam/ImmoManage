@@ -361,7 +361,14 @@
     "selectProperty": "Seleziona immobile",
     "uploadButton": "Carica",
     "uploading": "Caricamento…",
-    "uploadSuccess": "Documento caricato e in fase di indicizzazione."
+    "uploadSuccess": "Documento caricato e in fase di indicizzazione.",
+    "open": "Apri",
+    "categoryEinladung": "Invito",
+    "categoryVersammlungsprotokoll": "Verbale assemblea",
+    "categoryVollmacht": "Procura",
+    "categoryJahresrechnung": "Conto annuale",
+    "categoryBudget": "Budget",
+    "categoryHauswartBeleg": "Ricevuta custode"
   },
   "templates": {
     "title": "Modelli",
