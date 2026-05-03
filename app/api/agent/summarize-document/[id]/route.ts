@@ -12,7 +12,7 @@ async function extractText(fileUrl: string, fileType: string): Promise<{ text: s
 
     if (fileType === 'application/pdf' || fileUrl.endsWith('.pdf')) {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require('pdf-parse')
+      const pdfParse = require('pdf-parse/lib/pdf-parse')
       const data = await pdfParse(buffer)
       return { text: (data.text as string).slice(0, 4000).trim() || null }
     }

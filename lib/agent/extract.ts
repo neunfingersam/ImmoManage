@@ -16,7 +16,7 @@ export async function extractText(fileUrl: string, fileType: string): Promise<st
 
   if (fileType === 'application/pdf') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require('pdf-parse')
+    const pdfParse = require('pdf-parse/lib/pdf-parse')
     const data = await pdfParse(buffer)
     return (data.text as string).replace(/\u0000/g, '').replace(/[\x01-\x08\x0B\x0C\x0E-\x1F]/g, '')
   }
