@@ -350,7 +350,18 @@
     "allSection": "All Documents",
     "folderLabel": "Folders",
     "docCount": "{count} document",
-    "docCountPlural": "{count} documents"
+    "docCountPlural": "{count} documents",
+    "nameLabel": "Document Name",
+    "namePlaceholder": "e.g. Lease Agreement Smith",
+    "fileLabel": "File",
+    "scopeLabel": "Scope",
+    "tenantLabel": "Tenant",
+    "propertyLabel": "Property",
+    "selectTenant": "Select tenant",
+    "selectProperty": "Select property",
+    "uploadButton": "Upload",
+    "uploading": "Uploading…",
+    "uploadSuccess": "Document uploaded and being indexed."
   },
   "templates": {
     "title": "Templates",

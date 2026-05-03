@@ -350,7 +350,18 @@
     "allSection": "Tutti i documenti",
     "folderLabel": "Cartelle",
     "docCount": "{count} documento",
-    "docCountPlural": "{count} documenti"
+    "docCountPlural": "{count} documenti",
+    "nameLabel": "Nome documento",
+    "namePlaceholder": "es. Contratto d'affitto Rossi",
+    "fileLabel": "File",
+    "scopeLabel": "Ambito",
+    "tenantLabel": "Inquilino",
+    "propertyLabel": "Immobile",
+    "selectTenant": "Seleziona inquilino",
+    "selectProperty": "Seleziona immobile",
+    "uploadButton": "Carica",
+    "uploading": "Caricamento…",
+    "uploadSuccess": "Documento caricato e in fase di indicizzazione."
   },
   "templates": {
     "title": "Modelli",

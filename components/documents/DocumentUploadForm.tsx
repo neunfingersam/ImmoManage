@@ -1,6 +1,7 @@
 'use client'
 
 import { useTransition, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -16,6 +17,7 @@ type Props = {
 }
 
 export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: Props) {
+  const t = useTranslations('documents')
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -56,49 +58,49 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
   return (
     <form ref={formRef} onSubmit={onSubmit} className="space-y-4 max-w-lg">
       <div className="space-y-1">
-        <Label htmlFor="name">Dokumentname</Label>
-        <Input id="name" name="name" placeholder="z.B. Mietvertrag Schmidt" required />
+        <Label htmlFor="name">{t('nameLabel')}</Label>
+        <Input id="name" name="name" placeholder={t('namePlaceholder')} required />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="file">Datei</Label>
+        <Label htmlFor="file">{t('fileLabel')}</Label>
         <Input id="file" name="file" type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" required />
       </div>
       <div className="space-y-1">
-        <Label>Kategorie</Label>
+        <Label>{t('category')}</Label>
         <Select value={category} onValueChange={(v) => setCategory(v ?? 'SONSTIGES')}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="MIETVERTRAG">Mietvertrag</SelectItem>
-            <SelectItem value="HAUSORDNUNG">Hausordnung</SelectItem>
-            <SelectItem value="NEBENKOSTENABRECHNUNG">Nebenkostenabrechnung</SelectItem>
-            <SelectItem value="UEBERGABEPROTOKOLL">Übergabeprotokoll</SelectItem>
-            <SelectItem value="SONSTIGES">Sonstiges</SelectItem>
+            <SelectItem value="MIETVERTRAG">{t('categoryMietvertrag')}</SelectItem>
+            <SelectItem value="HAUSORDNUNG">{t('categoryHausordnung')}</SelectItem>
+            <SelectItem value="NEBENKOSTENABRECHNUNG">{t('categoryNebenkostenabrechnung')}</SelectItem>
+            <SelectItem value="UEBERGABEPROTOKOLL">{t('categoryUebergabeprotokoll')}</SelectItem>
+            <SelectItem value="SONSTIGES">{t('categorySonstiges')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div className="space-y-1">
-        <Label>Bereich</Label>
+        <Label>{t('scopeLabel')}</Label>
         <Select value={scope} onValueChange={(v) => { setScope(v ?? 'GLOBAL'); setTenantId(''); setPropertyId('') }}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="GLOBAL">Global (alle Mieter)</SelectItem>
-            <SelectItem value="PROPERTY">Immobilie</SelectItem>
-            <SelectItem value="TENANT">Mieter</SelectItem>
+            <SelectItem value="GLOBAL">{t('scopeGlobal')}</SelectItem>
+            <SelectItem value="PROPERTY">{t('scopeProperty')}</SelectItem>
+            <SelectItem value="TENANT">{t('scopeTenant')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {scope === 'TENANT' && (
         <div className="space-y-1">
-          <Label>Mieter</Label>
+          <Label>{t('tenantLabel')}</Label>
           <Select value={tenantId} onValueChange={(v) => setTenantId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="Mieter auswählen">
-                {tenantId ? (tenants.find(t => t.id === tenantId)?.name ?? tenantId) : undefined}
+              <SelectValue placeholder={t('selectTenant')}>
+                {tenantId ? (tenants.find(ten => ten.id === tenantId)?.name ?? tenantId) : undefined}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {tenants.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+              {tenants.map(ten => <SelectItem key={ten.id} value={ten.id}>{ten.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -106,10 +108,10 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
 
       {scope === 'PROPERTY' && (
         <div className="space-y-1">
-          <Label>Immobilie</Label>
+          <Label>{t('propertyLabel')}</Label>
           <Select value={propertyId} onValueChange={(v) => setPropertyId(v ?? '')}>
             <SelectTrigger>
-              <SelectValue placeholder="Immobilie auswählen">
+              <SelectValue placeholder={t('selectProperty')}>
                 {propertyId ? (properties.find(p => p.id === propertyId)?.name ?? propertyId) : undefined}
               </SelectValue>
             </SelectTrigger>
@@ -121,9 +123,9 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
       )}
 
       {error && <p className="text-sm text-destructive">{error}</p>}
-      {success && <p className="text-sm text-green-600">Dokument hochgeladen und wird indexiert.</p>}
+      {success && <p className="text-sm text-green-600">{t('uploadSuccess')}</p>}
       <Button type="submit" disabled={pending} className="bg-primary hover:bg-primary/90">
-        {pending ? 'Hochladen…' : 'Hochladen'}
+        {pending ? t('uploading') : t('uploadButton')}
       </Button>
     </form>
   )

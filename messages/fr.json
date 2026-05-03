@@ -350,7 +350,18 @@
     "allSection": "Tous les documents",
     "folderLabel": "Dossiers",
     "docCount": "{count} document",
-    "docCountPlural": "{count} documents"
+    "docCountPlural": "{count} documents",
+    "nameLabel": "Nom du document",
+    "namePlaceholder": "p.ex. Bail Schmidt",
+    "fileLabel": "Fichier",
+    "scopeLabel": "Portée",
+    "tenantLabel": "Locataire",
+    "propertyLabel": "Immeuble",
+    "selectTenant": "Sélectionner un locataire",
+    "selectProperty": "Sélectionner un immeuble",
+    "uploadButton": "Téléverser",
+    "uploading": "Téléversement…",
+    "uploadSuccess": "Document téléversé et en cours d'indexation."
   },
   "templates": {
     "title": "Modèles",

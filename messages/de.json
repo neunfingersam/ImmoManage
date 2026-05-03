@@ -350,7 +350,18 @@
     "allSection": "Alle Dokumente",
     "folderLabel": "Ordner",
     "docCount": "{count} Dokument",
-    "docCountPlural": "{count} Dokumente"
+    "docCountPlural": "{count} Dokumente",
+    "nameLabel": "Dokumentname",
+    "namePlaceholder": "z.B. Mietvertrag Schmidt",
+    "fileLabel": "Datei",
+    "scopeLabel": "Bereich",
+    "tenantLabel": "Mieter",
+    "propertyLabel": "Immobilie",
+    "selectTenant": "Mieter auswählen",
+    "selectProperty": "Immobilie auswählen",
+    "uploadButton": "Hochladen",
+    "uploading": "Hochladen…",
+    "uploadSuccess": "Dokument hochgeladen und wird indexiert."
   },
   "templates": {
     "title": "Vorlagen",
