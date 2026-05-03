@@ -113,8 +113,14 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('immo_locale') as Locale | null
-    if (saved && ['de', 'fr', 'it', 'en'].includes(saved)) setLocale(saved)
+    const urlLocale = window.location.pathname.split('/')[1] as Locale
+    if (['de', 'fr', 'it', 'en'].includes(urlLocale)) {
+      setLocale(urlLocale)
+      localStorage.setItem('immo_locale', urlLocale)
+    } else {
+      const saved = localStorage.getItem('immo_locale') as Locale | null
+      if (saved && ['de', 'fr', 'it', 'en'].includes(saved)) setLocale(saved)
+    }
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll)
 
@@ -129,9 +135,8 @@ export default function LandingPage() {
   }, [])
 
   const changeLocale = (l: Locale) => {
-    setLocale(l)
     localStorage.setItem('immo_locale', l)
-    setMobileMenuOpen(false)
+    window.location.href = `/${l}`
   }
 
   const t = translations[locale]
