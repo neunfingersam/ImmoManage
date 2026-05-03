@@ -123,7 +123,7 @@ export default function LandingPage() {
       (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target) } }),
       { threshold: 0.12 }
     )
-    document.querySelectorAll('.scroll-reveal').forEach((el) => observer.observe(el))
+    document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale').forEach((el) => observer.observe(el))
 
     return () => { window.removeEventListener('scroll', onScroll); observer.disconnect() }
   }, [])
@@ -205,6 +205,27 @@ export default function LandingPage() {
         .scroll-reveal.delay-s2 { transition-delay: .2s; }
         .scroll-reveal.delay-s3 { transition-delay: .3s; }
         .scroll-reveal.delay-s4 { transition-delay: .4s; }
+        /* Directional scroll-reveals */
+        .scroll-reveal-left { opacity: 0; transform: translateX(-36px); transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1); }
+        .scroll-reveal-left.revealed { opacity: 1; transform: translateX(0); }
+        .scroll-reveal-right { opacity: 0; transform: translateX(36px); transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1); }
+        .scroll-reveal-right.revealed { opacity: 1; transform: translateX(0); }
+        .scroll-reveal-scale { opacity: 0; transform: scale(0.88) translateY(16px); transition: opacity .65s cubic-bezier(.34,1.2,.64,1), transform .65s cubic-bezier(.34,1.2,.64,1); }
+        .scroll-reveal-scale.revealed { opacity: 1; transform: scale(1) translateY(0); }
+        /* Feature icon hover */
+        .feature-icon { transition: transform .35s cubic-bezier(.34,1.56,.64,1); display: flex; align-items: center; justify-content: center; }
+        .feature-card:hover .feature-icon { transform: scale(1.2) rotate(-8deg); }
+        /* CTA ripple */
+        @keyframes ripple { 0% { transform: scale(0); opacity: .5; } 100% { transform: scale(4.5); opacity: 0; } }
+        .btn-coral::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(circle, rgba(255,255,255,.3) 0%, transparent 60%); transform: scale(0); opacity: 0; pointer-events: none; transition: none; }
+        .btn-coral:active::after { animation: ripple .45s ease-out; }
+        /* Pain card accent hover */
+        .pain-card { transition: transform .25s cubic-bezier(.34,1.2,.64,1), box-shadow .25s; }
+        .pain-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(232,115,74,.15); }
+        /* Input focus styles */
+        input:focus, textarea:focus, select:focus { border-color: ${CORAL} !important; box-shadow: 0 0 0 3px ${CORAL}20; }
+        /* Mobile input font fix (prevents iOS zoom) */
+        @media (max-width: 640px) { input, textarea, select { font-size: 16px !important; } }
         /* Mockup */
         .mockup-window { background: #1e2533; border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,.28), 0 0 0 1px rgba(0,0,0,.1); }
         .mockup-topbar { background: #2a3142; padding: 10px 14px; display: flex; align-items: center; gap: 6px; }
@@ -227,7 +248,7 @@ export default function LandingPage() {
         .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.09); border-color: ${CORAL}50; }
         .live-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(34,197,94,.1); color: #15803d; }
         .soon-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(99,102,241,.1); color: #4f46e5; }
-        .btn-coral { background: ${CORAL}; color: white; border: none; cursor: pointer; border-radius: 10px; font-weight: 600; transition: opacity .15s, transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; box-shadow: 0 4px 16px ${CORAL}40; }
+        .btn-coral { background: ${CORAL}; color: white; border: none; cursor: pointer; border-radius: 10px; font-weight: 600; transition: opacity .15s, transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; box-shadow: 0 4px 16px ${CORAL}40; position: relative; overflow: hidden; }
         .btn-coral:hover { opacity: .93; transform: translateY(-2px); box-shadow: 0 8px 28px ${CORAL}55; }
         .btn-coral:active { transform: translateY(0); }
         .btn-outline { background: transparent; color: #374151; border: 1.5px solid #d1cdc8; cursor: pointer; border-radius: 10px; font-weight: 600; transition: all .15s; }
@@ -238,6 +259,7 @@ export default function LandingPage() {
         @media (min-width: 640px) { .modal-box { border-radius: 24px; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(1.4); } }
         .float-anim { animation: floatBtn 3.5s ease-in-out infinite; }
         @keyframes floatBtn { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         /* Mobile nav */
@@ -374,7 +396,7 @@ export default function LandingPage() {
             border: `1px solid ${CORAL}40`, borderRadius: 999, marginBottom: 28,
             background: `${CORAL}10`, color: CORAL, fontSize: 13, fontWeight: 600,
           }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: CORAL, display: 'inline-block' }} />
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: CORAL, display: 'inline-block', animation: 'pulse 2s cubic-bezier(.4,0,.6,1) infinite' }} />
             {locale === 'de' ? 'Für die Schweiz gebaut' : locale === 'fr' ? 'Conçu pour la Suisse' : locale === 'it' ? 'Fatto per la Svizzera' : 'Built for Switzerland'}
           </div>
 
@@ -494,7 +516,7 @@ export default function LandingPage() {
           <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{lbl.painSub}</p>
           <div className="pain-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, textAlign: 'left' }}>
             {lbl.pains.map((pain, i) => (
-              <div key={i} className="scroll-reveal" style={{ transitionDelay: `${0.05 * i}s`,
+              <div key={i} className={`pain-card ${i % 2 === 0 ? 'scroll-reveal-left' : 'scroll-reveal-right'}`} style={{ transitionDelay: `${0.07 * i}s`,
                 background: 'linear-gradient(135deg, #fff7f5 0%, #fef3ef 100%)',
                 borderRadius: 16, padding: '22px 20px',
                 border: '1.5px solid #fce4da',
@@ -526,7 +548,7 @@ export default function LandingPage() {
               return (
                 <div key={f.key} className="feature-card hover-lift scroll-reveal" style={{ opacity: f.live ? 1 : 0.82, transitionDelay: `${0.05 * (fi % 4)}s` }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 10, background: f.live ? `${CORAL}15` : 'rgba(99,102,241,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                    <div className="feature-icon" style={{ width: 40, height: 40, borderRadius: 10, background: f.live ? `${CORAL}15` : 'rgba(99,102,241,.1)', fontSize: 18 }}>
                       {f.icon}
                     </div>
                     {f.live
@@ -547,17 +569,17 @@ export default function LandingPage() {
       <section id="pricing" className="section-pad" style={{ padding: '80px 24px', background: 'white' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
           {/* Badge */}
-          <div style={{ display: 'inline-block', background: `${CORAL}15`, color: CORAL, fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 999, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 24 }}>
+          <div className="scroll-reveal" style={{ display: 'inline-block', background: `${CORAL}15`, color: CORAL, fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 999, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 24 }}>
             {locale === 'de' ? 'Early Access' : locale === 'fr' ? 'Accès anticipé' : locale === 'it' ? 'Accesso anticipato' : 'Early Access'}
           </div>
 
-          <h2 className="serif" style={{ fontSize: 'clamp(28px, 4vw, 42px)', color: '#1a1a2e', marginBottom: 16, lineHeight: 1.2 }}>
+          <h2 className="serif scroll-reveal delay-s1" style={{ fontSize: 'clamp(28px, 4vw, 42px)', color: '#1a1a2e', marginBottom: 16, lineHeight: 1.2 }}>
             {locale === 'de' ? <>Aktuell im Aufbau —<br />sei von Anfang an dabei.</> :
              locale === 'fr' ? <>En construction —<br />rejoignez-nous dès le début.</> :
              locale === 'it' ? <>In fase di sviluppo —<br />unisciti fin dall'inizio.</> :
                                <>Currently in development —<br />be part of it from day one.</>}
           </h2>
-          <p style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.7, maxWidth: 560, margin: '0 auto 48px' }}>
+          <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.7, maxWidth: 560, margin: '0 auto 48px' }}>
             {locale === 'de' ? 'ImmoManage befindet sich in der Early-Access-Phase. Wer sich jetzt registriert, erhält eine persönliche Demo-Umgebung — und kann das Produkt direkt mitgestalten.' :
              locale === 'fr' ? 'ImmoManage est en phase d\'accès anticipé. Les personnes qui s\'inscrivent maintenant reçoivent un environnement de démo personnel — et peuvent contribuer directement au développement du produit.' :
              locale === 'it' ? 'ImmoManage è in fase di accesso anticipato. Chi si registra ora riceve un ambiente demo personale — e può contribuire direttamente allo sviluppo del prodotto.' :
@@ -566,7 +588,7 @@ export default function LandingPage() {
 
           {/* Two benefit cards */}
           <div className="benefit-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 48, textAlign: 'left' }}>
-            <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2' }}>
+            <div className="scroll-reveal-left hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2', transitionDelay: '.05s' }}>
               <div style={{ fontSize: 28, marginBottom: 14 }}>🧪</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
                 {locale === 'de' ? 'Kostenlos bis zum Launch' : locale === 'fr' ? 'Gratuit jusqu\'au lancement' : locale === 'it' ? 'Gratuito fino al lancio' : 'Free until launch'}
@@ -578,7 +600,7 @@ export default function LandingPage() {
                                    'Full access to the platform — no credit card, no risk. You only pay once the product is ready.'}
               </p>
             </div>
-            <div style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40` }}>
+            <div className="scroll-reveal-right hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40`, transitionDelay: '.12s' }}>
               <div style={{ fontSize: 28, marginBottom: 14 }}>🎨</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
                 {locale === 'de' ? 'Produkt mitgestalten' : locale === 'fr' ? 'Contribuer au produit' : locale === 'it' ? 'Contribuisci al prodotto' : 'Shape the product'}
@@ -705,19 +727,19 @@ function FeedbackModal({ t, onClose }: { locale: Locale; t: FeedbackT; onClose: 
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b6860', marginBottom: 4 }}>{field.label}</label>
                   {field.type === 'select' ? (
                     <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', background: 'white' }}>
+                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', background: 'white' }}>
                       <option value="">—</option>
                       {t.categories.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   ) : field.type === 'textarea' ? (
                     <textarea rows={3} required placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
                       onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit' }} />
+                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
                   ) : (
                     <input type={field.type} placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
                       required={field.label.includes('*')}
                       onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none' }} />
+                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none' }} />
                   )}
                 </div>
               ))}
@@ -753,7 +775,7 @@ function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onC
           <span style={{ fontWeight: 700, fontSize: 15, color: 'white' }}>{t.title}</span>
           <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.2)', border: 'none', cursor: 'pointer', fontSize: 16, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
         </div>
-        <div style={{ padding: 20 }}>
+        <div style={{ padding: 20, overflowY: 'auto', maxHeight: 'calc(90vh - 68px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
           {status === 'success' ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ fontSize: 44, marginBottom: 10 }}>✅</div>
@@ -773,11 +795,11 @@ function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onC
                     {f.type === 'textarea' ? (
                       <textarea rows={3} value={form[f.key as keyof typeof form] as string}
                         onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none', resize: 'none', fontFamily: 'inherit' }} />
+                        style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', resize: 'none', fontFamily: 'inherit', transition: 'border-color .15s', lineHeight: 1.5 }} />
                     ) : (
                       <input type={f.type} required={f.label.includes('*')} value={form[f.key as keyof typeof form] as string}
                         onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #e8e2db', fontSize: 13, outline: 'none' }} />
+                        style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', transition: 'border-color .15s' }} />
                     )}
                   </div>
                 ))}
