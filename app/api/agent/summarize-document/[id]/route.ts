@@ -6,16 +6,16 @@ import { isOllamaAvailable, generateText } from '@/lib/agent/ollama'
 
 async function extractText(fileUrl: string, fileType: string): Promise<{ text: string | null; error?: string }> {
   try {
-    if (fileType === 'application/pdf' || fileUrl.endsWith('.pdf')) {
-      const { PDFParse } = await import('pdf-parse')
-      const parser = new PDFParse({ url: fileUrl })
-      const result = await parser.getText()
-      return { text: result.text.slice(0, 4000).trim() || null }
-    }
-
     const res = await fetch(fileUrl)
     if (!res.ok) return { text: null, error: `Fetch failed: ${res.status}` }
     const buffer = Buffer.from(await res.arrayBuffer())
+
+    if (fileType === 'application/pdf' || fileUrl.endsWith('.pdf')) {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require('pdf-parse')
+      const data = await pdfParse(buffer)
+      return { text: (data.text as string).slice(0, 4000).trim() || null }
+    }
 
     if (
       fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||

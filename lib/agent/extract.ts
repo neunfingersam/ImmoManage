@@ -15,15 +15,10 @@ export async function extractText(fileUrl: string, fileType: string): Promise<st
   const buffer = fs.readFileSync(absolutePath)
 
   if (fileType === 'application/pdf') {
-    // pdf-parse v2: PDFParse Klasse, getText() gibt {pages:[{text}]} zurück
-    const { PDFParse } = await import('pdf-parse')
-    const parser = new PDFParse({ data: buffer })
-    const result = await parser.getText()
-    return result.pages
-      .map((p: { text: string }) => p.text)
-      .join('\n')
-      .replace(/\u0000/g, '')
-      .replace(/[\x01-\x08\x0B\x0C\x0E-\x1F]/g, '')
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse')
+    const data = await pdfParse(buffer)
+    return (data.text as string).replace(/\u0000/g, '').replace(/[\x01-\x08\x0B\x0C\x0E-\x1F]/g, '')
   }
 
   if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
