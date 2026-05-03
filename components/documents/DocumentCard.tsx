@@ -38,12 +38,7 @@ const SCOPE_KEY: Record<string, string> = {
 export function DocumentCard({ doc }: { doc: DocumentWithRels }) {
   const t = useTranslations('documents')
   const date = new Date(doc.createdAt).toLocaleDateString()
-
-  async function handleDelete() {
-    'use server'
-    await deleteDocument(doc.id)
-  }
-
+  async function handleDelete() { await deleteDocument(doc.id) }
   const categoryLabel = CATEGORY_KEY[doc.category] ? t(CATEGORY_KEY[doc.category] as any) : doc.category
   const scopeLabel = SCOPE_KEY[doc.scope] ? t(SCOPE_KEY[doc.scope] as any) : doc.scope
 
