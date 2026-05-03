@@ -38,7 +38,6 @@ export async function getDocuments(propertyId?: string) {
 export async function uploadDocument(formData: FormData): Promise<ActionResult<Document>> {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
-  await requireCompanyAccess(session.user.companyId)
 
   const file = formData.get('file') as File | null
   if (!file || file.size === 0) return { success: false, error: 'Keine Datei ausgewählt' }

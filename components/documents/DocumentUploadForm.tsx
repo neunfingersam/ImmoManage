@@ -35,16 +35,20 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
     if (scope === 'TENANT') fd.set('tenantId', tenantId)
     if (scope === 'PROPERTY') fd.set('propertyId', propertyId)
     startTransition(async () => {
-      const result = await uploadDocument(fd)
-      if (result.success) {
-        setSuccess(true)
-        formRef.current?.reset()
-        setCategory('SONSTIGES')
-        setScope(defaultPropertyId ? 'PROPERTY' : 'GLOBAL')
-        setTenantId('')
-        setPropertyId(defaultPropertyId ?? '')
-      } else {
-        setError(result.error)
+      try {
+        const result = await uploadDocument(fd)
+        if (result.success) {
+          setSuccess(true)
+          formRef.current?.reset()
+          setCategory('SONSTIGES')
+          setScope(defaultPropertyId ? 'PROPERTY' : 'GLOBAL')
+          setTenantId('')
+          setPropertyId(defaultPropertyId ?? '')
+        } else {
+          setError(result.error ?? 'Unbekannter Fehler')
+        }
+      } catch (e) {
+        setError('Upload fehlgeschlagen. Bitte erneut versuchen.')
       }
     })
   }
