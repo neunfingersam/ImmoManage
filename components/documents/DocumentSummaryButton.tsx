@@ -18,10 +18,11 @@ export function DocumentSummaryButton({ docId }: { docId: string }) {
         const { summary: s } = await res.json()
         setSummary(s)
       } else {
-        setError('KI-Analyse nicht verfügbar')
+        const body = await res.json().catch(() => ({}))
+        setError(body.error ?? `KI-Analyse nicht verfügbar (${res.status})`)
       }
-    } catch {
-      setError('KI-Analyse nicht verfügbar')
+    } catch (e) {
+      setError('KI-Analyse nicht verfügbar: ' + (e instanceof Error ? e.message : String(e)))
     }
     setLoading(false)
   }

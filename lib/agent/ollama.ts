@@ -12,7 +12,7 @@ export async function isOllamaAvailable(): Promise<boolean> {
   try {
     const res = await fetch(`${OLLAMA_BASE}/api/tags`, {
       headers: NGROK_HEADERS,
-      signal: AbortSignal.timeout(2000),
+      signal: AbortSignal.timeout(5000),
     })
     return res.ok
   } catch {
