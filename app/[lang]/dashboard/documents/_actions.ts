@@ -36,6 +36,15 @@ export async function getDocuments(propertyId?: string) {
 }
 
 export async function uploadDocument(formData: FormData): Promise<ActionResult<Document>> {
+  try {
+    return await _uploadDocumentInner(formData)
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return { success: false, error: `Serverfehler: ${msg}` }
+  }
+}
+
+async function _uploadDocumentInner(formData: FormData): Promise<ActionResult<Document>> {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
 

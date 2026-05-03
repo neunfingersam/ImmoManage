@@ -48,7 +48,7 @@ export function DocumentUploadForm({ tenants, properties, defaultPropertyId }: P
           setError(result.error ?? 'Unbekannter Fehler')
         }
       } catch (e) {
-        setError('Upload fehlgeschlagen. Bitte erneut versuchen.')
+        setError('Client-Fehler: ' + (e instanceof Error ? e.message : String(e)))
       }
     })
   }
