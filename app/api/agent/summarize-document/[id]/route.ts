@@ -4,18 +4,18 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isOllamaAvailable, generateText } from '@/lib/agent/ollama'
 
-async function extractText(fileUrl: string, fileType: string): Promise<string | null> {
+async function extractText(fileUrl: string, fileType: string): Promise<{ text: string | null; error?: string }> {
   try {
-    const res = await fetch(fileUrl)
-    if (!res.ok) return null
-    const buffer = Buffer.from(await res.arrayBuffer())
-
     if (fileType === 'application/pdf' || fileUrl.endsWith('.pdf')) {
       const { PDFParse } = await import('pdf-parse')
-      const parser = new PDFParse({ data: new Uint8Array(buffer) })
+      const parser = new PDFParse({ url: fileUrl })
       const result = await parser.getText()
-      return result.text.slice(0, 4000).trim() || null
+      return { text: result.text.slice(0, 4000).trim() || null }
     }
+
+    const res = await fetch(fileUrl)
+    if (!res.ok) return { text: null, error: `Fetch failed: ${res.status}` }
+    const buffer = Buffer.from(await res.arrayBuffer())
 
     if (
       fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
@@ -23,12 +23,12 @@ async function extractText(fileUrl: string, fileType: string): Promise<string | 
     ) {
       const mammoth = await import('mammoth')
       const { value } = await mammoth.extractRawText({ buffer })
-      return value.slice(0, 4000).trim() || null
+      return { text: value.slice(0, 4000).trim() || null }
     }
 
-    return null
-  } catch {
-    return null
+    return { text: null }
+  } catch (e) {
+    return { text: null, error: e instanceof Error ? e.message : String(e) }
   }
 }
 
@@ -50,11 +50,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return new Response(JSON.stringify({ error: 'KI nicht verfügbar' }), { status: 503 })
   }
 
-  const extractedText = await extractText(doc.fileUrl, doc.fileType)
+  const { text: extractedText, error: extractError } = await extractText(doc.fileUrl, doc.fileType)
 
   const userMessage = extractedText
     ? `Dokument: "${doc.name}" (Kategorie: ${doc.category})\n\nInhalt:\n${extractedText}\n\nErstelle eine kurze Zusammenfassung (2-3 Sätze) des tatsächlichen Inhalts.`
     : `Dokument: "${doc.name}" (Kategorie: ${doc.category}). Erstelle eine kurze Zusammenfassung was dieses Dokument typischerweise enthält.`
+
+  console.log('[summarize]', { docId: id, extractedText: !!extractedText, extractError })
 
   const summary = await generateText([
     {
