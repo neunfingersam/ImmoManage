@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -22,7 +21,7 @@ const createVermieterSchema = z.object({
 async function requireAdmin() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.companyId || session.user.role !== 'ADMIN') {
-    throw new Error('Nur Admins erlaubt')
+    return null
   }
   return session
 }
@@ -39,6 +38,7 @@ export async function getTeamMembers() {
 
 export async function createVermieter(data: { name: string; email: string; password: string; phone?: string }): Promise<ActionResult<User>> {
   const session = await requireAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
   await requireCompanyAccess(session.user.companyId!)
   const parsed = createVermieterSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? 'Fehler' }
@@ -76,6 +76,7 @@ export async function createVermieter(data: { name: string; email: string; passw
 
 export async function toggleUserActive(userId: string): Promise<ActionResult<User>> {
   const session = await requireAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
   await requireCompanyAccess(session.user.companyId!)
   const user = await prisma.user.findFirst({
     where: { id: userId, companyId: session.user.companyId! },

@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -8,6 +8,7 @@ import { hash } from 'bcryptjs'
 import { z } from 'zod'
 import { sendEmail } from '@/lib/email'
 import type { ActionResult } from '@/lib/action-result'
+import { routing } from '@/i18n/routing'
 
 const adminSchema = z.object({
   name: z.string().min(1, 'Name ist erforderlich'),
@@ -22,12 +23,13 @@ function generatePassword(length = 12): string {
 
 async function requireSuperAdmin() {
   const session = await getServerSession(authOptions)
-  if (session?.user?.role !== 'SUPER_ADMIN') throw new Error('Nicht autorisiert')
+  if (session?.user?.role !== 'SUPER_ADMIN') return null
   return session
 }
 
 export async function getAdmins() {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return []
   return prisma.user.findMany({
     where: { role: 'ADMIN' },
     include: { company: { select: { id: true, name: true } } },
@@ -40,7 +42,8 @@ export async function createAdmin(data: {
   email: string
   companyId: string
 }): Promise<ActionResult<{ id: string }>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
 
   const parsed = adminSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? 'Fehler' }
@@ -76,7 +79,7 @@ export async function createAdmin(data: {
         <p><strong>E-Mail:</strong> ${parsed.data.email}</p>
         <p><strong>Temporäres Passwort:</strong> <code style="background:#e5e7eb;padding:2px 6px;border-radius:4px;">${tempPassword}</code></p>
         <p>Bitte melden Sie sich an und ändern Sie Ihr Passwort umgehend in Ihrem Profil.</p>
-        <p><a href="https://immo-manage.ch/de/auth/login" style="color:#1e3a5f;">Zum Login</a></p>
+        <p><a href="${process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'}/${routing.defaultLocale}/auth/login" style="color:#1e3a5f;">Zum Login</a></p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
         <p style="font-size: 12px; color: #9ca3af;">ImmoManage · ${company.name}</p>
       </div>
@@ -85,15 +88,16 @@ export async function createAdmin(data: {
 
   await sendEmail(parsed.data.email, 'Ihr ImmoManage-Zugang', html)
 
-  revalidatePath('/superadmin/admins')
+  revalidateAllLocales('/superadmin/admins')
   return { success: true, data: { id: user.id } }
 }
 
 export async function toggleAdminActive(userId: string): Promise<ActionResult<void>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
   const user = await prisma.user.findUnique({ where: { id: userId } })
   if (!user) return { success: false, error: 'Admin nicht gefunden' }
   await prisma.user.update({ where: { id: userId }, data: { active: !user.active } })
-  revalidatePath('/superadmin/admins')
+  revalidateAllLocales('/superadmin/admins')
   return { success: true, data: undefined }
 }

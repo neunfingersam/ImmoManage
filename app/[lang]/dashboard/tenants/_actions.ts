@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { hash } from 'bcryptjs'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
@@ -11,6 +10,7 @@ import { tenantSchema, type TenantFormValues, updateTenantSchema, type UpdateTen
 import type { ActionResult } from '@/lib/action-result'
 import type { User } from '@/lib/generated/prisma'
 import { sendTenantInviteEmail } from '@/lib/email'
+import { routing } from '@/i18n/routing'
 
 const PAGE_SIZE = 20
 
@@ -72,7 +72,7 @@ export async function createTenant(data: TenantFormValues): Promise<ActionResult
 
       const company = await prisma.company.findUnique({ where: { id: session.user.companyId }, select: { name: true } })
       const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
-      const inviteUrl = `${baseUrl}/auth/reset-password?token=${token}`
+      const inviteUrl = `${baseUrl}/${routing.defaultLocale}/auth/reset-password?token=${token}`
 
       await sendTenantInviteEmail({
         tenantEmail: tenant.email,
@@ -105,7 +105,7 @@ export async function resendTenantInvite(tenantId: string): Promise<ActionResult
 
     const company = await prisma.company.findUnique({ where: { id: session.user.companyId }, select: { name: true } })
     const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
-    const inviteUrl = `${baseUrl}/auth/reset-password?token=${token}`
+    const inviteUrl = `${baseUrl}/${routing.defaultLocale}/auth/reset-password?token=${token}`
 
     await sendTenantInviteEmail({
       tenantEmail: tenant.email,
@@ -168,7 +168,7 @@ export async function updateTenant(tenantId: string, data: UpdateTenantValues): 
       },
     })
     revalidateAllLocales('/dashboard/tenants')
-    revalidatePath(`/dashboard/tenants/${tenantId}`)
+    revalidateAllLocales(`/dashboard/tenants/${tenantId}`)
     return { success: true, data: undefined }
   })
 }
@@ -239,7 +239,7 @@ export async function moveTenantToUnit(tenantId: string, newUnitId: string): Pro
     ])
 
     revalidateAllLocales('/dashboard/tenants')
-    revalidatePath(`/dashboard/tenants/${tenantId}`)
+    revalidateAllLocales(`/dashboard/tenants/${tenantId}`)
     revalidateAllLocales('/dashboard/leases')
     return { success: true, data: undefined }
   })

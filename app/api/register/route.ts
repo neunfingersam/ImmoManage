@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
 import type { Prisma } from '@/lib/generated/prisma/client'
 import type { Plan } from '@/lib/generated/prisma/enums'
+import { routing } from '@/i18n/routing'
 
 const VALID_PLANS: Plan[] = ['STARTER', 'STANDARD', 'PRO', 'ENTERPRISE']
 
@@ -131,8 +132,8 @@ export async function POST(req: NextRequest) {
       companyName: companyName.trim(),
       plan,
       companyId: company.id,
-      successUrl: `${baseUrl}/de/dashboard?checkout=success`,
-      cancelUrl: `${baseUrl}/de/preise`,
+      successUrl: `${baseUrl}/${routing.defaultLocale}/dashboard?checkout=success`,
+      cancelUrl: `${baseUrl}/${routing.defaultLocale}/preise`,
     }).catch((err) => { console.error('[Stripe Checkout Error]', err?.message); return null })
 
     if (stripeData) {

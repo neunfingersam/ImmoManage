@@ -1,6 +1,5 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -110,7 +109,7 @@ export async function finalizeHandover(id: string): Promise<ActionResult<void>> 
     data: { status: 'ABGESCHLOSSEN', signedByVermieter: true },
   })
   revalidateAllLocales('/dashboard/handovers')
-  revalidatePath(`/dashboard/handovers/${id}`)
+  revalidateAllLocales(`/dashboard/handovers/${id}`)
   return { success: true, data: undefined }
 }
 

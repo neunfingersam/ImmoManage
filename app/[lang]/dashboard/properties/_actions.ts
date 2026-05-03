@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { getAuthSession, withAuthAction } from '@/lib/action-utils'
 import { getPropertyWhere } from '@/lib/access-control'
@@ -70,7 +69,7 @@ export async function assignVermieterToProperty(propertyId: string, userId: stri
       create: { userId, propertyId },
       update: {},
     })
-    revalidatePath(`/dashboard/properties/${propertyId}`)
+    revalidateAllLocales(`/dashboard/properties/${propertyId}`)
     return { success: true, data: undefined }
   })
 }
@@ -83,7 +82,7 @@ export async function removeVermieterFromProperty(propertyId: string, userId: st
     if (!property) return { success: false, error: 'Immobilie nicht gefunden' }
 
     await prisma.propertyAssignment.deleteMany({ where: { propertyId, userId } })
-    revalidatePath(`/dashboard/properties/${propertyId}`)
+    revalidateAllLocales(`/dashboard/properties/${propertyId}`)
     return { success: true, data: undefined }
   })
 }
@@ -142,7 +141,7 @@ export async function updateProperty(propertyId: string, data: PropertyFormValue
         data: { ...parsed.data, year: parsed.data.year ?? null, description: parsed.data.description ?? null },
       })
       revalidateAllLocales('/dashboard/properties')
-      revalidatePath(`/dashboard/properties/${propertyId}`)
+      revalidateAllLocales(`/dashboard/properties/${propertyId}`)
       return { success: true, data: property }
     } catch (e) {
       return { success: false, error: 'Fehler beim Aktualisieren' }
@@ -200,7 +199,7 @@ export async function createUnit(data: UnitFormValues): Promise<ActionResult<Uni
           persons: parsed.data.persons ?? 1,
         },
       })
-      revalidatePath(`/dashboard/properties/${parsed.data.propertyId}`)
+      revalidateAllLocales(`/dashboard/properties/${parsed.data.propertyId}`)
       return { success: true, data: unit }
     } catch (e) {
       return { success: false, error: 'Fehler beim Erstellen der Einheit' }
@@ -229,7 +228,7 @@ export async function updateUnit(unitId: string, data: UnitFormValues): Promise<
           persons: parsed.data.persons ?? undefined,
         },
       })
-      revalidatePath(`/dashboard/properties/${parsed.data.propertyId}`)
+      revalidateAllLocales(`/dashboard/properties/${parsed.data.propertyId}`)
       return { success: true, data: unit }
     } catch (e) {
       return { success: false, error: 'Fehler beim Aktualisieren der Einheit' }
@@ -239,7 +238,7 @@ export async function updateUnit(unitId: string, data: UnitFormValues): Promise<
 
 export async function updateUnitStatusAction(unitId: string, status: 'VERMIETET' | 'LEER' | 'RENOVIERUNG') {
   const session = await getAuthSession()
-  if (!session?.user?.companyId) throw new Error('Unauthorized')
+  if (!session?.user?.companyId) return
 
   await prisma.unit.update({
     where: { id: unitId },
@@ -262,7 +261,7 @@ export async function deleteUnit(unitId: string, propertyId: string): Promise<Ac
     if (activeLeases > 0) return { success: false, error: 'Einheit hat noch aktive Mietverträge' }
 
     await prisma.unit.delete({ where: { id: unitId } })
-    revalidatePath(`/dashboard/properties/${propertyId}`)
+    revalidateAllLocales(`/dashboard/properties/${propertyId}`)
     return { success: true, data: undefined }
   })
 }

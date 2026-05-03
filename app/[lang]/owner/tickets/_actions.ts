@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { prisma } from '@/lib/prisma'
 import { getAuthSession } from '@/lib/action-utils'
 import { ticketSchema, type TicketFormValues } from '@/lib/schemas/ticket'
@@ -60,6 +60,6 @@ export async function createOwnerTicket(data: TicketFormValues): Promise<ActionR
     },
   })
 
-  revalidatePath('/owner/tickets')
+  revalidateAllLocales('/owner/tickets')
   return { success: true, data: ticket }
 }

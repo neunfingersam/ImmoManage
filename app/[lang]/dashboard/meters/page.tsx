@@ -2,21 +2,27 @@ import { Gauge } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { getAllReadings } from './_actions'
-
-const typeLabels: Record<string, string> = { STROM: 'Strom', GAS: 'Gas', WASSER: 'Wasser', HEIZUNG: 'Heizung' }
+import { getTranslations } from 'next-intl/server'
 
 export default async function DashboardMetersPage() {
-  const readings = await getAllReadings()
+  const [readings, t] = await Promise.all([getAllReadings(), getTranslations('dashboardMeters')])
+
+  const typeLabels: Record<string, string> = {
+    STROM: t('typeSTROM'),
+    GAS: t('typeGAS'),
+    WASSER: t('typeWASSER'),
+    HEIZUNG: t('typeHEIZUNG'),
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl text-foreground">Zählerstände</h1>
-        <p className="text-sm text-muted-foreground mt-1">{readings.length} Ablesungen</p>
+        <h1 className="font-serif text-2xl text-foreground">{t('title')}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t('readingsCount', { count: readings.length })}</p>
       </div>
 
       {readings.length === 0 ? (
-        <EmptyState icon={<Gauge className="h-7 w-7" />} titel="Keine Ablesungen" beschreibung="Noch keine Zählerstände von Mietern eingereicht." />
+        <EmptyState icon={<Gauge className="h-7 w-7" />} titel={t('noReadingsTitle')} beschreibung={t('noReadingsDesc')} />
       ) : (
         <div className="space-y-2">
           {readings.map(r => (

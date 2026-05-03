@@ -380,6 +380,16 @@
     "dueDate": "Date d'échéance",
     "reminderDays": "Rappel (jours avant)"
   },
+  "dashboardMeters": {
+    "title": "Relevés de compteurs",
+    "readingsCount": "{count} relevés",
+    "noReadingsTitle": "Aucun relevé",
+    "noReadingsDesc": "Aucun relevé de compteur soumis par les locataires.",
+    "typeSTROM": "Électricité",
+    "typeGAS": "Gaz",
+    "typeWASSER": "Eau",
+    "typeHEIZUNG": "Chauffage"
+  },
   "handoverWizard": {
     "title": "Assistant de changement de locataire",
     "step1": "Résiliation",

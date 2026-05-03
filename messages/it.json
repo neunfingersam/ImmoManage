@@ -380,6 +380,16 @@
     "dueDate": "Data di scadenza",
     "reminderDays": "Promemoria (giorni prima)"
   },
+  "dashboardMeters": {
+    "title": "Letture contatori",
+    "readingsCount": "{count} letture",
+    "noReadingsTitle": "Nessuna lettura",
+    "noReadingsDesc": "Nessuna lettura del contatore inviata dagli inquilini.",
+    "typeSTROM": "Elettricità",
+    "typeGAS": "Gas",
+    "typeWASSER": "Acqua",
+    "typeHEIZUNG": "Riscaldamento"
+  },
   "handoverWizard": {
     "title": "Assistente cambio inquilino",
     "step1": "Disdetta",

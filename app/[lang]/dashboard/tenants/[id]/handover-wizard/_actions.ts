@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -17,14 +16,14 @@ type WizardState = {
 
 export async function updateWizardStepAction(leaseId: string, step: number, data: unknown) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) throw new Error('Unauthorized')
+  if (!session?.user?.companyId) return { success: false, error: 'Nicht autorisiert' }
 
   const lease = await prisma.lease.findFirst({
     where: { id: leaseId, companyId: session.user.companyId },
     select: { handoverWizard: true },
   })
 
-  if (!lease) throw new Error('Lease not found')
+  if (!lease) return { success: false, error: 'Mietvertrag nicht gefunden' }
 
   const wizard = (lease.handoverWizard as WizardState | null) ?? { currentStep: 1 }
   const stepKey = `step${step}` as keyof WizardState

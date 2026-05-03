@@ -3,7 +3,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { requireCompanyAccess } from '@/lib/auth-guard'
 
 export async function getUnreadCount() {
@@ -30,7 +30,7 @@ export async function markAllRead() {
     where: { userId: session.user.id, read: false },
     data: { read: true },
   })
-  revalidatePath('/dashboard')
+  revalidateAllLocales('/dashboard')
 }
 
 export async function markOneRead(id: string) {

@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -15,12 +15,13 @@ const companySchema = z.object({
 
 async function requireSuperAdmin() {
   const session = await getServerSession(authOptions)
-  if (session?.user?.role !== 'SUPER_ADMIN') throw new Error('Nicht autorisiert')
+  if (session?.user?.role !== 'SUPER_ADMIN') return null
   return session
 }
 
 export async function getCompanies() {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return []
   return prisma.company.findMany({
     include: {
       _count: { select: { users: true, properties: true, tickets: true } },
@@ -30,7 +31,8 @@ export async function getCompanies() {
 }
 
 export async function createCompany(data: { name: string; slug: string }): Promise<ActionResult<Company>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
   const parsed = companySchema.safeParse(data)
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? 'Fehler' }
 
@@ -38,24 +40,26 @@ export async function createCompany(data: { name: string; slug: string }): Promi
   if (existing) return { success: false, error: 'Slug bereits vergeben' }
 
   const company = await prisma.company.create({ data: parsed.data })
-  revalidatePath('/superadmin/companies')
+  revalidateAllLocales('/superadmin/companies')
   return { success: true, data: company }
 }
 
 export async function toggleCompanyActive(companyId: string): Promise<ActionResult<Company>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
   const company = await prisma.company.findUnique({ where: { id: companyId } })
   if (!company) return { success: false, error: 'Company nicht gefunden' }
   const updated = await prisma.company.update({
     where: { id: companyId },
     data: { active: !company.active },
   })
-  revalidatePath('/superadmin/companies')
+  revalidateAllLocales('/superadmin/companies')
   return { success: true, data: updated }
 }
 
 export async function updateCompanyPlan(companyId: string, plan: Plan): Promise<ActionResult<Company>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return { success: false, error: 'Nicht autorisiert' }
   const validPlans: Plan[] = ['STARTER', 'STANDARD', 'PRO', 'ENTERPRISE']
   if (!validPlans.includes(plan)) return { success: false, error: 'Ungültiger Plan' }
 
@@ -66,13 +70,14 @@ export async function updateCompanyPlan(companyId: string, plan: Plan): Promise<
     where: { id: companyId },
     data: { plan },
   })
-  revalidatePath(`/superadmin/companies/${companyId}`)
-  revalidatePath('/superadmin/companies')
+  revalidateAllLocales(`/superadmin/companies/${companyId}`)
+  revalidateAllLocales('/superadmin/companies')
   return { success: true, data: updated }
 }
 
 export async function getCompany(id: string) {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+  if (!session) return null
   return prisma.company.findUnique({
     where: { id },
     include: {

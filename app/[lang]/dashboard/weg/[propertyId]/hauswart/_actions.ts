@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -57,7 +57,7 @@ export async function createHauswartEntry(propertyId: string, data: unknown): Pr
   const entry = await prisma.hauswartEntry.create({
     data: { companyId: session.user.companyId, propertyId, datum: new Date(datum), kategorie, beschreibung, stunden: stunden ?? null, betrag: betrag ?? null, createdById: session.user.id },
   })
-  revalidatePath(`/dashboard/weg/${propertyId}/hauswart`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/hauswart`)
   return { success: true, data: entry }
 }
 
@@ -76,7 +76,7 @@ export async function updateHauswartEntry(entryId: string, data: unknown): Promi
     where: { id: entryId },
     data: { datum: new Date(datum), kategorie, beschreibung, stunden: stunden ?? null, betrag: betrag ?? null },
   })
-  revalidatePath(`/dashboard/weg/${existing.propertyId}/hauswart`)
+  revalidateAllLocales(`/dashboard/weg/${existing.propertyId}/hauswart`)
   return { success: true, data: entry }
 }
 
@@ -88,7 +88,7 @@ export async function deleteHauswartEntry(entryId: string): Promise<ActionResult
   if (!entry) return { success: false, error: 'Eintrag nicht gefunden' }
 
   await prisma.hauswartEntry.delete({ where: { id: entryId } })
-  revalidatePath(`/dashboard/weg/${entry.propertyId}/hauswart`)
+  revalidateAllLocales(`/dashboard/weg/${entry.propertyId}/hauswart`)
   return { success: true, data: null }
 }
 

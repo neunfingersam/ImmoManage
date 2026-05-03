@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -72,6 +72,6 @@ export async function sendTenantMessage(data: { toId: string; text: string }): P
     data: { userId: data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Mieter'}`, link: '/dashboard/messages' },
   }).catch(() => {})
   sendPushToUser(data.toId, session.user.name ?? 'Neue Nachricht', data.text.trim(), '/dashboard/messages').catch(() => {})
-  revalidatePath('/tenant/messages')
+  revalidateAllLocales('/tenant/messages')
   return { success: true, data: message }
 }

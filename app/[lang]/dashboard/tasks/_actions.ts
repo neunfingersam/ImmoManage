@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -11,14 +10,14 @@ const taskSchema = z.object({
   title: z.string().min(1, 'Titel erforderlich'),
   description: z.string().optional(),
   type: z.enum(['WARTUNG', 'REPARATUR', 'VERTRAGSVERLAENGERUNG', 'BESICHTIGUNG', 'SONSTIGES']),
-  dueDate: z.string().datetime(),
+  dueDate: z.string().min(1, 'Datum erforderlich'),
   propertyId: z.string().optional(),
   reminderDays: z.number().int().min(0).optional(),
 })
 
 export async function createTaskAction(data: unknown) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) throw new Error('Unauthorized')
+  if (!session?.user?.companyId) return
 
   const parsed = taskSchema.parse(data)
 
@@ -40,7 +39,7 @@ export async function createTaskAction(data: unknown) {
 
 export async function updateTaskStatusAction(taskId: string, status: 'OFFEN' | 'IN_BEARBEITUNG' | 'ERLEDIGT') {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) throw new Error('Unauthorized')
+  if (!session?.user?.companyId) return
 
   await prisma.task.update({
     where: { id: taskId, companyId: session.user.companyId },
@@ -52,7 +51,7 @@ export async function updateTaskStatusAction(taskId: string, status: 'OFFEN' | '
 
 export async function deleteTaskAction(taskId: string) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.companyId) throw new Error('Unauthorized')
+  if (!session?.user?.companyId) return
 
   await prisma.task.delete({
     where: { id: taskId, companyId: session.user.companyId },

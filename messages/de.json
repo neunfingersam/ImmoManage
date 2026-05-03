@@ -380,6 +380,16 @@
     "dueDate": "Fälligkeitsdatum",
     "reminderDays": "Erinnerung (Tage vorher)"
   },
+  "dashboardMeters": {
+    "title": "Zählerstände",
+    "readingsCount": "{count} Ablesungen",
+    "noReadingsTitle": "Keine Ablesungen",
+    "noReadingsDesc": "Noch keine Zählerstände von Mietern eingereicht.",
+    "typeSTROM": "Strom",
+    "typeGAS": "Gas",
+    "typeWASSER": "Wasser",
+    "typeHEIZUNG": "Heizung"
+  },
   "handoverWizard": {
     "title": "Mieterwechsel-Assistent",
     "step1": "Kündigung",

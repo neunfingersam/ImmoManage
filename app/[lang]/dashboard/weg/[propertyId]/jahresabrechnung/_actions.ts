@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -73,7 +73,7 @@ export async function generateJahresabrechnung(propertyId: string, jahr: number)
     })
   }
 
-  revalidatePath(`/dashboard/weg/${propertyId}/jahresabrechnung`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/jahresabrechnung`)
   return { success: true, data: { id: ja.id } }
 }
 
@@ -83,6 +83,6 @@ export async function updateJahresabrechnungStatus(id: string, status: 'ENTWURF'
   const ja = await prisma.stegJahresabrechnung.findFirst({ where: { id, companyId: session.user.companyId } })
   if (!ja) return { success: false, error: 'Nicht gefunden' }
   await prisma.stegJahresabrechnung.update({ where: { id }, data: { status } })
-  revalidatePath(`/dashboard/weg/${ja.propertyId}/jahresabrechnung`)
+  revalidateAllLocales(`/dashboard/weg/${ja.propertyId}/jahresabrechnung`)
   return { success: true, data: null }
 }

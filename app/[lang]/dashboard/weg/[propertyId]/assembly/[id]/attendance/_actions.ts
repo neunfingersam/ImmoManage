@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -69,7 +69,7 @@ export async function sendAssemblyInvitation(assemblyId: string): Promise<Action
   }
 
   await prisma.assembly.update({ where: { id: assemblyId }, data: { einladungVersandtAt: new Date() } })
-  revalidatePath(`/dashboard/weg/${property.id}`)
+  revalidateAllLocales(`/dashboard/weg/${property.id}`)
   return { success: true, data: null }
 }
 
@@ -92,6 +92,6 @@ export async function saveAttendance(
     create: { assemblyId, ownerId, anwesend: data.anwesend, vertretenDurch: data.vertretenDurch ?? null },
   })
 
-  revalidatePath(`/dashboard/weg`)
+  revalidateAllLocales(`/dashboard/weg`)
   return { success: true, data: null }
 }

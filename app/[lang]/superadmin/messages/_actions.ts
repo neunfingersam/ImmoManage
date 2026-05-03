@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -84,6 +84,6 @@ export async function sendSuperAdminMessage(data: { toId: string; text: string }
     data: { userId: data.toId, type: 'MESSAGE', text: `Neue Nachricht von ${session.user.name ?? 'Platform-Admin'}`, link: '/dashboard/messages' },
   }).catch(() => {})
   sendPushToUser(data.toId, session.user.name ?? 'Neue Nachricht', text, '/dashboard/messages').catch(() => {})
-  revalidatePath('/superadmin/messages')
+  revalidateAllLocales('/superadmin/messages')
   return { success: true, data: message }
 }

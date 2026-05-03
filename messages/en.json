@@ -380,6 +380,16 @@
     "dueDate": "Due Date",
     "reminderDays": "Reminder (days before)"
   },
+  "dashboardMeters": {
+    "title": "Meter Readings",
+    "readingsCount": "{count} readings",
+    "noReadingsTitle": "No Readings",
+    "noReadingsDesc": "No meter readings submitted by tenants yet.",
+    "typeSTROM": "Electricity",
+    "typeGAS": "Gas",
+    "typeWASSER": "Water",
+    "typeHEIZUNG": "Heating"
+  },
   "handoverWizard": {
     "title": "Tenant Handover Wizard",
     "step1": "Termination",

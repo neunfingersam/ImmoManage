@@ -1,13 +1,13 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { withAuthAction, getAuthSession } from '@/lib/action-utils'
 import { hash } from 'bcryptjs'
 import { randomBytes } from 'crypto'
 import { sendTenantInviteEmail } from '@/lib/email'
 import type { ActionResult } from '@/lib/action-result'
+import { routing } from '@/i18n/routing'
 
 export async function getOwners() {
   const session = await getAuthSession()
@@ -65,7 +65,7 @@ export async function createOwner(data: {
       data: { token, userId: user.id, expiresAt },
     })
     const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
-    const inviteUrl = `${baseUrl}/de/auth/reset-password?token=${token}`
+    const inviteUrl = `${baseUrl}/${routing.defaultLocale}/auth/reset-password?token=${token}`
     const company = await prisma.company.findUnique({
       where: { id: session.user.companyId! },
       select: { name: true },

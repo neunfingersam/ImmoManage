@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { randomBytes } from 'crypto'
 import { sendTenantInviteEmail } from '@/lib/email'
 import { ensureSystemFolders, ensureAssemblyFolder } from '@/lib/document-folders'
+import { routing } from '@/i18n/routing'
 
 // ─── Get all WEG properties for this company ─────────────────────────────────
 export async function getWegProperties() {
@@ -211,7 +212,7 @@ export async function addWegOwner(propertyId: string, data: unknown) {
     const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000)
     await prisma.passwordResetToken.create({ data: { token: inviteToken, userId: user.id, expiresAt } })
     const baseUrl = process.env.NEXTAUTH_URL ?? 'https://immo-manage.ch'
-    const inviteUrl = `${baseUrl}/de/auth/reset-password?token=${inviteToken}`
+    const inviteUrl = `${baseUrl}/${routing.defaultLocale}/auth/reset-password?token=${inviteToken}`
     const company = await prisma.company.findUnique({
       where: { id: session.user.companyId },
       select: { name: true },

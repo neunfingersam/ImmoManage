@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { getAuthSession, withAuthAction } from '@/lib/action-utils'
 import { getTicketWhere } from '@/lib/access-control'
@@ -73,7 +72,7 @@ export async function updateTicketStatus(ticketId: string, data: { status: strin
       data: { status: parsed.data.status },
     })
     revalidateAllLocales('/dashboard/tickets')
-    revalidatePath(`/dashboard/tickets/${ticketId}`)
+    revalidateAllLocales(`/dashboard/tickets/${ticketId}`)
     if (ticket.tenantId) {
       sendPushToUser(
         ticket.tenantId,
@@ -97,7 +96,7 @@ export async function updateRepairCost(ticketId: string, repairCost: number | nu
       where: { id: ticketId },
       data: { repairCost },
     })
-    revalidatePath(`/dashboard/tickets/${ticketId}`)
+    revalidateAllLocales(`/dashboard/tickets/${ticketId}`)
     revalidateAllLocales('/dashboard/tax')
     return { success: true, data: ticket }
   })
@@ -116,7 +115,7 @@ export async function addComment(ticketId: string, data: { text: string }): Prom
     const comment = await prisma.ticketComment.create({
       data: { ticketId, authorId: session.user.id, text: parsed.data.text },
     })
-    revalidatePath(`/dashboard/tickets/${ticketId}`)
+    revalidateAllLocales(`/dashboard/tickets/${ticketId}`)
     return { success: true, data: comment }
   })
 }

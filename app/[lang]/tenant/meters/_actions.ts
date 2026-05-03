@@ -2,7 +2,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import type { ActionResult } from '@/lib/action-result'
 import { z } from 'zod'
 
@@ -48,6 +48,6 @@ export async function submitMeterReading(data: {
       note: parsed.data.note || null,
     },
   })
-  revalidatePath('/tenant/meters')
+  revalidateAllLocales('/tenant/meters')
   return { success: true, data: undefined }
 }

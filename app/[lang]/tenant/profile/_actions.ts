@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -30,6 +30,6 @@ export async function updateProfile(data: UpdateProfileValues): Promise<ActionRe
       whatsapp: parsed.data.whatsapp ?? null,
     },
   })
-  revalidatePath('/tenant/profile')
+  revalidateAllLocales('/tenant/profile')
   return { success: true, data: undefined }
 }

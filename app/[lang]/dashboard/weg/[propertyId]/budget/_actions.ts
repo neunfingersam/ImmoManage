@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -79,7 +79,7 @@ export async function createStegBudget(propertyId: string, data: unknown): Promi
     },
   })
 
-  revalidatePath(`/dashboard/weg/${propertyId}/budget`)
+  revalidateAllLocales(`/dashboard/weg/${propertyId}/budget`)
   return { success: true, data: { id: budget.id } }
 }
 
@@ -91,6 +91,6 @@ export async function updateBudgetStatus(budgetId: string, status: 'ENTWURF' | '
   if (!budget) return { success: false, error: 'Budget nicht gefunden' }
 
   await prisma.stegBudget.update({ where: { id: budgetId }, data: { status } })
-  revalidatePath(`/dashboard/weg/${budget.propertyId}/budget`)
+  revalidateAllLocales(`/dashboard/weg/${budget.propertyId}/budget`)
   return { success: true, data: null }
 }

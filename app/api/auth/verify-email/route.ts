@@ -2,23 +2,26 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
+import { routing } from '@/i18n/routing'
+
+const locale = routing.defaultLocale
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('token')
 
   if (!token) {
-    redirect('/de/auth/login?verifyError=invalid')
+    redirect(`/${locale}/auth/login?verifyError=invalid`)
   }
 
   const record = await prisma.emailVerificationToken.findUnique({ where: { token } })
 
   if (!record) {
-    redirect('/de/auth/login?verifyError=invalid')
+    redirect(`/${locale}/auth/login?verifyError=invalid`)
   }
 
   if (record.expiresAt < new Date()) {
     await prisma.emailVerificationToken.delete({ where: { token } })
-    redirect('/de/auth/login?verifyError=expired')
+    redirect(`/${locale}/auth/login?verifyError=expired`)
   }
 
   // Mark user as verified and delete token
@@ -28,5 +31,5 @@ export async function GET(req: NextRequest) {
   })
   await prisma.emailVerificationToken.delete({ where: { token } })
 
-  redirect('/de/auth/login?verified=1')
+  redirect(`/${locale}/auth/login?verified=1`)
 }

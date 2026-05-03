@@ -1,7 +1,6 @@
 'use server'
 import { revalidateAllLocales } from '@/lib/revalidate'
 
-import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -109,7 +108,7 @@ export async function sendMessage(data: { toId: string; text: string }): Promise
     `/dashboard/messages/${session.user.id}`,
   ).catch(() => {})
   revalidateAllLocales('/dashboard/messages')
-  revalidatePath(`/dashboard/messages/${parsed.data.toId}`)
+  revalidateAllLocales(`/dashboard/messages/${parsed.data.toId}`)
   return { success: true, data: message }
 }
 

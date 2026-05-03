@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidateAllLocales } from '@/lib/revalidate'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -68,7 +68,7 @@ export async function createTicket(data: TicketFormValues): Promise<ActionResult
         images: JSON.stringify(parsed.data.images ?? []),
       },
     })
-    revalidatePath('/tenant/tickets')
+    revalidateAllLocales('/tenant/tickets')
     prisma.user.findMany({
       where: { companyId: session.user.companyId, role: { in: ['ADMIN', 'VERMIETER'] }, active: true },
       select: { id: true },
@@ -100,7 +100,7 @@ export async function addTenantComment(ticketId: string, data: { text: string })
     const comment = await prisma.ticketComment.create({
       data: { ticketId, authorId: session.user.id, text },
     })
-    revalidatePath(`/tenant/tickets/${ticketId}`)
+    revalidateAllLocales(`/tenant/tickets/${ticketId}`)
     return { success: true, data: comment }
   } catch {
     return { success: false, error: 'Fehler beim Speichern des Kommentars' }
