@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     siteName: 'ImmoManage',
     title: 'ImmoManage – Immobilienverwaltung Schweiz',
     description: 'Die Schweizer Software für Hausverwaltungen und private Vermieter. Einfach, vollständig, CH-konform.',
-    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'ImmoManage' }],
+    images: [{ url: '/api/og?v=2', width: 1200, height: 630, alt: 'ImmoManage' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ImmoManage – Immobilienverwaltung Schweiz',
     description: 'Die Schweizer Software für Hausverwaltungen und private Vermieter.',
-    images: ['/api/og'],
+    images: ['/api/og?v=2'],
   },
   icons: {
     icon: [
