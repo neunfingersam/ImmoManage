@@ -255,7 +255,7 @@ export default function LandingPage() {
         .btn-outline:hover { border-color: ${CORAL}; color: ${CORAL}; }
         .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; padding: 0; animation: fadeIn .2s ease; }
         @media (min-width: 640px) { .modal-bg { align-items: center; padding: 16px; } }
-        .modal-box { background: white; border-radius: 24px 24px 0 0; width: 100%; max-width: 460px; overflow: hidden; max-height: 92vh; animation: slideUp .32s cubic-bezier(.4,0,.2,1); }
+        .modal-box { background: white; border-radius: 24px 24px 0 0; width: 100%; max-width: 460px; overflow: hidden; max-height: 85vh; max-height: 85dvh; display: flex; flex-direction: column; animation: slideUp .32s cubic-bezier(.4,0,.2,1); }
         @media (min-width: 640px) { .modal-box { border-radius: 24px; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
@@ -516,7 +516,7 @@ export default function LandingPage() {
           <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.6, marginBottom: 48 }}>{lbl.painSub}</p>
           <div className="pain-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, textAlign: 'left' }}>
             {lbl.pains.map((pain, i) => (
-              <div key={i} className={`pain-card ${i % 2 === 0 ? 'scroll-reveal-left' : 'scroll-reveal-right'}`} style={{ transitionDelay: `${0.07 * i}s`,
+              <div key={i} className="pain-card scroll-reveal" style={{ transitionDelay: `${0.07 * i}s`,
                 background: 'linear-gradient(135deg, #fff7f5 0%, #fef3ef 100%)',
                 borderRadius: 16, padding: '22px 20px',
                 border: '1.5px solid #fce4da',
@@ -588,7 +588,7 @@ export default function LandingPage() {
 
           {/* Two benefit cards */}
           <div className="benefit-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 48, textAlign: 'left' }}>
-            <div className="scroll-reveal-left hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2', transitionDelay: '.05s' }}>
+            <div className="scroll-reveal hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2', transitionDelay: '.05s' }}>
               <div style={{ fontSize: 28, marginBottom: 14 }}>🧪</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
                 {locale === 'de' ? 'Kostenlos bis zum Launch' : locale === 'fr' ? 'Gratuit jusqu\'au lancement' : locale === 'it' ? 'Gratuito fino al lancio' : 'Free until launch'}
@@ -600,7 +600,7 @@ export default function LandingPage() {
                                    'Full access to the platform — no credit card, no risk. You only pay once the product is ready.'}
               </p>
             </div>
-            <div className="scroll-reveal-right hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40`, transitionDelay: '.12s' }}>
+            <div className="scroll-reveal delay-s1 hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40`, transitionDelay: '.12s' }}>
               <div style={{ fontSize: 28, marginBottom: 14 }}>🎨</div>
               <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
                 {locale === 'de' ? 'Produkt mitgestalten' : locale === 'fr' ? 'Contribuer au produit' : locale === 'it' ? 'Contribuisci al prodotto' : 'Shape the product'}
@@ -708,7 +708,7 @@ function FeedbackModal({ t, onClose }: { locale: Locale; t: FeedbackT; onClose: 
           <span style={{ fontWeight: 700, fontSize: 15, color: '#1a1a2e' }}>{t.modalTitle}</span>
           <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: '50%', background: '#f3f0ec', border: 'none', cursor: 'pointer', fontSize: 16, color: '#6b6860', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
         </div>
-        <div style={{ maxHeight: 'calc(90vh - 80px)', overflowY: 'auto', padding: 20 }}>
+        <div style={{ flex: '1 1 auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: 20 } as React.CSSProperties}>
           {submitted ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ fontSize: 40, marginBottom: 10 }}>🎉</div>
@@ -775,7 +775,7 @@ function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onC
           <span style={{ fontWeight: 700, fontSize: 15, color: 'white' }}>{t.title}</span>
           <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.2)', border: 'none', cursor: 'pointer', fontSize: 16, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
         </div>
-        <div style={{ padding: 20, overflowY: 'auto', maxHeight: 'calc(90vh - 68px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+        <div style={{ flex: '1 1 auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: 20 } as React.CSSProperties}>
           {status === 'success' ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ fontSize: 44, marginBottom: 10 }}>✅</div>
