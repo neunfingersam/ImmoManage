@@ -60,7 +60,7 @@ export function RevenueBarChart({ data }: { data: MonthlyRevenue[] }) {
           tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
           width={36}
         />
-        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', radius: 6 }} />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.05)', radius: 6 }} />
         <Bar
           dataKey="amount"
           radius={[6, 6, 0, 0]}
