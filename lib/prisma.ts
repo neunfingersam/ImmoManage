@@ -5,7 +5,7 @@ import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '@/lib/generated/prisma'
 
 // Schema version — bump after every `prisma migrate dev` so stale dev singletons are replaced
-const SCHEMA_VERSION = 4
+const SCHEMA_VERSION = 5
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined

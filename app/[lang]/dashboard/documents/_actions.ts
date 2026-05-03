@@ -68,18 +68,36 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
 
   const ext = path.extname(file.name)
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
-  const uploadDir = path.join(process.cwd(), 'private', 'uploads', session.user.companyId, session.user.id)
   const buffer = Buffer.from(await file.arrayBuffer())
-  try {
-    await mkdir(uploadDir, { recursive: true })
-    const filePath = path.join(uploadDir, filename)
-    await writeFile(filePath, buffer)
-  } catch {
-    return { success: false, error: 'Datei konnte nicht gespeichert werden. Bitte prüfen Sie die Serverkonfiguration.' }
-  }
-  const filePath = path.join(uploadDir, filename)
 
-  const fileUrl = `/api/uploads/${session.user.companyId}/${session.user.id}/${filename}`
+  let fileUrl: string
+  let localFilePath: string | null = null
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    // Production (Vercel Blob)
+    try {
+      const { put } = await import('@vercel/blob')
+      const blob = await put(
+        `documents/${session.user.companyId}/${session.user.id}/${filename}`,
+        buffer,
+        { access: 'public' }
+      )
+      fileUrl = blob.url
+    } catch {
+      return { success: false, error: 'Datei konnte nicht gespeichert werden (Blob-Fehler).' }
+    }
+  } else {
+    // Local development (filesystem)
+    const uploadDir = path.join(process.cwd(), 'private', 'uploads', session.user.companyId, session.user.id)
+    localFilePath = path.join(uploadDir, filename)
+    try {
+      await mkdir(uploadDir, { recursive: true })
+      await writeFile(localFilePath, buffer)
+    } catch {
+      return { success: false, error: 'Datei konnte nicht gespeichert werden. Bitte prüfen Sie die Serverkonfiguration.' }
+    }
+    fileUrl = `/api/uploads/${session.user.companyId}/${session.user.id}/${filename}`
+  }
 
   let doc: Document
   try {
@@ -98,7 +116,15 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult<D
       },
     })
   } catch (e) {
-    try { await (await import('fs/promises')).unlink(filePath) } catch {}
+    // Clean up uploaded file on DB error
+    try {
+      if (localFilePath) {
+        await (await import('fs/promises')).unlink(localFilePath)
+      } else if (process.env.BLOB_READ_WRITE_TOKEN && fileUrl) {
+        const { del } = await import('@vercel/blob')
+        await del(fileUrl)
+      }
+    } catch {}
     return { success: false, error: 'Fehler beim Speichern des Dokuments' }
   }
 
@@ -129,9 +155,14 @@ export async function deleteDocument(documentId: string): Promise<ActionResult<v
   await prisma.document.delete({ where: { id: documentId } })
 
   try {
-    const { unlink } = await import('fs/promises')
-    const filePath = path.join(process.cwd(), 'private', doc.fileUrl.replace(/^\/api\//, ''))
-    await unlink(filePath)
+    if (doc.fileUrl.startsWith('https://')) {
+      const { del } = await import('@vercel/blob')
+      await del(doc.fileUrl)
+    } else {
+      const { unlink } = await import('fs/promises')
+      const filePath = path.join(process.cwd(), 'private', doc.fileUrl.replace(/^\/api\//, ''))
+      await unlink(filePath)
+    }
   } catch { /* Datei bereits gelöscht oder nicht gefunden */ }
 
   revalidateAllLocales('/dashboard/documents')
