@@ -570,67 +570,91 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Early Access ─────────────────────────────────────────────────────── */}
+      {/* ── Pricing ──────────────────────────────────────────────────────────── */}
       <section id="pricing" className="section-pad" style={{ padding: '80px 24px', background: 'white' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-          {/* Badge */}
-          <div className="scroll-reveal" style={{ display: 'inline-block', background: `${CORAL}15`, color: CORAL, fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 999, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 24 }}>
-            {locale === 'de' ? 'Early Access' : locale === 'fr' ? 'Accès anticipé' : locale === 'it' ? 'Accesso anticipato' : 'Early Access'}
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          {/* Header */}
+          <div className="scroll-reveal" style={{ textAlign: 'center', marginBottom: 52 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 14px', background: `${CORAL}15`, color: CORAL, borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 20 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: CORAL, display: 'inline-block' }} />
+              {t.pricing.trialBadge}
+            </div>
+            <h2 className="serif scroll-reveal delay-s1" style={{ fontSize: 'clamp(28px, 4vw, 42px)', color: '#1a1a2e', marginBottom: 12, lineHeight: 1.2 }}>{t.pricing.title}</h2>
+            <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 15 }}>{t.pricing.subtitle}</p>
           </div>
 
-          <h2 className="serif scroll-reveal delay-s1" style={{ fontSize: 'clamp(28px, 4vw, 42px)', color: '#1a1a2e', marginBottom: 16, lineHeight: 1.2 }}>
-            {locale === 'de' ? <>Aktuell im Aufbau —<br />sei von Anfang an dabei.</> :
-             locale === 'fr' ? <>En construction —<br />rejoignez-nous dès le début.</> :
-             locale === 'it' ? <>In fase di sviluppo —<br />unisciti fin dall'inizio.</> :
-                               <>Currently in development —<br />be part of it from day one.</>}
-          </h2>
-          <p className="scroll-reveal delay-s2" style={{ color: '#6b6860', fontSize: 16, lineHeight: 1.7, maxWidth: 560, margin: '0 auto 48px' }}>
-            {locale === 'de' ? 'ImmoManage befindet sich in der Early-Access-Phase. Wer sich jetzt registriert, erhält eine persönliche Demo-Umgebung — und kann das Produkt direkt mitgestalten.' :
-             locale === 'fr' ? 'ImmoManage est en phase d\'accès anticipé. Les personnes qui s\'inscrivent maintenant reçoivent un environnement de démo personnel — et peuvent contribuer directement au développement du produit.' :
-             locale === 'it' ? 'ImmoManage è in fase di accesso anticipato. Chi si registra ora riceve un ambiente demo personale — e può contribuire direttamente allo sviluppo del prodotto.' :
-                               'ImmoManage is in early access. Those who register now get a personal demo environment — and can directly help shape the product.'}
-          </p>
+          {/* Plan cards */}
+          <div className="features-grid scroll-reveal" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, alignItems: 'stretch' }}>
+            {t.pricing.plans.map((plan, i) => (
+              <div
+                key={plan.name}
+                className="hover-lift"
+                style={{
+                  borderRadius: 20,
+                  padding: plan.highlight ? '32px 28px' : '28px 24px',
+                  border: plan.highlight ? `2px solid ${CORAL}` : '1.5px solid #ede8e2',
+                  background: plan.highlight ? '#fff' : BG,
+                  display: 'flex', flexDirection: 'column', gap: 0,
+                  position: 'relative',
+                  boxShadow: plan.highlight ? `0 8px 40px ${CORAL}20` : 'none',
+                  transitionDelay: `${0.07 * i}s`,
+                }}
+              >
+                {plan.highlight && (
+                  <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: CORAL, color: 'white', fontSize: 11, fontWeight: 700, padding: '4px 14px', borderRadius: 999, whiteSpace: 'nowrap', letterSpacing: '0.04em' }}>
+                    {t.pricing.popular}
+                  </div>
+                )}
 
-          {/* Two benefit cards */}
-          <div className="benefit-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 48, textAlign: 'left' }}>
-            <div className="scroll-reveal hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: '1.5px solid #ede8e2', transitionDelay: '.05s' }}>
-              <div style={{ fontSize: 28, marginBottom: 14 }}>🧪</div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
-                {locale === 'de' ? 'Kostenlos bis zum Launch' : locale === 'fr' ? 'Gratuit jusqu\'au lancement' : locale === 'it' ? 'Gratuito fino al lancio' : 'Free until launch'}
+                {/* Plan header */}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: CORAL, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>{plan.promo}</div>
+                  <div style={{ fontWeight: 800, fontSize: 22, color: '#1a1a2e' }}>{plan.name}</div>
+                  <div style={{ marginTop: 14, marginBottom: 6, display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                    <span style={{ fontSize: 36, fontWeight: 800, color: '#1a1a2e', lineHeight: 1 }}>{plan.price}</span>
+                    <span style={{ fontSize: 14, color: '#9ca3af' }}>{t.pricing.month}</span>
+                  </div>
+                  <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, color: '#6b6860', background: '#f0ece7', borderRadius: 6, padding: '2px 8px', marginBottom: 8 }}>
+                    {t.pricing.earlyAccess}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#9ca3af' }}>{plan.desc}</div>
+                </div>
+
+                {/* CTA */}
+                <button
+                  className={plan.highlight ? 'btn-coral' : 'btn-outline'}
+                  style={{ width: '100%', padding: '12px 0', fontSize: 14, borderRadius: 10, minHeight: 44, marginBottom: 24 }}
+                  onClick={() => setContactOpen(true)}
+                >
+                  {plan.cta}
+                </button>
+
+                {/* Features included */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 9, flex: 1 }}>
+                  {(plan.features as unknown as string[]).map((f) => (
+                    <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13, color: '#374151' }}>
+                      <span style={{ color: '#16a34a', fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+                      {f}
+                    </div>
+                  ))}
+                  {(plan.missing as unknown as string[]).length > 0 && (
+                    <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid #f0ece7' }}>
+                      {(plan.missing as unknown as string[]).map((f) => (
+                        <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13, color: '#c4bdb4', marginBottom: 7 }}>
+                          <span style={{ flexShrink: 0, marginTop: 1 }}>–</span>
+                          {f}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-              <p style={{ fontSize: 14, color: '#6b6860', lineHeight: 1.6 }}>
-                {locale === 'de' ? 'Vollständiger Zugang zur Plattform — ohne Kreditkarte, ohne Risiko. Du zahlst erst wenn das Produkt fertig ist.' :
-                 locale === 'fr' ? 'Accès complet à la plateforme — sans carte de crédit, sans risque. Vous ne payez qu\'une fois le produit terminé.' :
-                 locale === 'it' ? 'Accesso completo alla piattaforma — senza carta di credito, senza rischi. Paghi solo quando il prodotto è pronto.' :
-                                   'Full access to the platform — no credit card, no risk. You only pay once the product is ready.'}
-              </p>
-            </div>
-            <div className="scroll-reveal delay-s1 hover-lift" style={{ background: BG, borderRadius: 16, padding: '28px 24px', border: `1.5px solid ${CORAL}40`, transitionDelay: '.12s' }}>
-              <div style={{ fontSize: 28, marginBottom: 14 }}>🎨</div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 8 }}>
-                {locale === 'de' ? 'Produkt mitgestalten' : locale === 'fr' ? 'Contribuer au produit' : locale === 'it' ? 'Contribuisci al prodotto' : 'Shape the product'}
-              </div>
-              <p style={{ fontSize: 14, color: '#6b6860', lineHeight: 1.6 }}>
-                {locale === 'de' ? 'Als Early-Access-Nutzer hast du direkten Einfluss auf die Weiterentwicklung. Dein Feedback fliesst direkt ins Produkt ein.' :
-                 locale === 'fr' ? 'En tant qu\'utilisateur Early Access, vous avez une influence directe sur le développement. Vos retours sont intégrés directement dans le produit.' :
-                 locale === 'it' ? 'Come utente Early Access, hai un\'influenza diretta sullo sviluppo. Il tuo feedback viene integrato direttamente nel prodotto.' :
-                                   'As an early access user, you have direct influence on development. Your feedback flows directly into the product.'}
-              </p>
-            </div>
+            ))}
           </div>
 
-          <button
-            className="btn-coral"
-            style={{ padding: '16px 36px', fontSize: 16, minHeight: 52 }}
-            onClick={() => setContactOpen(true)}
-          >
-            {lbl.cta} →
-          </button>
-          <p style={{ marginTop: 16, fontSize: 13, color: '#9ca3af' }}>
-            {locale === 'de' ? 'Preise werden nach der Early-Access-Phase veröffentlicht.' :
-             locale === 'fr' ? 'Les tarifs seront publiés après la phase d\'accès anticipé.' :
-             locale === 'it' ? 'I prezzi verranno pubblicati dopo la fase di accesso anticipato.' :
-                               'Pricing will be published after the early access phase.'}
+          {/* Trust note */}
+          <p className="scroll-reveal" style={{ textAlign: 'center', marginTop: 32, fontSize: 13, color: '#9ca3af' }}>
+            {t.pricing.trialNote}
           </p>
         </div>
       </section>
