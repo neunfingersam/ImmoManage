@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { OwnerSidebar, OwnerMobileNav } from '@/components/layout/OwnerSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { PushBanner } from '@/components/layout/PushBanner'
+import { FeedbackWidget } from '@/components/shared/FeedbackWidget'
 
 export default async function OwnerLayout({
   children,
@@ -39,6 +40,7 @@ export default async function OwnerLayout({
         </main>
       </div>
       <PushBanner />
+      <FeedbackWidget />
     </div>
   )
 }

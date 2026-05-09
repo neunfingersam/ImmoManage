@@ -3,8 +3,8 @@ import { revalidateAllLocales } from '@/lib/revalidate'
 
 import { prisma } from '@/lib/prisma'
 import { getAuthSession, withAuthAction } from '@/lib/action-utils'
-import { getTicketWhere } from '@/lib/access-control'
-import { commentSchema, updateStatusSchema } from '@/lib/schemas/ticket'
+import { getTicketWhere, getPropertyWhere } from '@/lib/access-control'
+import { commentSchema, updateStatusSchema, ticketSchema, type TicketFormValues } from '@/lib/schemas/ticket'
 import type { ActionResult } from '@/lib/action-result'
 import type { Ticket, TicketComment } from '@/lib/generated/prisma'
 import { sendPushToUser } from '@/lib/push'
@@ -98,6 +98,61 @@ export async function updateRepairCost(ticketId: string, repairCost: number | nu
     })
     revalidateAllLocales(`/dashboard/tickets/${ticketId}`)
     revalidateAllLocales('/dashboard/tax')
+    return { success: true, data: ticket }
+  })
+}
+
+export async function getStaffTicketOptions() {
+  const session = await getAuthSession()
+  if (!session) return []
+
+  const properties = await prisma.property.findMany({
+    where: getPropertyWhere(session),
+    include: { units: { select: { id: true, unitNumber: true, floor: true } } },
+    orderBy: { name: 'asc' },
+  })
+
+  return properties.flatMap(p =>
+    p.units.map(u => {
+      const floorLabel = u.floor !== null && u.floor !== undefined
+        ? u.floor === 0 ? ' (EG)' : ` (${u.floor}. OG)`
+        : ''
+      return {
+        propertyId: p.id,
+        propertyName: p.address || p.name,
+        unitId: u.id,
+        unitNumber: `Whg. ${u.unitNumber}${floorLabel}`,
+      }
+    })
+  )
+}
+
+export async function createStaffTicket(data: TicketFormValues): Promise<ActionResult<Ticket>> {
+  return withAuthAction(async (session) => {
+    const parsed = ticketSchema.safeParse(data)
+    if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? 'Fehler' }
+
+    const property = await prisma.property.findFirst({
+      where: { id: parsed.data.propertyId, ...getPropertyWhere(session) },
+    })
+    if (!property) return { success: false, error: 'Immobilie nicht gefunden oder kein Zugriff' }
+
+    const ticket = await prisma.ticket.create({
+      data: {
+        companyId: session.user.companyId!,
+        propertyId: parsed.data.propertyId,
+        unitId: parsed.data.unitId ?? null,
+        tenantId: session.user.id,
+        title: parsed.data.title,
+        description: parsed.data.description,
+        priority: parsed.data.priority,
+        scope: parsed.data.scope,
+        status: 'OPEN',
+        images: JSON.stringify(parsed.data.images ?? []),
+      },
+    })
+
+    revalidateAllLocales('/dashboard/tickets')
     return { success: true, data: ticket }
   })
 }

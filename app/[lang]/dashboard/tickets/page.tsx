@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { AlertCircle, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { AlertCircle, ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { TicketCard } from '@/components/tickets/TicketCard'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { KiSummaryButton } from '@/components/shared/KiSummaryButton'
@@ -42,7 +43,13 @@ export default async function TicketsPage({
               : t('subtitle', { open: open.length, inProgress: inProgress.length, done: doneTotal })}
           </p>
         </div>
-        <KiSummaryButton apiPath="/api/agent/ticket-summary" label={t('kiSummary')} />
+        <div className="flex items-center gap-2">
+          <KiSummaryButton apiPath="/api/agent/ticket-summary" label={t('kiSummary')} />
+          <Button render={<Link href={`/${lang}/dashboard/tickets/new`} />} className="bg-primary hover:bg-primary/90">
+            <Plus className="h-4 w-4 mr-1" />
+            Neue Meldung
+          </Button>
+        </div>
       </div>
 
       <form method="GET" action={`/${lang}/dashboard/tickets`} className="relative max-w-sm">

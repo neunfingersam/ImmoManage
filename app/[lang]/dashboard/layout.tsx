@@ -9,6 +9,7 @@ import { TrialBanner } from '@/components/layout/TrialBanner'
 import { PaymentRequiredWall } from '@/components/layout/PaymentRequiredWall'
 import { getPlanLimits } from '@/lib/plan-limits'
 import { PushBanner } from '@/components/layout/PushBanner'
+import { FeedbackWidget } from '@/components/shared/FeedbackWidget'
 
 export default async function DashboardLayout({
   children,
@@ -63,6 +64,7 @@ export default async function DashboardLayout({
         </main>
       </div>
       <PushBanner />
+      <FeedbackWidget />
     </div>
   )
 }

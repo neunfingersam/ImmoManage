@@ -6,6 +6,7 @@ import { TenantSidebar, TenantMobileNav } from '@/components/layout/TenantSideba
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 import { prisma } from '@/lib/prisma'
 import { PushBanner } from '@/components/layout/PushBanner'
+import { FeedbackWidget } from '@/components/shared/FeedbackWidget'
 
 export default async function TenantLayout({
   children,
@@ -66,6 +67,7 @@ export default async function TenantLayout({
         </main>
       </div>
       <PushBanner />
+      <FeedbackWidget />
     </div>
   )
 }
