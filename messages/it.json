@@ -831,6 +831,22 @@
     "empty": "Nessun messaggio",
     "emptyDesc": "Inizia una conversazione con un affittuario."
   },
+  "feedback": {
+    "button": "Feedback & Desideri",
+    "title": "Feedback & Desideri",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "p.es. Funzione di esportazione per affittuari",
+    "categoryLabel": "Categoria",
+    "categoryPlaceholder": "— seleziona —",
+    "categories": ["Richiesta funzionalità", "Bug", "Design", "Performance", "Altro"],
+    "descLabel": "Descrizione",
+    "descPlaceholder": "Cosa desideri esattamente, o cosa non funziona?",
+    "nameLabel": "Nome (opzionale)",
+    "emailLabel": "E-mail (opzionale)",
+    "submit": "Invia",
+    "submitting": "Invio in corso…",
+    "successMsg": "Grazie per il tuo feedback!"
+  },
   "weg": {
     "title": "Proprietà per piani (PPP)",
     "count": "{count, plural, one {# comunità} other {# comunità}}",

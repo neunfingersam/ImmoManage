@@ -831,6 +831,22 @@
     "empty": "No messages",
     "emptyDesc": "Start a conversation with a tenant."
   },
+  "feedback": {
+    "button": "Feedback & Wishes",
+    "title": "Feedback & Wishes",
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g. Export function for tenants",
+    "categoryLabel": "Category",
+    "categoryPlaceholder": "— please select —",
+    "categories": ["Feature request", "Bug", "Design", "Performance", "Other"],
+    "descLabel": "Description",
+    "descPlaceholder": "What exactly would you like, or what is wrong?",
+    "nameLabel": "Name (optional)",
+    "emailLabel": "Email (optional)",
+    "submit": "Submit",
+    "submitting": "Sending…",
+    "successMsg": "Thank you for your feedback!"
+  },
   "weg": {
     "title": "Condominium (WEG)",
     "count": "{count, plural, one {# community} other {# communities}}",

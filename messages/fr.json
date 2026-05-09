@@ -831,6 +831,22 @@
     "empty": "Aucun message",
     "emptyDesc": "Commencez une conversation avec un locataire."
   },
+  "feedback": {
+    "button": "Feedback & Souhaits",
+    "title": "Feedback & Souhaits",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "p.ex. Fonction d'export pour locataires",
+    "categoryLabel": "Catégorie",
+    "categoryPlaceholder": "— veuillez sélectionner —",
+    "categories": ["Demande de fonctionnalité", "Bug", "Design", "Performance", "Autre"],
+    "descLabel": "Description",
+    "descPlaceholder": "Qu'est-ce que vous souhaitez exactement, ou qu'est-ce qui ne va pas?",
+    "nameLabel": "Nom (optionnel)",
+    "emailLabel": "E-mail (optionnel)",
+    "submit": "Envoyer",
+    "submitting": "Envoi en cours…",
+    "successMsg": "Merci pour votre feedback!"
+  },
   "weg": {
     "title": "Propriété par étages (PPE)",
     "count": "{count, plural, one {# communauté} other {# communautés}}",

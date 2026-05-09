@@ -831,6 +831,22 @@
     "empty": "Keine Nachrichten",
     "emptyDesc": "Starten Sie ein Gespräch mit einem Mieter."
   },
+  "feedback": {
+    "button": "Feedback & Wünsche",
+    "title": "Feedback & Wünsche",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "z.B. Exportfunktion für Mieter",
+    "categoryLabel": "Kategorie",
+    "categoryPlaceholder": "— bitte wählen —",
+    "categories": ["Feature-Wunsch", "Bug", "Design", "Performance", "Sonstiges"],
+    "descLabel": "Beschreibung",
+    "descPlaceholder": "Was genau wünschst du dir, oder was stimmt nicht?",
+    "nameLabel": "Name (optional)",
+    "emailLabel": "E-Mail (optional)",
+    "submit": "Absenden",
+    "submitting": "Wird gesendet…",
+    "successMsg": "Danke für dein Feedback!"
+  },
   "weg": {
     "title": "Stockwerkeigentum (WEG)",
     "count": "{count, plural, one {# Gemeinschaft} other {# Gemeinschaften}}",
