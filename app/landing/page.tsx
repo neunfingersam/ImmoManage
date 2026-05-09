@@ -110,6 +110,12 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [contactOpen, setContactOpen] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+
+  function openContact(plan?: string) {
+    setSelectedPlan(plan ?? null)
+    setContactOpen(true)
+  }
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -342,7 +348,7 @@ export default function LandingPage() {
             <button
               className="btn-coral"
               style={{ padding: '8px 16px', fontSize: 14, minHeight: 36, whiteSpace: 'nowrap' }}
-              onClick={() => setContactOpen(true)}
+              onClick={() => openContact()}
             >
               <span className="nav-cta-text">{lbl.cta} →</span>
               <span style={{ display: 'none' }} className="nav-cta-short">→</span>
@@ -425,7 +431,7 @@ export default function LandingPage() {
           </p>
 
           <div className="fade-up delay-4" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 28 }}>
-            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => setContactOpen(true)}>
+            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => openContact()}>
               {lbl.cta} →
             </button>
           </div>
@@ -624,7 +630,7 @@ export default function LandingPage() {
                 <button
                   className={plan.highlight ? 'btn-coral' : 'btn-outline'}
                   style={{ width: '100%', padding: '12px 0', fontSize: 14, borderRadius: 10, minHeight: 44, marginBottom: 24 }}
-                  onClick={() => setContactOpen(true)}
+                  onClick={() => openContact(plan.name)}
                 >
                   {plan.cta}
                 </button>
@@ -700,7 +706,7 @@ export default function LandingPage() {
 
       {/* ── Modals ───────────────────────────────────────────────────────────── */}
       {feedbackOpen && <FeedbackModal locale={locale} t={t.feedback} onClose={() => setFeedbackOpen(false)} />}
-      {contactOpen && <ContactModal locale={locale} t={t.contact} onClose={() => setContactOpen(false)} />}
+      {contactOpen && <ContactModal locale={locale} t={t.contact} selectedPlan={selectedPlan} onClose={() => setContactOpen(false)} />}
     </div>
   )
 }
@@ -783,7 +789,7 @@ function FeedbackModal({ t, onClose }: { locale: Locale; t: FeedbackT; onClose: 
 
 // ─── Contact Modal ─────────────────────────────────────────────────────────────
 
-function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onClose: () => void }) {
+function ContactModal({ locale, t, selectedPlan, onClose }: { locale: Locale; t: ContactT; selectedPlan: string | null; onClose: () => void }) {
   const [form, setForm] = useState({ name: '', email: '', message: '', consent: false })
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
@@ -792,7 +798,11 @@ function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onC
     if (!form.consent) return
     setStatus('loading')
     try {
-      const res = await fetch('/api/demo-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch('/api/demo-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, plan: selectedPlan }),
+      })
       setStatus(res.ok ? 'success' : 'error')
     } catch { setStatus('error') }
   }
@@ -801,7 +811,14 @@ function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onC
     <div className="modal-bg" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-box">
         <div style={{ background: CORAL, padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontWeight: 700, fontSize: 15, color: 'white' }}>{t.title}</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 15, color: 'white' }}>{t.title}</div>
+            {selectedPlan && (
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,.8)', marginTop: 2 }}>
+                Plan: <strong style={{ color: 'white' }}>{selectedPlan}</strong>
+              </div>
+            )}
+          </div>
           <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.2)', border: 'none', cursor: 'pointer', fontSize: 16, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
         </div>
         <div style={{ flex: '1 1 auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: 20 } as React.CSSProperties}>
