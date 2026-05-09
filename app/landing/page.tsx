@@ -732,14 +732,14 @@ function FeedbackModal({ t, onClose }: { locale: Locale; t: FeedbackT; onClose: 
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b6860', marginBottom: 4 }}>{field.label}</label>
                   {field.type === 'select' ? (
                     <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', background: 'white' }}>
+                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 16, outline: 'none', background: 'white' }}>
                       <option value="">—</option>
                       {t.categories.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   ) : field.type === 'textarea' ? (
                     <textarea rows={3} required placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
                       onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
+                      style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 16, outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
                   ) : (
                     <input type={field.type} placeholder={field.ph} value={form[field.key as keyof typeof form] as string}
                       required={field.label.includes('*')}
@@ -800,11 +800,11 @@ function ContactModal({ locale, t, onClose }: { locale: Locale; t: ContactT; onC
                     {f.type === 'textarea' ? (
                       <textarea rows={3} value={form[f.key as keyof typeof form] as string}
                         onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                        style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', resize: 'none', fontFamily: 'inherit', transition: 'border-color .15s', lineHeight: 1.5 }} />
+                        style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 16, outline: 'none', resize: 'none', fontFamily: 'inherit', transition: 'border-color .15s', lineHeight: 1.5 }} />
                     ) : (
                       <input type={f.type} required={f.label.includes('*')} value={form[f.key as keyof typeof form] as string}
                         onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                        style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 15, outline: 'none', transition: 'border-color .15s' }} />
+                        style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: '1.5px solid #e8e2db', fontSize: 16, outline: 'none', transition: 'border-color .15s' }} />
                     )}
                   </div>
                 ))}

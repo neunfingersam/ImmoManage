@@ -137,9 +137,19 @@
   }
   html {
     @apply font-sans;
+    /* Prevent iOS Safari zoom on input focus */
+    -webkit-text-size-adjust: 100%;
   }
   h1, h2 {
     font-family: var(--font-heading);
+  }
+  /* Prevent iOS Safari from zooming in on input focus (requires font-size >= 16px) */
+  @media screen and (max-width: 1024px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
   }
 }
 
