@@ -348,7 +348,7 @@ export default function LandingPage() {
             <button
               className="btn-coral"
               style={{ padding: '8px 16px', fontSize: 14, minHeight: 36, whiteSpace: 'nowrap' }}
-              onClick={() => openContact()}
+              onClick={() => scrollTo('pricing')}
             >
               <span className="nav-cta-text">{lbl.cta} →</span>
               <span style={{ display: 'none' }} className="nav-cta-short">→</span>
@@ -376,7 +376,7 @@ export default function LandingPage() {
             <button className="mobile-menu-link" onClick={() => scrollTo('pricing')}>{lbl.pricing}</button>
             <button className="mobile-menu-link" onClick={() => { window.location.href = `/${locale}/auth/login`; setMobileMenuOpen(false) }}>{lbl.login}</button>
             <div style={{ paddingTop: 8 }}>
-              <button className="btn-coral" style={{ width: '100%', padding: '14px', fontSize: 15, minHeight: 48 }} onClick={() => { setContactOpen(true); setMobileMenuOpen(false) }}>
+              <button className="btn-coral" style={{ width: '100%', padding: '14px', fontSize: 15, minHeight: 48 }} onClick={() => scrollTo('pricing')}>
                 {lbl.cta} →
               </button>
             </div>
@@ -431,7 +431,7 @@ export default function LandingPage() {
           </p>
 
           <div className="fade-up delay-4" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 28 }}>
-            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => openContact()}>
+            <button className="btn-coral" style={{ padding: '14px 28px', fontSize: 15, minHeight: 48 }} onClick={() => scrollTo('pricing')}>
               {lbl.cta} →
             </button>
           </div>
